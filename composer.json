@@ -12,6 +12,18 @@
         "php": ">=5.3.3",
         "symfony/console": "2.3.6",
         "symfony/process": "2.3.6",
+        "symfony/filesystem": "2.3.6",
         "symfony/finder": "2.3.6"
+    },
+    "autoload": {
+        "psr-0": {
+            "Boring\\": "src/"
+         }
+    },
+    "bin": [
+        "bin/boring"
+    ],
+    "config": {
+        "bin-dir": "bin"
     }
 }
