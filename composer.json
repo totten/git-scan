@@ -1,0 +1,17 @@
+{
+    "name": "totten/boring",
+    "description": "CLI tool for scanning/updating git repos",
+    "license": "AGPL-3.0",
+    "authors": [
+        {
+            "name": "Tim Otten",
+            "email": "totten@civicrm.org"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/console": "2.3.6",
+        "symfony/process": "2.3.6",
+        "symfony/finder": "2.3.6"
+    }
+}
