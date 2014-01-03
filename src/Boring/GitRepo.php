@@ -38,6 +38,12 @@ class GitRepo {
 
   /* --------------- Main interfaces --------------- */
 
+  /**
+   * Get short status code
+   *
+   * @param bool $fresh
+   * @return string eg " B  ", "BM S", or "    "
+   */
   public function getStatusCode($fresh = FALSE) {
     if ($this->statusCode === NULL || $fresh) {
       $this->statusCode = '';
@@ -95,6 +101,13 @@ class GitRepo {
     }
   }
 
+  /**
+   * Determine the upstream/remote/tracking branch that corresponds to the currently
+   * checked-out code.
+   *
+   * @return string|NULL name of the upstream branch ("some-remote/some-branch") or NULL if none
+   * @throws \RuntimeException
+   */
   public function getTrackingBranch() {
     $process = $this->command("git rev-parse --abbrev-ref @{upstream}");
     $process->run();
