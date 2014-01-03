@@ -1,17 +1,14 @@
 <?php
 namespace Boring;
 
-use Boring\Util\Process as ProcessUtil;
-use Symfony\Component\Filesystem\Filesystem;
-
 class GitRepoScannerTest extends BoringTestCase {
 
   public function testScan_string() {
     // Make a mix of git repos and superfluous files
-    $this->createFile($this->fixturePath . '/modules/example.txt');
-    $this->createFile($this->fixturePath . '/modules/extra-1/example.txt');
-    $this->createFile($this->fixturePath . '/themes/extra-1/example.txt');
-    $this->createFile($this->fixturePath . '/sites/all/modules/extra-2/example.txt');
+    $this->createExampleFile($this->fixturePath . '/modules/example.txt');
+    $this->createExampleFile($this->fixturePath . '/modules/extra-1/example.txt');
+    $this->createExampleFile($this->fixturePath . '/themes/extra-1/example.txt');
+    $this->createExampleFile($this->fixturePath . '/sites/all/modules/extra-2/example.txt');
     $this->createExampleRepo($this->fixturePath);
     $this->createExampleRepo($this->fixturePath . '/sites/all/modules/real-1');
     $this->createExampleRepo($this->fixturePath . '/sites/default/real-2');
@@ -28,8 +25,8 @@ class GitRepoScannerTest extends BoringTestCase {
 
   public function testScan_array() {
     // Make a mix of git repos and superfluous files
-    $this->createFile($this->fixturePath . '/modules/example.txt');
-    $this->createFile($this->fixturePath . '/sites/all/modules/extra-2/example.txt');
+    $this->createExampleFile($this->fixturePath . '/modules/example.txt');
+    $this->createExampleFile($this->fixturePath . '/sites/all/modules/extra-2/example.txt');
     $this->createExampleRepo($this->fixturePath . '/sites/all/themes/ignore-1');
     $this->createExampleRepo($this->fixturePath . '/sites/all/modules/real-1');
     $this->createExampleRepo($this->fixturePath . '/sites/default/real-2');
@@ -44,22 +41,6 @@ class GitRepoScannerTest extends BoringTestCase {
       $this->fixturePath . '/sites/all/modules/real-1',
       $this->fixturePath . '/sites/default/real-2'
     ));
-  }
-
-
-  public function createFile($path) {
-    $dir = dirname($path);
-    if ($dir) {
-      $this->fs->mkdir($dir);
-    }
-    $this->fs->dumpFile($path, "hello from $path");
-  }
-
-  public function createExampleRepo($dir) {
-    $this->createFile("$dir/example.txt");
-    ProcessUtil::runOk($this->command($dir, "git init"));
-    ProcessUtil::runOk($this->command($dir, "git add example.txt"));
-    ProcessUtil::runOk($this->command($dir, "git commit -m Import example.txt"));
   }
 
   public function assertRepos($gitRepos, $expecteds) {

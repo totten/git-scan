@@ -1,6 +1,7 @@
 <?php
 namespace Boring;
 
+use Boring\Util\Process as ProcessUtil;
 use Symfony\Component\Filesystem\Filesystem;
 
 class BoringTestCase extends \PHPUnit_Framework_TestCase {
@@ -48,4 +49,20 @@ class BoringTestCase extends \PHPUnit_Framework_TestCase {
     $process->setWorkingDirectory($subdir);
     return $process;
   }
+
+  public function createExampleFile($path) {
+    $dir = dirname($path);
+    if ($dir) {
+      $this->fs->mkdir($dir);
+    }
+    $this->fs->dumpFile($path, "hello from $path");
+  }
+
+  public function createExampleRepo($dir) {
+    $this->createExampleFile("$dir/example.txt");
+    ProcessUtil::runOk($this->command($dir, "git init"));
+    ProcessUtil::runOk($this->command($dir, "git add example.txt"));
+    ProcessUtil::runOk($this->command($dir, "git commit -m Import example.txt"));
+  }
+
 }
