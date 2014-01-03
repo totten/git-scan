@@ -14,6 +14,7 @@ class ProcessUtils {
     if (!$process->isSuccessful()) {
       $report = "Process failed:
 [[ COMMAND: {$process->getCommandLine()} ]]
+[[ CWD: {$process->getWorkingDirectory()} ]]
 [[ EXIT CODE: {$process->getExitCode()} ]]
 [[ STDOUT ]]
 {$process->getOutput()}
