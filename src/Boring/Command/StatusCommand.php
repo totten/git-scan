@@ -62,7 +62,7 @@ class StatusCommand extends BaseCommand {
     $hiddenCount = 0;
     foreach ($gitRepos as $gitRepo) {
       /** @var \Boring\GitRepo $gitRepo */
-      if (!$input->getOption('offline') && $gitRepo->getTrackingBranch() !== NULL) {
+      if (!$input->getOption('offline') && $gitRepo->getUpstreamBranch() !== NULL) {
         ProcessUtil::runOk($gitRepo->command('git fetch'));
       }
       if ($input->getOption('all') || !$gitRepo->isBoring()) {
@@ -70,7 +70,7 @@ class StatusCommand extends BaseCommand {
           $gitRepo->getStatusCode(),
           rtrim($this->fs->makePathRelative($gitRepo->getPath(), $input->getOption('root')), '/'),
           $gitRepo->getLocalBranch(),
-          $gitRepo->getTrackingBranch(),
+          $gitRepo->getUpstreamBranch(),
         );
       }
       else {

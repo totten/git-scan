@@ -48,7 +48,7 @@ class GitRepo {
     if ($this->statusCode === NULL || $fresh) {
       $this->statusCode = '';
 
-      if (basename($this->getLocalBranch()) != basename($this->getTrackingBranch())) {
+      if (basename($this->getLocalBranch()) != basename($this->getUpstreamBranch())) {
         $this->statusCode .= 'B';
       }
       else {
@@ -108,7 +108,7 @@ class GitRepo {
    * @return string|NULL name of the upstream branch ("some-remote/some-branch") or NULL if none
    * @throws \RuntimeException
    */
-  public function getTrackingBranch() {
+  public function getUpstreamBranch() {
     $process = $this->command("git rev-parse --abbrev-ref @{upstream}");
     $process->run();
     $symbolicRef = trim($process->getOutput());

@@ -55,14 +55,14 @@ class UpdateCommand extends BaseCommand {
     foreach ($gitRepos as $gitRepo) {
       /** @var \Boring\GitRepo $gitRepo */
       $path = rtrim($this->fs->makePathRelative($gitRepo->getPath(), $input->getOption('root')), '/');
-      if ($gitRepo->getTrackingBranch() === NULL) {
+      if ($gitRepo->getUpstreamBranch() === NULL) {
         $output->writeln("<comment>Skip $path: No upstream tracking branch</comment>");
       }
       elseif (!$gitRepo->isLocalFastForwardable()) {
         $output->writeln("<comment>Skip $path: Cannot be fast-forwarded</comment>");
       }
       else {
-        $output->writeln("<comment>Fast-forward $path ({$gitRepo->getLocalBranch()} <= {$gitRepo->getTrackingBranch()})...</comment>");
+        $output->writeln("<comment>Fast-forward $path ({$gitRepo->getLocalBranch()} <= {$gitRepo->getUpstreamBranch()})...</comment>");
         $process = $gitRepo->command('git pull --ff-only');
         $process->run();
         if (!$process->isSuccessful()) {

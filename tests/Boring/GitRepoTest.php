@@ -8,7 +8,7 @@ class GitRepoTest extends BoringTestCase {
     $gitRepo = new GitRepo($this->fixturePath);
     $gitRepo->init();
     $this->assertEquals('master', $gitRepo->getLocalBranch());
-    $this->assertEquals(NULL, $gitRepo->getTrackingBranch());
+    $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(FALSE, $gitRepo->hasUncommittedChanges());
   }
 
@@ -18,7 +18,7 @@ class GitRepoTest extends BoringTestCase {
     $gitRepo->commitFile('example.txt', 'first');
 
     $this->assertEquals('master', $gitRepo->getLocalBranch());
-    $this->assertEquals(NULL, $gitRepo->getTrackingBranch());
+    $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(FALSE, $gitRepo->hasUncommittedChanges());
   }
 
@@ -29,7 +29,7 @@ class GitRepoTest extends BoringTestCase {
     $gitRepo->writeFile('example.txt', 'second');
 
     $this->assertEquals('master', $gitRepo->getLocalBranch());
-    $this->assertEquals(NULL, $gitRepo->getTrackingBranch());
+    $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(TRUE, $gitRepo->hasUncommittedChanges());
   }
 
@@ -40,7 +40,7 @@ class GitRepoTest extends BoringTestCase {
     $gitRepo->writeFile('example-2.txt', 'second');
 
     $this->assertEquals('master', $gitRepo->getLocalBranch());
-    $this->assertEquals(NULL, $gitRepo->getTrackingBranch());
+    $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(TRUE, $gitRepo->hasUncommittedChanges());
   }
 
@@ -52,7 +52,7 @@ class GitRepoTest extends BoringTestCase {
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
     $this->assertEquals('master', $downstream->getLocalBranch());
-    $this->assertEquals('origin/master', $downstream->getTrackingBranch());
+    $this->assertEquals('origin/master', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
   }
 
@@ -64,7 +64,7 @@ class GitRepoTest extends BoringTestCase {
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
     $this->assertEquals('master', $downstream->getLocalBranch());
-    $this->assertEquals('origin/master', $downstream->getTrackingBranch());
+    $this->assertEquals('origin/master', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
   }
 
@@ -76,7 +76,7 @@ class GitRepoTest extends BoringTestCase {
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
 
     $this->assertEquals('my-feature', $downstream->getLocalBranch());
-    $this->assertEquals('origin/my-feature', $downstream->getTrackingBranch());
+    $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
   }
 
@@ -89,7 +89,7 @@ class GitRepoTest extends BoringTestCase {
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
 
     $this->assertEquals('my-feature', $downstream->getLocalBranch());
-    $this->assertEquals('origin/my-feature', $downstream->getTrackingBranch());
+    $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
   }
 
@@ -103,7 +103,7 @@ class GitRepoTest extends BoringTestCase {
     $downstream->writeFile("example.txt", "ch-ch-changes");
 
     $this->assertEquals('my-feature', $downstream->getLocalBranch());
-    $this->assertEquals('origin/my-feature', $downstream->getTrackingBranch());
+    $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(TRUE, $downstream->hasUncommittedChanges());
   }
 
@@ -117,7 +117,7 @@ class GitRepoTest extends BoringTestCase {
     $downstream->writeFile("example-2.txt", "second");
 
     $this->assertEquals('my-feature', $downstream->getLocalBranch());
-    $this->assertEquals('origin/my-feature', $downstream->getTrackingBranch());
+    $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(TRUE, $downstream->hasUncommittedChanges());
   }
 
