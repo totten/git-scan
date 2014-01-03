@@ -10,6 +10,7 @@ class GitRepoTest extends BoringTestCase {
     $this->assertEquals('master', $gitRepo->getLocalBranch());
     $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(FALSE, $gitRepo->hasUncommittedChanges());
+    $this->assertEquals(FALSE, $gitRepo->hasUntrackedFiles());
   }
 
   public function testLocalOnly_AllCommitted() {
@@ -20,6 +21,7 @@ class GitRepoTest extends BoringTestCase {
     $this->assertEquals('master', $gitRepo->getLocalBranch());
     $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(FALSE, $gitRepo->hasUncommittedChanges());
+    $this->assertEquals(FALSE, $gitRepo->hasUntrackedFiles());
   }
 
   public function testLocalOnly_ModifiedFile() {
@@ -31,6 +33,7 @@ class GitRepoTest extends BoringTestCase {
     $this->assertEquals('master', $gitRepo->getLocalBranch());
     $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(TRUE, $gitRepo->hasUncommittedChanges());
+    $this->assertEquals(FALSE, $gitRepo->hasUntrackedFiles());
   }
 
   public function testLocalOnly_NewFile() {
@@ -41,7 +44,33 @@ class GitRepoTest extends BoringTestCase {
 
     $this->assertEquals('master', $gitRepo->getLocalBranch());
     $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
+    $this->assertEquals(FALSE, $gitRepo->hasUncommittedChanges());
+    $this->assertEquals(TRUE, $gitRepo->hasUntrackedFiles());
+  }
+
+  public function testLocalOnly_NewDir() {
+    $gitRepo = new GitRepo($this->fixturePath);
+    $gitRepo->init();
+    $gitRepo->commitFile('example.txt', 'first');
+    $gitRepo->writeFile('newdir/example.txt', 'second');
+
+    $this->assertEquals('master', $gitRepo->getLocalBranch());
+    $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
+    $this->assertEquals(FALSE, $gitRepo->hasUncommittedChanges());
+    $this->assertEquals(TRUE, $gitRepo->hasUntrackedFiles());
+  }
+
+  public function testLocalOnly_NewAndModifiedFiles() {
+    $gitRepo = new GitRepo($this->fixturePath);
+    $gitRepo->init();
+    $gitRepo->commitFile('example.txt', 'first');
+    $gitRepo->writeFile('example.txt', 'second');
+    $gitRepo->writeFile('newdir/example.txt', 'second');
+
+    $this->assertEquals('master', $gitRepo->getLocalBranch());
+    $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(TRUE, $gitRepo->hasUncommittedChanges());
+    $this->assertEquals(TRUE, $gitRepo->hasUntrackedFiles());
   }
 
   public function testClonedDefaultBranch_Fresh() {
@@ -54,6 +83,7 @@ class GitRepoTest extends BoringTestCase {
     $this->assertEquals('master', $downstream->getLocalBranch());
     $this->assertEquals('origin/master', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
+    $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());
   }
 
   public function testClonedMasterBranch_Fresh() {
@@ -66,6 +96,7 @@ class GitRepoTest extends BoringTestCase {
     $this->assertEquals('master', $downstream->getLocalBranch());
     $this->assertEquals('origin/master', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
+    $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());
   }
 
   public function testClonedMyFeatureBranch_Fresh() {
@@ -78,6 +109,7 @@ class GitRepoTest extends BoringTestCase {
     $this->assertEquals('my-feature', $downstream->getLocalBranch());
     $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
+    $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());
   }
 
   public function testCloned_CheckoutMyFeature_Fresh() {
@@ -91,6 +123,7 @@ class GitRepoTest extends BoringTestCase {
     $this->assertEquals('my-feature', $downstream->getLocalBranch());
     $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
+    $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());
   }
 
   public function testCloned_CheckoutMyFeature_Modified() {
@@ -105,6 +138,7 @@ class GitRepoTest extends BoringTestCase {
     $this->assertEquals('my-feature', $downstream->getLocalBranch());
     $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(TRUE, $downstream->hasUncommittedChanges());
+    $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());
   }
 
   public function testCloned_CheckoutMyFeature_Newfile() {
@@ -118,7 +152,8 @@ class GitRepoTest extends BoringTestCase {
 
     $this->assertEquals('my-feature', $downstream->getLocalBranch());
     $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
-    $this->assertEquals(TRUE, $downstream->hasUncommittedChanges());
+    $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
+    $this->assertEquals(TRUE, $downstream->hasUntrackedFiles());
   }
 
   public function testIsFastForwardable_upstreamChanged() {

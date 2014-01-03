@@ -34,6 +34,7 @@ class GitRepo {
   function __construct($path) {
     $this->fs = new Filesystem();
     $this->path = $path;
+    $this->flush();
   }
 
   /* --------------- Main interfaces --------------- */
@@ -57,6 +58,13 @@ class GitRepo {
 
       if ($this->hasUncommittedChanges($fresh)) {
         $this->statusCode .= 'M';
+      }
+      else {
+        $this->statusCode .= ' ';
+      }
+
+      if ($this->hasUntrackedFiles($fresh)) {
+        $this->statusCode .= 'N';
       }
       else {
         $this->statusCode .= ' ';
@@ -140,7 +148,29 @@ class GitRepo {
    * @return bool
    */
   public function hasUncommittedChanges($fresh = FALSE) {
-    return $this->getPorcelain($fresh) ? TRUE : FALSE;
+    $porcelain = trim($this->getPorcelain($fresh));
+    if (empty($porcelain)) {
+      return FALSE;
+    }
+    $lines = explode("\n", $porcelain);
+    $untracked = preg_grep('/^\?\?/', $lines);
+    return count($lines) > count($untracked);
+  }
+
+  /**
+   * Determine if the local working-copy has uncommitted changes
+   * (modified files or new+nonignored files).
+   *
+   * @return bool
+   */
+  public function hasUntrackedFiles($fresh = FALSE) {
+    $porcelain = trim($this->getPorcelain($fresh));
+    if (empty($porcelain)) {
+      return FALSE;
+    }
+    $lines = explode("\n", $porcelain);
+    $untracked = preg_grep('/^\?\?/', $lines);
+    return count($untracked) > 0;
   }
 
   public function isBoring($fresh = FALSE) {
@@ -197,10 +227,16 @@ class GitRepo {
     return TRUE;
   }
 
+  public function flush() {
+    $this->porcelain = NULL;
+    $this->status = NULL;
+    $this->statusCode = NULL;
+  }
+
   /* --------------- Helpers to facilitate testing --------------- */
 
   public function getPorcelain($fresh = FALSE) {
-    if (!$this->porcelain) {
+    if ($fresh || $this->porcelain === NULL) {
       $process = ProcessUtil::runOk($this->command("git status --porcelain"));
       $this->porcelain = $process->getOutput();
     }
@@ -208,7 +244,7 @@ class GitRepo {
   }
 
   public function getStatus($fresh = FALSE) {
-    if (!$this->status) {
+    if ($fresh || $this->status === NULL) {
       $process = ProcessUtil::runOk($this->command("git status"));
       $this->status = $process->getOutput();
     }
@@ -256,6 +292,9 @@ class GitRepo {
    * @param string $content
    */
   public function writeFile($relPath, $content) {
+    if (dirname($relPath)) {
+      $this->fs->mkdir(dirname($relPath));
+    }
     $this->fs->dumpFile($this->path . DIRECTORY_SEPARATOR . $relPath, $content);
   }
 

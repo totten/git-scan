@@ -94,7 +94,10 @@ class StatusCommand extends BaseCommand {
           case ' ':
             break;
           case 'M':
-            $output->writeln("[M] Local (m)odifications (or new files) have not been committed");
+            $output->writeln("[M] Local repo has (m)odifications that have not been committed");
+            break;
+          case 'N':
+            $output->writeln("[N] Local repo has (n)ew files that have not been committed");
             break;
           case 'P':
             $output->writeln("[P] Local commits have not been (p)ushed");
