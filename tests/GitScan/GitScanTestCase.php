@@ -1,12 +1,12 @@
 <?php
-namespace Boring;
+namespace GitScan;
 
-use Boring\Util\Process as ProcessUtil;
-use Boring\Application;
+use GitScan\Util\Process as ProcessUtil;
+use GitScan\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
-class BoringTestCase extends \PHPUnit_Framework_TestCase {
+class GitScanTestCase extends \PHPUnit_Framework_TestCase {
   /**
    * @var string
    */

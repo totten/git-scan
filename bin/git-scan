@@ -15,4 +15,4 @@ foreach ($autoloaders as $autoloader) {
 if (!$found) {
   die("Failed to find autoloader");
 }
-\Boring\Application::main(__DIR__);
+\GitScan\Application::main(__DIR__);

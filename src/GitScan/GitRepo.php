@@ -1,7 +1,7 @@
 <?php
-namespace Boring;
+namespace GitScan;
 
-use Boring\Util\Process as ProcessUtil;
+use GitScan\Util\Process as ProcessUtil;
 use Symfony\Component\Filesystem\Filesystem;
 
 class GitRepo {
@@ -173,7 +173,7 @@ class GitRepo {
     return count($untracked) > 0;
   }
 
-  public function isBoring($fresh = FALSE) {
+  public function isGitScan($fresh = FALSE) {
     return preg_match('/^ +$/', $this->getStatusCode($fresh));
   }
 
@@ -237,10 +237,10 @@ class GitRepo {
       return TRUE;
     }
     elseif ($rule == 'novel') {
-      return !$this->isBoring();
+      return !$this->isGitScan();
     }
     elseif ($rule == 'boring') {
-      return $this->isBoring();
+      return $this->isGitScan();
     }
     else {
       throw new \RuntimeException("Unrecognized status filter");

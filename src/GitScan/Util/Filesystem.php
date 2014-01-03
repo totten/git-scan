@@ -1,5 +1,5 @@
 <?php
-namespace Boring\Util;
+namespace GitScan\Util;
 
 class Filesystem extends \Symfony\Component\Filesystem\Filesystem {
   /**

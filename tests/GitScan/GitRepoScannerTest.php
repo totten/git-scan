@@ -1,7 +1,7 @@
 <?php
-namespace Boring;
+namespace GitScan;
 
-class GitRepoScannerTest extends BoringTestCase {
+class GitRepoScannerTest extends GitScanTestCase {
 
   public function testScan_string() {
     // Make a mix of git repos and superfluous files

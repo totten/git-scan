@@ -1,5 +1,5 @@
 <?php
-namespace Boring\Util;
+namespace GitScan\Util;
 class ArrayUtil {
   public static  function collect($array, $index) {
     $result = array();

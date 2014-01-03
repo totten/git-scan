@@ -1,8 +1,8 @@
 <?php
-namespace Boring;
-use Boring\Util\Process as ProcessUtil;
+namespace GitScan;
+use GitScan\Util\Process as ProcessUtil;
 
-class GitRepoTest extends BoringTestCase {
+class GitRepoTest extends GitScanTestCase {
 
   public function testLocalOnly_Empty() {
     $gitRepo = new GitRepo($this->fixturePath);

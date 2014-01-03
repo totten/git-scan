@@ -1,5 +1,5 @@
 <?php
-namespace Boring;
+namespace GitScan;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,7 +15,7 @@ class Application extends \Symfony\Component\Console\Application {
    * @return
    */
   public static function main($binDir) {
-    $application = new Application('boring', '@package_version@');
+    $application = new Application('git-scan', '@package_version@');
     $application->run();
   }
 
@@ -32,9 +32,9 @@ class Application extends \Symfony\Component\Console\Application {
    */
   public function createCommands() {
     $commands = array();
-    $commands[] = new \Boring\Command\StatusCommand();
-    $commands[] = new \Boring\Command\UpdateCommand();
-    $commands[] = new \Boring\Command\ForeachCommand();
+    $commands[] = new \GitScan\Command\StatusCommand();
+    $commands[] = new \GitScan\Command\UpdateCommand();
+    $commands[] = new \GitScan\Command\ForeachCommand();
     return $commands;
   }
 

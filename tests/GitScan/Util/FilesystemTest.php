@@ -1,7 +1,7 @@
 <?php
-namespace Boring\Util;
+namespace GitScan\Util;
 
-class FilesystemTest extends \Boring\BoringTestCase {
+class FilesystemTest extends \GitScan\GitScanTestCase {
   public function dataIsDescendent() {
     return array(
       array('/ex', '/ex', FALSE),

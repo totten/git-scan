@@ -1,10 +1,10 @@
 <?php
-namespace Boring\Command;
+namespace GitScan\Command;
 
-use Boring\Application;
-use Boring\GitRepo;
-use Boring\Util\ArrayUtil;
-use Boring\Util\Filesystem;
+use GitScan\Application;
+use GitScan\GitRepo;
+use GitScan\Util\ArrayUtil;
+use GitScan\Util\Filesystem;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -45,12 +45,12 @@ class UpdateCommand extends BaseCommand {
     $statusCode = 0;
 
     $output->writeln("<info>[[ Finding repositories ]]</info>");
-    $scanner = new \Boring\GitRepoScanner();
+    $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getArgument('path'));
 
     $output->writeln("<info>[[ Fast-forwarding ]]</info>");
     foreach ($gitRepos as $gitRepo) {
-      /** @var \Boring\GitRepo $gitRepo */
+      /** @var \GitScan\GitRepo $gitRepo */
       $path = $this->fs->formatPrettyPath($gitRepo->getPath(), $input->getArgument('path'));
       if ($gitRepo->getUpstreamBranch() === NULL) {
         $output->writeln("<comment>Skip $path: No upstream tracking branch</comment>");

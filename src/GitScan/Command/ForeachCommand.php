@@ -1,8 +1,8 @@
 <?php
-namespace Boring\Command;
+namespace GitScan\Command;
 
-use Boring\GitRepo;
-use Boring\Util\Filesystem;
+use GitScan\GitRepo;
+use GitScan\Util\Filesystem;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -67,11 +67,11 @@ class ForeachCommand extends BaseCommand {
     if (OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity()) {
       $output->writeln("<info>[[ Finding repositories ]]</info>");
     }
-    $scanner = new \Boring\GitRepoScanner();
+    $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getArgument('path'));
 
     foreach ($gitRepos as $gitRepo) {
-      /** @var \Boring\GitRepo $gitRepo */
+      /** @var \GitScan\GitRepo $gitRepo */
       if (!$gitRepo->matchesStatus($input->getOption('status'))) {
         continue;
       }

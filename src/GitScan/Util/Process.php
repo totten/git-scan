@@ -1,5 +1,5 @@
 <?php
-namespace Boring\Util;
+namespace GitScan\Util;
 class Process {
 
   /**
@@ -12,7 +12,7 @@ class Process {
   public static function runOk(\Symfony\Component\Process\Process $process) {
     $process->run();
     if (!$process->isSuccessful()) {
-      throw new \Boring\Exception\ProcessErrorException($process);
+      throw new \GitScan\Exception\ProcessErrorException($process);
     }
     return $process;
   }

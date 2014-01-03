@@ -1,7 +1,7 @@
 <?php
-namespace Boring\Command;
+namespace GitScan\Command;
 
-class ForeachCommandTest extends \Boring\BoringTestCase {
+class ForeachCommandTest extends \GitScan\GitScanTestCase {
   public function setup() {
     parent::setup();
     $this->createExampleRepo($this->fixturePath . '/example-1/repo-1');

@@ -10,7 +10,7 @@
          bootstrap="tests/bootstrap.php"
 >
   <testsuites>
-    <testsuite name="Boring Test Suite">
+    <testsuite name="GitScan Test Suite">
       <directory>./tests/</directory>
     </testsuite>
   </testsuites>

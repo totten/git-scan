@@ -1,11 +1,11 @@
 <?php
-namespace Boring\Command;
+namespace GitScan\Command;
 
-use Boring\Application;
-use Boring\GitRepo;
-use Boring\Util\ArrayUtil;
-use Boring\Util\Filesystem;
-use Boring\Util\Process as ProcessUtil;
+use GitScan\Application;
+use GitScan\GitRepo;
+use GitScan\Util\ArrayUtil;
+use GitScan\Util\Filesystem;
+use GitScan\Util\Process as ProcessUtil;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -49,7 +49,7 @@ class StatusCommand extends BaseCommand {
 
   protected function execute(InputInterface $input, OutputInterface $output) {
     $output->writeln("<info>[[ Finding repositories ]]</info>");
-    $scanner = new \Boring\GitRepoScanner();
+    $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getArgument('path'));
 
     if ($input->getOption('status') == 'auto') {
@@ -67,7 +67,7 @@ class StatusCommand extends BaseCommand {
     $rows = array();
     $hiddenCount = 0;
     foreach ($gitRepos as $gitRepo) {
-      /** @var \Boring\GitRepo $gitRepo */
+      /** @var \GitScan\GitRepo $gitRepo */
       if (!$input->getOption('offline') && $gitRepo->getUpstreamBranch() !== NULL) {
         ProcessUtil::runOk($gitRepo->command('git fetch'));
       }

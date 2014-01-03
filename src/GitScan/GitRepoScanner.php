@@ -1,5 +1,5 @@
 <?php
-namespace Boring;
+namespace GitScan;
 use Symfony\Component\Finder\Finder;
 
 class GitRepoScanner {

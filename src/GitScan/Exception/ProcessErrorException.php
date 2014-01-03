@@ -1,5 +1,5 @@
 <?php
-namespace Boring\Exception;
+namespace GitScan\Exception;
 
 class ProcessErrorException extends \RuntimeException {
   /**

@@ -16,4 +16,4 @@ if (!isset($loader)) {
 }
 
 #### Extra - Register classes in "tests" directory
-$loader->add('Boring', __DIR__);
+$loader->add('GitScan', __DIR__);
