@@ -14,7 +14,7 @@ class Application extends \Symfony\Component\Console\Application {
    * @return
    */
   public static function main($binDir) {
-    $application = new Application('amp', '@package_version@');
+    $application = new Application('boring', '@package_version@');
     $application->run();
   }
 

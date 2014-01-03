@@ -34,7 +34,7 @@ class StatusCommand extends BaseCommand {
       ->setDescription('Show the status of any nested git repositories')
       ->addOption('root', 'r', InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
       ->addOption('all', 'a', InputOption::VALUE_NONE, 'Display status of all repos (even boring ones)')
-      ->addOption('offline', 'O', InputOption::VALUE_NONE, 'Offline mode - do not fetch latest from remotes');
+      ->addOption('offline', 'O', InputOption::VALUE_NONE, 'Offline mode: Do not fetch latest data about remote repositories');
     //->addOption('scan', 's', InputOption::VALUE_NONE, 'Force an immediate scan for new git repositories before doing anything')
   }
 
@@ -62,7 +62,7 @@ class StatusCommand extends BaseCommand {
     $hiddenCount = 0;
     foreach ($gitRepos as $gitRepo) {
       /** @var \Boring\GitRepo $gitRepo */
-      if (!$input->getOption('offline')) {
+      if (!$input->getOption('offline') && $gitRepo->getTrackingBranch() !== NULL) {
         ProcessUtil::runOk($gitRepo->command('git fetch'));
       }
       if ($input->getOption('all') || !$gitRepo->isBoring()) {
@@ -94,16 +94,16 @@ class StatusCommand extends BaseCommand {
           case ' ':
             break;
           case 'M':
-            $output->writeln("[M] Local modifications have not been committed");
+            $output->writeln("[M] Local (m)odifications (or new files) have not been committed");
             break;
           case 'P':
-            $output->writeln("[P] Local commits have not been pushed");
+            $output->writeln("[P] Local commits have not been (p)ushed");
             break;
           case 'B':
-            $output->writeln("[B] Local and remote branch names are suspiciously different");
+            $output->writeln("[B] Local and remote (b)ranch names are suspiciously different");
             break;
           case 'S':
-            $output->writeln("[S] Changes have been stashed");
+            $output->writeln("[S] Changes have been (s)tashed");
             break;
           default:
             throw new \RuntimeException("Unrecognized status code [$char]");

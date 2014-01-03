@@ -30,7 +30,7 @@ class UpdateCommand extends BaseCommand {
   protected function configure() {
     $this
       ->setName('update')
-      ->setDescription('Show the status of any nested git repositories')
+      ->setDescription('Execute routine updates on any boring repositories')
       ->addOption('root', 'r', InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd());
   }
 
