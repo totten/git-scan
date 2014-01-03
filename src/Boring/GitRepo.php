@@ -227,6 +227,26 @@ class GitRepo {
     return TRUE;
   }
 
+  /**
+   * @param $rule
+   * @return bool
+   * @throws \RuntimeException
+   */
+  public function matchesStatus($rule) {
+    if ($rule == 'all') {
+      return TRUE;
+    }
+    elseif ($rule == 'novel') {
+      return !$this->isBoring();
+    }
+    elseif ($rule == 'boring') {
+      return $this->isBoring();
+    }
+    else {
+      throw new \RuntimeException("Unrecognized status filter");
+    }
+  }
+
   public function flush() {
     $this->porcelain = NULL;
     $this->status = NULL;

@@ -67,7 +67,7 @@ class StatusCommand extends BaseCommand {
       if (!$input->getOption('offline') && $gitRepo->getUpstreamBranch() !== NULL) {
         ProcessUtil::runOk($gitRepo->command('git fetch'));
       }
-      if ($this->filterByStatus($input->getOption('status'), $gitRepo)) {
+      if ($gitRepo->matchesStatus($input->getOption('status'))) {
         $rows[] = array(
           $gitRepo->getStatusCode(),
           $this->fs->formatPrettyPath($gitRepo->getPath(), $input->getArgument('path')),
@@ -143,20 +143,4 @@ class StatusCommand extends BaseCommand {
     ksort($chars);
     return array_keys($chars);
   }
-
-  public function filterByStatus($rule, GitRepo $gitRepo) {
-    if ($rule == 'all') {
-      return TRUE;
-    }
-    elseif ($rule == 'novel') {
-      return !$gitRepo->isBoring();
-    }
-    elseif ($rule == 'boring') {
-      return $gitRepo->isBoring();
-    }
-    else {
-      throw new \RuntimeException("Unrecognized status filter");
-    }
-  }
-
 }
