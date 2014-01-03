@@ -12,16 +12,7 @@ class Process {
   public static function runOk(\Symfony\Component\Process\Process $process) {
     $process->run();
     if (!$process->isSuccessful()) {
-      $report = "Process failed:
-[[ COMMAND: {$process->getCommandLine()} ]]
-[[ CWD: {$process->getWorkingDirectory()} ]]
-[[ EXIT CODE: {$process->getExitCode()} ]]
-[[ STDOUT ]]
-{$process->getOutput()}
-[[ STDERR ]]
-{$process->getErrorOutput()}
-      ";
-      throw new \RuntimeException($report);
+      throw new \Boring\Exception\ProcessErrorException($process);
     }
     return $process;
   }
