@@ -30,6 +30,7 @@ class UpdateCommand extends BaseCommand {
   protected function configure() {
     $this
       ->setName('update')
+      ->setAliases(array('up'))
       ->setDescription('Execute fast-forward merges on all nested repositories')
       ->setHelp('Execute fast-forward merges on all nested repositories (which are already amenable to fast-forwarding)')
       ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()));

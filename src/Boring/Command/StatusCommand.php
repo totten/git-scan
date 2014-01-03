@@ -33,6 +33,7 @@ class StatusCommand extends BaseCommand {
   protected function configure() {
     $this
       ->setName('status')
+      ->setAliases(array('st'))
       ->setDescription('Show the status of any nested git repositories')
       ->setHelp("Show the status of any nested git repositories.\n\nNote: This will fetch upstream repositories to help determine the status (unless you specify --offline mode).")
       ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()))
