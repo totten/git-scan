@@ -56,7 +56,10 @@ class StatusCommand extends BaseCommand {
       $input->setOption('status', count($gitRepos) > self::DISPLAY_ALL_THRESHOLD ? 'novel' : 'all');
     }
 
-    $output->writeln("<info>[[ Checking statuses ]]</info>");
+    $output->writeln($input->getOption('offline')
+        ? "<info>[[ Checking statuses ]]</info>"
+        : "<info>[[ Fetching statuses ]]</info>"
+    );
     /** @var \Symfony\Component\Console\Helper\ProgressHelper $progress */
     $progress = $this->getApplication()->getHelperSet()->get('progress');
     $progress->start($output, 1 + count($gitRepos));
@@ -103,7 +106,8 @@ class StatusCommand extends BaseCommand {
             $output->writeln("[N] Local repo has (n)ew files that have not been committed");
             break;
           case 'P':
-            $output->writeln("[P] Local commits have not been (p)ushed");
+            $output->writeln("[P] Local branch cannot be fast-forwarded (strictly)");
+            $output->writeln("    Local commits have not been (p)ushed upstream (usually)");
             break;
           case 'B':
             $output->writeln("[B] Local and remote (b)ranch names are suspiciously different");
