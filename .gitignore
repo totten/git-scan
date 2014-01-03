@@ -1,4 +1,4 @@
-vendor
-.idea
+/vendor
+/.idea
 *~
-boring.phar
+/bin/git-scan.phar

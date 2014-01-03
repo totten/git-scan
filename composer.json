@@ -21,7 +21,7 @@
          }
     },
     "bin": [
-        "bin/boring"
+        "bin/git-scan"
     ],
     "config": {
         "bin-dir": "bin"

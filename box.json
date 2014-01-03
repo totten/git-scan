@@ -11,7 +11,7 @@
         }
     ],
     "git-version": "package_version",
-    "main": "bin/boring",
-    "output": "boring.phar",
+    "main": "bin/git-scan",
+    "output": "bin/git-scan.phar",
     "stub": true
 }
