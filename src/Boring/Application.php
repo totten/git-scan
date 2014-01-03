@@ -20,6 +20,7 @@ class Application extends \Symfony\Component\Console\Application {
 
   public function __construct($name, $version) {
     parent::__construct($name, $version);
+    $this->setCatchExceptions(false);
     $this->addCommands($this->createCommands());
   }
 
@@ -30,7 +31,7 @@ class Application extends \Symfony\Component\Console\Application {
    */
   public function createCommands() {
     $commands = array();
-//    $commands[] = new \Amp\Command\ConfigCommand();
+    $commands[] = new \Boring\Command\StatusCommand();
     return $commands;
   }
 }
