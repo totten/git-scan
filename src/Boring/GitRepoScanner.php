@@ -5,7 +5,7 @@ use Symfony\Component\Finder\Finder;
 class GitRepoScanner {
 
   /**
-   * @param string $basedir
+   * @param string|array $basedir
    * @return array of GitRepo
    */
   public function scan($basedir) {
@@ -19,7 +19,7 @@ class GitRepoScanner {
       ->name('.git');
     foreach ($finder as $file) {
       $path = dirname($file);
-      $gitRepos[] = new GitRepo($path);
+      $gitRepos[(string)$path] = new GitRepo($path);
     }
     return $gitRepos;
   }
