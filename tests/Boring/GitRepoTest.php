@@ -58,7 +58,7 @@ class GitRepoTest extends BoringTestCase {
   public function testClonedMasterBranch_Fresh() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
+    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
@@ -119,6 +119,59 @@ class GitRepoTest extends BoringTestCase {
     $this->assertEquals('origin/my-feature', $downstream->getTrackingBranch());
     $this->assertEquals(TRUE, $downstream->hasUncommittedChanges());
   }
+
+  public function testIsFastForwardable_upstreamChanged() {
+    $upstream = $this->createUpstreamRepo();
+
+    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
+    $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $this->assertEquals("example text", $downstream->readFile("example.txt"));
+
+    // note: messages may appear different before/after fetching
+    $upstream->commitFile('example-from-upstream.txt', 'upstream change example');
+    $this->assertEquals(TRUE, $downstream->isLocalFastForwardable(TRUE));
+    ProcessUtils::runOk($downstream->command("git fetch"));
+    $this->assertEquals(TRUE, $downstream->isLocalFastForwardable(TRUE));
+  }
+
+  public function testIsFastForwardable_downstreamChanged() {
+    $upstream = $this->createUpstreamRepo();
+
+    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
+    $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $this->assertEquals("example text", $downstream->readFile("example.txt"));
+
+    $downstream->commitFile('example-from-downstream.txt', 'downstream change example');
+    $this->assertEquals(FALSE, $downstream->isLocalFastForwardable(TRUE));
+  }
+
+  public function testIsFastForwardable_bothChanged() {
+    $upstream = $this->createUpstreamRepo();
+
+    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
+    $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $this->assertEquals("example text", $downstream->readFile("example.txt"));
+
+    $upstream->commitFile('example-from-upstream.txt', 'upstream change example');
+    $downstream->commitFile('example-from-downstream.txt', 'downstream change example');
+    $this->assertEquals(FALSE, $downstream->isLocalFastForwardable(TRUE));
+  }
+
+  public function testHasStash() {
+    $upstream = $this->createUpstreamRepo();
+
+    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
+    $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $this->assertEquals("example text", $downstream->readFile("example.txt"));
+
+    $this->assertEquals(FALSE, $downstream->hasStash());
+    $downstream->writeFile('example.txt', 'example of stashed change');
+    ProcessUtils::runOk($downstream->command("git stash save"));
+    $this->assertEquals(TRUE, $downstream->hasStash());
+    ProcessUtils::runOk($downstream->command("git stash pop"));
+    $this->assertEquals(FALSE, $downstream->hasStash());
+  }
+
 
   /**
    * @param string $checkout the treeish to checkout

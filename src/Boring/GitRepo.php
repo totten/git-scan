@@ -3,6 +3,12 @@ namespace Boring;
 use Symfony\Component\Filesystem\Filesystem;
 
 class GitRepo {
+
+  /**
+   * @var string status code (cached)
+   */
+  private $statusCode;
+
   /**
    * @var Filesystem
    */
@@ -14,9 +20,14 @@ class GitRepo {
   private $path;
 
   /**
-   * @var string command-line output from "git status --porcelain"
+   * @var string command-line output from "git status --porcelain" (cached)
    */
   private $porcelain;
+
+  /**
+   * @var string command-line output from "git status" (cached)
+   */
+  private $status;
 
   function __construct($path) {
     $this->fs = new Filesystem();
@@ -24,6 +35,42 @@ class GitRepo {
   }
 
   /* --------------- Main interfaces --------------- */
+
+  public function getStatusCode($fresh = FALSE) {
+    if ($this->statusCode === NULL || $fresh) {
+      $this->statusCode = '';
+
+      if (basename($this->getLocalBranch()) != basename($this->getTrackingBranch())) {
+        $this->statusCode .= 'B';
+      }
+      else {
+        $this->statusCode .= ' ';
+      }
+
+      if ($this->hasUncommittedChanges($fresh)) {
+        $this->statusCode .= 'M';
+      }
+      else {
+        $this->statusCode .= ' ';
+      }
+
+      if (!$this->isLocalFastForwardable($fresh)) {
+        $this->statusCode .= 'P';
+      }
+      else {
+        $this->statusCode .= ' ';
+      }
+
+      if ($this->hasStash()) {
+        $this->statusCode .= 'S';
+      }
+      else {
+        $this->statusCode .= ' ';
+      }
+    }
+
+    return $this->statusCode;
+  }
 
   /**
    * Determine the name of the local branch
@@ -40,7 +87,8 @@ class GitRepo {
     }
     if (preg_match(":^refs/heads/(.*)$:", $symbolicRef, $matches)) {
       return $matches[1];
-    } else {
+    }
+    else {
       throw new \RuntimeException("Unrecognized symbolic ref [$symbolicRef]");
     }
   }
@@ -54,13 +102,84 @@ class GitRepo {
     }
     if (preg_match(":[a-zA-Z0-9\_\.\/]+:", $symbolicRef)) {
       return $symbolicRef;
-    } else {
+    }
+    else {
       throw new \RuntimeException("Failed to determine tracking branch");
     }
   }
 
+  /**
+   * Determine if there is any data in the stash
+   *
+   * @return bool
+   */
+  public function hasStash() {
+    $process = ProcessUtils::runOk($this->command("git stash list"));
+    return $process->getOutput() ? TRUE : FALSE;
+  }
+
+  /**
+   * Determine if the local working-copy has uncommitted changes
+   * (modified files or new+nonignored files).
+   *
+   * @return bool
+   */
   public function hasUncommittedChanges($fresh = FALSE) {
     return $this->getPorcelain($fresh) ? TRUE : FALSE;
+  }
+
+  public function isBoring($fresh = FALSE) {
+    return preg_match('/^ +$/', $this->getStatusCode($fresh));
+  }
+
+  /**
+   * Determine if the local branch can be fast-forwarded to match the
+   * remote branch.
+   *
+   * @return bool
+   */
+  public function isLocalFastForwardable($fresh = FALSE) {
+    $lines = explode("\n", $this->getStatus($fresh));
+    $lines = preg_grep('/^#/', $lines);
+    $unknowns = array();
+    foreach ($lines as $line) {
+      $line = trim($line);
+
+      if (preg_match('/^# Your branch is ahead of /', $line)) {
+        return FALSE;
+      }
+      elseif (preg_match('/^# Your branch and .* diverged/', $line)) {
+        return FALSE;
+      }
+      elseif (preg_match('/^# Your branch is behind.*can be fast-forwarded/', $line)) {
+        return TRUE;
+      }
+      /*
+      elseif ($line == '#') {
+        continue; // ignore
+      }
+      elseif (preg_match('/^# (On branch|Not currently on any branch)/', $line)) {
+        continue; // ignore
+      }
+      elseif (preg_match('/^# Untracked files/', $line)) {
+        continue; // ignore
+      }
+      elseif (preg_match('/^#(\t|   )/', $line)) {
+        continue; // ignore
+      }
+      else {
+        $unknowns[] = $line;
+      }
+      */
+    }
+    // If there's no explicit mention of merge-ability, then it should be clean.
+    // However, it's possible that the status message language has changed and we
+    // don't know about it yet.
+
+    if (count($unknowns) > 0) {
+      throw new \RuntimeException("Failed to parse status of [" . $this->getPath() . "]:" . implode("\n", $unknowns));
+    }
+    return TRUE;
   }
 
   /* --------------- Helpers to facilitate testing --------------- */
@@ -71,6 +190,14 @@ class GitRepo {
       $this->porcelain = $process->getOutput();
     }
     return $this->porcelain;
+  }
+
+  public function getStatus($fresh = FALSE) {
+    if (!$this->status) {
+      $process = ProcessUtils::runOk($this->command("git status"));
+      $this->status = $process->getOutput();
+    }
+    return $this->status;
   }
 
   /**
