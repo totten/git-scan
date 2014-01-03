@@ -31,17 +31,12 @@ class UpdateCommand extends BaseCommand {
     $this
       ->setName('update')
       ->setDescription('Execute routine updates on any boring repositories')
-      ->addOption('root', 'r', InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd());
+      ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search (default: current directory)', array(getcwd()));
   }
 
   protected function initialize(InputInterface $input, OutputInterface $output) {
-    $root = $this->fs->toAbsolutePath($input->getOption('root'));
-    if (!$this->fs->exists($root)) {
-      throw new \Exception("Failed to locate root: " . $root);
-    }
-    else {
-      $input->setOption('root', $root);
-    }
+    $input->setArgument('path', $this->fs->toAbsolutePaths($input->getArgument('path')));
+    $this->fs->validateExists($input->getArgument('path'));
   }
 
   protected function execute(InputInterface $input, OutputInterface $output) {
@@ -49,12 +44,12 @@ class UpdateCommand extends BaseCommand {
 
     $output->writeln("<info>[[ Finding repositories ]]</info>");
     $scanner = new \Boring\GitRepoScanner();
-    $gitRepos = $scanner->scan($input->getOption('root'));
+    $gitRepos = $scanner->scan($input->getArgument('path'));
 
     $output->writeln("<info>[[ Fast-forwarding ]]</info>");
     foreach ($gitRepos as $gitRepo) {
       /** @var \Boring\GitRepo $gitRepo */
-      $path = rtrim($this->fs->makePathRelative($gitRepo->getPath(), $input->getOption('root')), '/');
+      $path = $this->fs->formatPrettyPath($gitRepo->getPath(), $input->getArgument('path'));
       if ($gitRepo->getUpstreamBranch() === NULL) {
         $output->writeln("<comment>Skip $path: No upstream tracking branch</comment>");
       }

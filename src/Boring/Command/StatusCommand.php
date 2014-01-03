@@ -34,26 +34,21 @@ class StatusCommand extends BaseCommand {
     $this
       ->setName('status')
       ->setDescription('Show the status of any nested git repositories')
-      ->addOption('root', 'r', InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
+      ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search (default: current directory)', array(getcwd()))
       ->addOption('status', NULL, InputOption::VALUE_REQUIRED, 'Filter table output by repo statuses ("all","novel","boring","auto")', 'auto')
       ->addOption('offline', 'O', InputOption::VALUE_NONE, 'Offline mode: Do not fetch latest data about remote repositories');
     //->addOption('scan', 's', InputOption::VALUE_NONE, 'Force an immediate scan for new git repositories before doing anything')
   }
 
   protected function initialize(InputInterface $input, OutputInterface $output) {
-    $root = $this->fs->toAbsolutePath($input->getOption('root'));
-    if (!$this->fs->exists($root)) {
-      throw new \Exception("Failed to locate root: " . $root);
-    }
-    else {
-      $input->setOption('root', $root);
-    }
+    $input->setArgument('path', $this->fs->toAbsolutePaths($input->getArgument('path')));
+    $this->fs->validateExists($input->getArgument('path'));
   }
 
   protected function execute(InputInterface $input, OutputInterface $output) {
     $output->writeln("<info>[[ Finding repositories ]]</info>");
     $scanner = new \Boring\GitRepoScanner();
-    $gitRepos = $scanner->scan($input->getOption('root'));
+    $gitRepos = $scanner->scan($input->getArgument('path'));
 
     if ($input->getOption('status') == 'auto') {
       $input->setOption('status', count($gitRepos) > self::DISPLAY_ALL_THRESHOLD ? 'novel' : 'all');
@@ -74,7 +69,7 @@ class StatusCommand extends BaseCommand {
       if ($this->filterByStatus($input->getOption('status'), $gitRepo)) {
         $rows[] = array(
           $gitRepo->getStatusCode(),
-          rtrim($this->fs->makePathRelative($gitRepo->getPath(), $input->getOption('root')), '/'),
+          $this->fs->formatPrettyPath($gitRepo->getPath(), $input->getArgument('path')),
           $gitRepo->getLocalBranch(),
           $gitRepo->getUpstreamBranch(),
         );
@@ -135,7 +130,6 @@ class StatusCommand extends BaseCommand {
           $output->writeln("NOTE: Omitted information about $hiddenCount repo(s). To display all, use --status=all.");
       }
     }
-
   }
 
   function getUniqueChars($items) {
@@ -163,4 +157,5 @@ class StatusCommand extends BaseCommand {
       throw new \RuntimeException("Unrecognized status filter");
     }
   }
+
 }
