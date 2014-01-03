@@ -34,7 +34,8 @@ class StatusCommand extends BaseCommand {
     $this
       ->setName('status')
       ->setDescription('Show the status of any nested git repositories')
-      ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search (default: current directory)', array(getcwd()))
+      ->setHelp("Show the status of any nested git repositories.\n\nNote: This will fetch upstream repositories to help determine the status (unless you specify --offline mode).")
+      ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()))
       ->addOption('status', NULL, InputOption::VALUE_REQUIRED, 'Filter table output by repo statuses ("all","novel","boring","auto")', 'auto')
       ->addOption('offline', 'O', InputOption::VALUE_NONE, 'Offline mode: Do not fetch latest data about remote repositories');
     //->addOption('scan', 's', InputOption::VALUE_NONE, 'Force an immediate scan for new git repositories before doing anything')

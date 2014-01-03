@@ -30,8 +30,9 @@ class UpdateCommand extends BaseCommand {
   protected function configure() {
     $this
       ->setName('update')
-      ->setDescription('Execute routine updates on any boring repositories')
-      ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search (default: current directory)', array(getcwd()));
+      ->setDescription('Execute fast-forward merges on all nested repositories')
+      ->setHelp('Execute fast-forward merges on all nested repositories (which are already amenable to fast-forwarding)')
+      ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()));
   }
 
   protected function initialize(InputInterface $input, OutputInterface $output) {
