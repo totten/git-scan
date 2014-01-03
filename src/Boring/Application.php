@@ -32,6 +32,7 @@ class Application extends \Symfony\Component\Console\Application {
   public function createCommands() {
     $commands = array();
     $commands[] = new \Boring\Command\StatusCommand();
+    $commands[] = new \Boring\Command\UpdateCommand();
     return $commands;
   }
 }
