@@ -5,9 +5,9 @@ Git-scan is designed for users who have many overlapping git repositories -- for
 
  * Zero configuration
  * Works with deeply nested repositories
- * Filters and displays repositories based on their status ("git-scan status")
- * Performs safe (fast-forward) updates on repositories when valid ("git-scan update")
- * Executes custom commands ("git scan foreach -c '...'")
+ * Filters and displays repositories based on their status ("*git-scan status*")
+ * Performs safe (fast-forward) updates on repositories when valid ("*git-scan update*")
+ * Executes custom commands ("*git scan foreach -c '...'*")
  * Agnostic to the build system (eg works equally well with "composer", "drush-make", and manually-written build scripts)
  * Agnostic to the branch/submission/review process (eg works with personal read/write repos as well as GitHub repos that require pull-requests)
 
