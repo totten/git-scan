@@ -1,6 +1,6 @@
 <?php
-namespace Boring;
-class ProcessUtils {
+namespace Boring\Util;
+class Process {
 
   /**
    * Helper which synchronously runs a command and verifies that it doesn't generate an error.

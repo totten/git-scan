@@ -5,6 +5,7 @@ use Boring\Application;
 use Boring\GitRepo;
 use Boring\Util\ArrayUtil;
 use Boring\Util\Filesystem;
+use Boring\Util\Process as ProcessUtil;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -62,7 +63,7 @@ class StatusCommand extends BaseCommand {
     foreach ($gitRepos as $gitRepo) {
       /** @var \Boring\GitRepo $gitRepo */
       if (!$input->getOption('offline')) {
-        \Boring\ProcessUtils::runOk($gitRepo->command('git fetch'));
+        ProcessUtil::runOk($gitRepo->command('git fetch'));
       }
       if ($input->getOption('all') || !$gitRepo->isBoring()) {
         $rows[] = array(

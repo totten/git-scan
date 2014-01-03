@@ -1,6 +1,7 @@
 <?php
 namespace Boring;
 
+use Boring\Util\Process as ProcessUtil;
 use Symfony\Component\Filesystem\Filesystem;
 
 class GitRepoScannerTest extends BoringTestCase {
@@ -18,9 +19,9 @@ class GitRepoScannerTest extends BoringTestCase {
       $dir = $this->fixturePath . $subdir;
       $this->fs->mkdir($dir);
       $this->fs->dumpFile($dir . '/example.txt', "hello $subdir");
-      ProcessUtils::runOk($this->command($dir, "git init"));
-      ProcessUtils::runOk($this->command($dir, "git add example.txt"));
-      ProcessUtils::runOk($this->command($dir, "git commit -m Import example.txt"));
+      ProcessUtil::runOk($this->command($dir, "git init"));
+      ProcessUtil::runOk($this->command($dir, "git add example.txt"));
+      ProcessUtil::runOk($this->command($dir, "git commit -m Import example.txt"));
     }
 
     $scanner = new GitRepoScanner();

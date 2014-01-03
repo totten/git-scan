@@ -1,5 +1,6 @@
 <?php
 namespace Boring;
+use Boring\Util\Process as ProcessUtil;
 
 class GitRepoTest extends BoringTestCase {
 
@@ -46,7 +47,7 @@ class GitRepoTest extends BoringTestCase {
   public function testClonedDefaultBranch_Fresh() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
+    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
@@ -58,7 +59,7 @@ class GitRepoTest extends BoringTestCase {
   public function testClonedMasterBranch_Fresh() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
+    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
@@ -70,7 +71,7 @@ class GitRepoTest extends BoringTestCase {
   public function testClonedMyFeatureBranch_Fresh() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b my-feature"));
+    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b my-feature"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
 
@@ -82,9 +83,9 @@ class GitRepoTest extends BoringTestCase {
   public function testCloned_CheckoutMyFeature_Fresh() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
+    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
-    ProcessUtils::runOk($downstream->command("git checkout my-feature"));
+    ProcessUtil::runOk($downstream->command("git checkout my-feature"));
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
 
     $this->assertEquals('my-feature', $downstream->getLocalBranch());
@@ -95,9 +96,9 @@ class GitRepoTest extends BoringTestCase {
   public function testCloned_CheckoutMyFeature_Modified() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
+    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
-    ProcessUtils::runOk($downstream->command("git checkout my-feature"));
+    ProcessUtil::runOk($downstream->command("git checkout my-feature"));
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
     $downstream->writeFile("example.txt", "ch-ch-changes");
 
@@ -109,9 +110,9 @@ class GitRepoTest extends BoringTestCase {
   public function testCloned_CheckoutMyFeature_Newfile() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
+    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
-    ProcessUtils::runOk($downstream->command("git checkout my-feature"));
+    ProcessUtil::runOk($downstream->command("git checkout my-feature"));
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
     $downstream->writeFile("example-2.txt", "second");
 
@@ -123,21 +124,21 @@ class GitRepoTest extends BoringTestCase {
   public function testIsFastForwardable_upstreamChanged() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
+    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
     // note: messages may appear different before/after fetching
     $upstream->commitFile('example-from-upstream.txt', 'upstream change example');
     $this->assertEquals(TRUE, $downstream->isLocalFastForwardable(TRUE));
-    ProcessUtils::runOk($downstream->command("git fetch"));
+    ProcessUtil::runOk($downstream->command("git fetch"));
     $this->assertEquals(TRUE, $downstream->isLocalFastForwardable(TRUE));
   }
 
   public function testIsFastForwardable_downstreamChanged() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
+    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
@@ -148,7 +149,7 @@ class GitRepoTest extends BoringTestCase {
   public function testIsFastForwardable_bothChanged() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
+    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
@@ -160,15 +161,15 @@ class GitRepoTest extends BoringTestCase {
   public function testHasStash() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtils::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
+    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
     $this->assertEquals(FALSE, $downstream->hasStash());
     $downstream->writeFile('example.txt', 'example of stashed change');
-    ProcessUtils::runOk($downstream->command("git stash save"));
+    ProcessUtil::runOk($downstream->command("git stash save"));
     $this->assertEquals(TRUE, $downstream->hasStash());
-    ProcessUtils::runOk($downstream->command("git stash pop"));
+    ProcessUtil::runOk($downstream->command("git stash pop"));
     $this->assertEquals(FALSE, $downstream->hasStash());
   }
 
@@ -187,19 +188,19 @@ class GitRepoTest extends BoringTestCase {
     }
 
     $gitRepo->commitFile("example.txt", "example text");
-    ProcessUtils::runOk($gitRepo->command("git tag 0.1"));
+    ProcessUtil::runOk($gitRepo->command("git tag 0.1"));
 
-    ProcessUtils::runOk($gitRepo->command("git checkout -b my-feature"));
+    ProcessUtil::runOk($gitRepo->command("git checkout -b my-feature"));
     $gitRepo->commitFile("example.txt", "example text plus my feature");
 
     // Validate
-    ProcessUtils::runOk($gitRepo->command("git checkout master"));
+    ProcessUtil::runOk($gitRepo->command("git checkout master"));
     $this->assertEquals("example text", $gitRepo->readFile("example.txt"));
-    ProcessUtils::runOk($gitRepo->command("git checkout my-feature"));
+    ProcessUtil::runOk($gitRepo->command("git checkout my-feature"));
     $this->assertEquals("example text plus my feature", $gitRepo->readFile("example.txt"));
 
     // Wrap up
-    ProcessUtils::runOk($gitRepo->command("git checkout $checkout"));
+    ProcessUtil::runOk($gitRepo->command("git checkout $checkout"));
     return $gitRepo;
   }
 }

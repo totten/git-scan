@@ -1,5 +1,7 @@
 <?php
 namespace Boring;
+
+use Boring\Util\Process as ProcessUtil;
 use Symfony\Component\Filesystem\Filesystem;
 
 class GitRepo {
@@ -114,7 +116,7 @@ class GitRepo {
    * @return bool
    */
   public function hasStash() {
-    $process = ProcessUtils::runOk($this->command("git stash list"));
+    $process = ProcessUtil::runOk($this->command("git stash list"));
     return $process->getOutput() ? TRUE : FALSE;
   }
 
@@ -186,7 +188,7 @@ class GitRepo {
 
   public function getPorcelain($fresh = FALSE) {
     if (!$this->porcelain) {
-      $process = ProcessUtils::runOk($this->command("git status --porcelain"));
+      $process = ProcessUtil::runOk($this->command("git status --porcelain"));
       $this->porcelain = $process->getOutput();
     }
     return $this->porcelain;
@@ -194,7 +196,7 @@ class GitRepo {
 
   public function getStatus($fresh = FALSE) {
     if (!$this->status) {
-      $process = ProcessUtils::runOk($this->command("git status"));
+      $process = ProcessUtil::runOk($this->command("git status"));
       $this->status = $process->getOutput();
     }
     return $this->status;
@@ -208,7 +210,7 @@ class GitRepo {
       $this->fs->mkdir($this->path);
     }
     if (!$this->fs->exists($this->path . DIRECTORY_SEPARATOR . '.git')) {
-      ProcessUtils::runOk($this->command("git init"));
+      ProcessUtil::runOk($this->command("git init"));
       return TRUE;
     }
     else {
@@ -254,8 +256,8 @@ class GitRepo {
       $commitMessage = "Update $relPath";
     }
     $this->writeFile($relPath, $content);
-    ProcessUtils::runOk($this->command("git add " . escapeshellarg($relPath)));
-    ProcessUtils::runOk($this->command("git commit " . escapeshellarg($relPath) . ' -m ' . escapeshellarg($commitMessage)));
+    ProcessUtil::runOk($this->command("git add " . escapeshellarg($relPath)));
+    ProcessUtil::runOk($this->command("git commit " . escapeshellarg($relPath) . ' -m ' . escapeshellarg($commitMessage)));
   }
 
   /* --------------- Boiler plate --------------- */
