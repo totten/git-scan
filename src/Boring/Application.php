@@ -4,7 +4,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Filesystem\Filesystem;
 
 class Application extends \Symfony\Component\Console\Application {
 
@@ -20,7 +19,7 @@ class Application extends \Symfony\Component\Console\Application {
 
   public function __construct($name, $version) {
     parent::__construct($name, $version);
-    $this->setCatchExceptions(false);
+    $this->setCatchExceptions(FALSE);
     $this->addCommands($this->createCommands());
   }
 
