@@ -17,7 +17,7 @@ class Application extends \Symfony\Component\Console\Application {
     $application->run();
   }
 
-  public function __construct($name, $version) {
+  public function __construct($name = 'UNKNOWN', $version = 'UNKNOWN') {
     parent::__construct($name, $version);
     $this->setCatchExceptions(FALSE);
     $this->addCommands($this->createCommands());
@@ -32,6 +32,7 @@ class Application extends \Symfony\Component\Console\Application {
     $commands = array();
     $commands[] = new \Boring\Command\StatusCommand();
     $commands[] = new \Boring\Command\UpdateCommand();
+    $commands[] = new \Boring\Command\ForeachCommand();
     return $commands;
   }
 }

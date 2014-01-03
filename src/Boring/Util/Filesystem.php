@@ -54,6 +54,15 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem {
     return $path;
   }
 
+  public function findFirstParent($path, $basePaths) {
+    foreach ($basePaths as $basePath) {
+      if ($path == $basePath || $this->isDescendent($path, $basePath)) {
+        return $basePath;
+      }
+    }
+    return NULL;
+  }
+
   /**
    * @param string|array|Traversable $files
    * @throws \RuntimeException

@@ -2,6 +2,8 @@
 namespace Boring;
 
 use Boring\Util\Process as ProcessUtil;
+use Boring\Application;
+use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
 class BoringTestCase extends \PHPUnit_Framework_TestCase {
@@ -63,6 +65,23 @@ class BoringTestCase extends \PHPUnit_Framework_TestCase {
     ProcessUtil::runOk($this->command($dir, "git init"));
     ProcessUtil::runOk($this->command($dir, "git add example.txt"));
     ProcessUtil::runOk($this->command($dir, "git commit -m Import example.txt"));
+  }
+
+  /**
+   * Create a helper for executing command-tests in our application.
+   *
+   * @param array $args; must include key "command"
+   * @return \Symfony\Component\Console\Tester\CommandTester
+   */
+  public function createCommandTester($args) {
+    if (!isset($args['command'])) {
+      throw new \RuntimeException("Missing mandatory argument: command");
+    }
+    $application = new Application();
+    $command = $application->find($args['command']);
+    $commandTester = new CommandTester($command);
+    $commandTester->execute($args);
+    return $commandTester;
   }
 
 }
