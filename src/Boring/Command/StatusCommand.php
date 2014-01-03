@@ -14,6 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class StatusCommand extends BaseCommand {
 
+  const DISPLAY_ALL_THRESHOLD = 10;
+
   /**
    * @var Filesystem
    */
@@ -33,7 +35,7 @@ class StatusCommand extends BaseCommand {
       ->setName('status')
       ->setDescription('Show the status of any nested git repositories')
       ->addOption('root', 'r', InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
-      ->addOption('all', 'a', InputOption::VALUE_NONE, 'Display status of all repos (even boring ones)')
+      ->addOption('status', NULL, InputOption::VALUE_REQUIRED, 'Filter table output by repo statuses ("all","novel","boring","auto")', 'auto')
       ->addOption('offline', 'O', InputOption::VALUE_NONE, 'Offline mode: Do not fetch latest data about remote repositories');
     //->addOption('scan', 's', InputOption::VALUE_NONE, 'Force an immediate scan for new git repositories before doing anything')
   }
@@ -53,6 +55,10 @@ class StatusCommand extends BaseCommand {
     $scanner = new \Boring\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getOption('root'));
 
+    if ($input->getOption('status') == 'auto') {
+      $input->setOption('status', count($gitRepos) > self::DISPLAY_ALL_THRESHOLD ? 'novel' : 'all');
+    }
+
     $output->writeln("<info>[[ Checking statuses ]]</info>");
     /** @var \Symfony\Component\Console\Helper\ProgressHelper $progress */
     $progress = $this->getApplication()->getHelperSet()->get('progress');
@@ -65,7 +71,7 @@ class StatusCommand extends BaseCommand {
       if (!$input->getOption('offline') && $gitRepo->getUpstreamBranch() !== NULL) {
         ProcessUtil::runOk($gitRepo->command('git fetch'));
       }
-      if ($input->getOption('all') || !$gitRepo->isBoring()) {
+      if ($this->filterByStatus($input->getOption('status'), $gitRepo)) {
         $rows[] = array(
           $gitRepo->getStatusCode(),
           rtrim($this->fs->makePathRelative($gitRepo->getPath(), $input->getOption('root')), '/'),
@@ -118,7 +124,16 @@ class StatusCommand extends BaseCommand {
     }
 
     if ($hiddenCount > 0) {
-      $output->writeln("NOTE: Omitted information about $hiddenCount boring repo(s). Use --all to display.");
+      switch ($input->getOption('status')) {
+        case 'novel':
+          $output->writeln("NOTE: Omitted information about $hiddenCount boring repo(s). To display all, use --status=all.");
+          break;
+        case 'boring':
+          $output->writeln("NOTE: Omitted information about $hiddenCount novel repo(s). To display all, use --status=all.");
+          break;
+        default:
+          $output->writeln("NOTE: Omitted information about $hiddenCount repo(s). To display all, use --status=all.");
+      }
     }
 
   }
@@ -132,5 +147,20 @@ class StatusCommand extends BaseCommand {
     }
     ksort($chars);
     return array_keys($chars);
+  }
+
+  public function filterByStatus($rule, GitRepo $gitRepo) {
+    if ($rule == 'all') {
+      return TRUE;
+    }
+    elseif ($rule == 'novel') {
+      return !$gitRepo->isBoring();
+    }
+    elseif ($rule == 'boring') {
+      return $gitRepo->isBoring();
+    }
+    else {
+      throw new \RuntimeException("Unrecognized status filter");
+    }
   }
 }
