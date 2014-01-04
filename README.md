@@ -13,7 +13,7 @@ Git-scan is designed for users who have many overlapping git repositories -- for
 
 Limitations:
 
- * Performs filesystem scan and does not cache results
+ * IO-intensive -- Performs filesystem scan and does not cache results
 
 Examples
 ========
