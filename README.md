@@ -65,14 +65,14 @@ The relative path is sites/all/modules/contrib/civicrm_developer/.
 
 me@localhost:~/drupal-demo$ git scan foreach -c 'git pull --rebase' -v
 [[ Finding repositories ]]
-[[ /Applications/MAMP/civicrm-project/build/drupal-demo/sites/all/modules/civicrm ]]
+[[ /home/me/drupal-demo/sites/all/modules/civicrm ]]
 STDOUT Current branch master is up to date.
-[[ /Applications/MAMP/civicrm-project/build/drupal-demo/sites/all/modules/civicrm/drupal ]]
+[[ /home/me/drupal-demo/sites/all/modules/civicrm/drupal ]]
 STDOUT Current branch 7.x-master is up to date.
-[[ /Applications/MAMP/civicrm-project/build/drupal-demo/sites/all/modules/civicrm/packages ]]
+[[ /home/me/drupal-demo/sites/all/modules/civicrm/packages ]]
 STDERR Cannot pull with rebase: You have unstaged changes.
-STDERR Please commit or stash them.
-[[ /Applications/MAMP/civicrm-project/build/drupal-demo/sites/all/modules/civicrm/packages: exit code = 1 ]]
-[[ /Applications/MAMP/civicrm-project/build/drupal-demo/sites/all/modules/contrib/civicrm_developer ]]
+STDERR Please commit or stash them.                       
+[[ /home/me/drupal-demo/sites/all/modules/civicrm/packages: exit code = 1 ]]
+[[ /home/me/drupal-demo/sites/all/modules/contrib/civicrm_developer ]]
 STDOUT Current branch master is up to date.
 ```
