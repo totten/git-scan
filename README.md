@@ -63,20 +63,6 @@ This is /home/me/drupal-demo/sites/all/modules/contrib/civicrm_developer.
 The relative path is sites/all/modules/contrib/civicrm_developer/.
 
 
-me@localhost:~/drupal-demo$ git scan foreach -c 'echo "This is $(pwd)."; echo "The relative path is $path."; echo'
-This is /home/me/drupal-demo/sites/all/modules/civicrm.
-The relative path is sites/all/modules/civicrm/.
-
-This is /home/me/drupal-demo/sites/all/modules/civicrm/drupal.
-The relative path is sites/all/modules/civicrm/drupal/.
-
-This is /home/me/drupal-demo/sites/all/modules/civicrm/packages.
-The relative path is sites/all/modules/civicrm/packages/.
-
-This is /home/me/drupal-demo/sites/all/modules/contrib/civicrm_developer.
-The relative path is sites/all/modules/contrib/civicrm_developer/.
-
-
 me@localhost:~/drupal-demo$ git scan foreach -c 'git pull --rebase' -v
 [[ Finding repositories ]]
 [[ /Applications/MAMP/civicrm-project/build/drupal-demo/sites/all/modules/civicrm ]]
