@@ -1,7 +1,6 @@
 <?php
 namespace GitScan\Command;
 
-use GitScan\Application;
 use GitScan\GitRepo;
 use GitScan\Util\ArrayUtil;
 use GitScan\Util\Filesystem;
@@ -38,7 +37,7 @@ class StatusCommand extends BaseCommand {
       ->setHelp("Show the status of any nested git repositories.\n\nNote: This will fetch upstream repositories to help determine the status (unless you specify --offline mode).")
       ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()))
       ->addOption('status', NULL, InputOption::VALUE_REQUIRED, 'Filter table output by repo statuses ("all","novel","boring","auto")', 'auto')
-      ->addOption('offline', 'O', InputOption::VALUE_NONE, 'Offline mode: Do not fetch latest data about remote repositories');
+      ->addOption('fetch', NULL, InputOption::VALUE_NONE, 'Fetch latest data about remote repositories. (Slower but more accurate statuses.)');
     //->addOption('scan', 's', InputOption::VALUE_NONE, 'Force an immediate scan for new git repositories before doing anything')
   }
 
@@ -56,9 +55,9 @@ class StatusCommand extends BaseCommand {
       $input->setOption('status', count($gitRepos) > self::DISPLAY_ALL_THRESHOLD ? 'novel' : 'all');
     }
 
-    $output->writeln($input->getOption('offline')
-        ? "<info>[[ Checking statuses ]]</info>"
-        : "<info>[[ Fetching statuses ]]</info>"
+    $output->writeln($input->getOption('fetch')
+        ? "<info>[[ Fetching statuses ]]</info>"
+        : "<info>[[ Checking statuses ]]</info>"
     );
     /** @var \Symfony\Component\Console\Helper\ProgressHelper $progress */
     $progress = $this->getApplication()->getHelperSet()->get('progress');
@@ -68,7 +67,7 @@ class StatusCommand extends BaseCommand {
     $hiddenCount = 0;
     foreach ($gitRepos as $gitRepo) {
       /** @var \GitScan\GitRepo $gitRepo */
-      if (!$input->getOption('offline') && $gitRepo->getUpstreamBranch() !== NULL) {
+      if ($input->getOption('fetch') && $gitRepo->getUpstreamBranch() !== NULL) {
         ProcessUtil::runOk($gitRepo->command('git fetch'));
       }
       if ($gitRepo->matchesStatus($input->getOption('status'))) {

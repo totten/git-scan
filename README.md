@@ -19,7 +19,7 @@ Examples
 ========
 
 ```bash
-me@localhost:~/drupal-demo$ git scan st -O
+me@localhost:~/drupal-demo$ git scan st
 [[ Finding repositories ]]
 [[ Checking statuses ]]
  5/5 [============================] 100%
