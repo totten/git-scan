@@ -99,20 +99,19 @@ class StatusCommand extends BaseCommand {
           case ' ':
             break;
           case 'M':
-            $output->writeln("[M] Local repo has (m)odifications that have not been committed");
+            $output->writeln("[M] Modifications have not been committed");
             break;
           case 'N':
-            $output->writeln("[N] Local repo has (n)ew files that have not been committed");
+            $output->writeln("[N] New files have not been committed");
             break;
-          case 'P':
-            $output->writeln("[P] Local branch cannot be fast-forwarded (strictly)");
-            $output->writeln("    Local commits have not been (p)ushed upstream (usually)");
+          case 'F':
+            $output->writeln("[F] Fast-forwards are not possible");
             break;
           case 'B':
-            $output->writeln("[B] Local and remote (b)ranch names are suspiciously different");
+            $output->writeln("[B] Branch names are suspiciously different");
             break;
           case 'S':
-            $output->writeln("[S] Changes have been (s)tashed");
+            $output->writeln("[S] Stash contains data");
             break;
           default:
             throw new \RuntimeException("Unrecognized status code [$char]");

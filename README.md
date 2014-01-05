@@ -30,14 +30,13 @@ me@localhost:~/drupal-demo$ git scan st
 +--------+---------------------------------------------------------+--------------+---------------------+
 |     S  | drupal-demo/sites/all/modules/civicrm                   | master       | upstream/master     |
 |        | drupal-demo/sites/all/modules/civicrm/drupal            | 7.x-master   | upstream/7.x-master |
-|  MNP   | drupal-demo/sites/all/modules/civicrm/packages          | master       | upstream/master     |
+|  FMN   | drupal-demo/sites/all/modules/civicrm/packages          | master       | upstream/master     |
 |        | drupal-demo/sites/all/modules/contrib/civicrm_developer | master       | origin/master       |
 +--------+---------------------------------------------------------+--------------+---------------------+
-[M] Local repo has (m)odifications that have not been committed
-[N] Local repo has (n)ew files that have not been committed
-[P] Local branch cannot be fast-forwarded (strictly)
-    Local commits have not been (p)ushed upstream (usually)
-[S] Changes have been (s)tashed
+[F] Fast-forwards are not possible
+[M] Modifications have not been committed
+[N] New files have not been committed
+[S] Stash contains data
 
 
 me@localhost:~/drupal-demo$ git scan up 

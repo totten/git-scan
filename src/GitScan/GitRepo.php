@@ -56,6 +56,13 @@ class GitRepo {
         $this->statusCode .= ' ';
       }
 
+      if (!$this->isLocalFastForwardable($fresh)) {
+        $this->statusCode .= 'F';
+      }
+      else {
+        $this->statusCode .= ' ';
+      }
+
       if ($this->hasUncommittedChanges($fresh)) {
         $this->statusCode .= 'M';
       }
@@ -65,13 +72,6 @@ class GitRepo {
 
       if ($this->hasUntrackedFiles($fresh)) {
         $this->statusCode .= 'N';
-      }
-      else {
-        $this->statusCode .= ' ';
-      }
-
-      if (!$this->isLocalFastForwardable($fresh)) {
-        $this->statusCode .= 'P';
       }
       else {
         $this->statusCode .= ' ';
@@ -184,6 +184,9 @@ class GitRepo {
    * @return bool
    */
   public function isLocalFastForwardable($fresh = FALSE) {
+    if ($this->hasUncommittedChanges()) {
+      return FALSE;
+    }
     $lines = explode("\n", $this->getStatus($fresh));
     $lines = preg_grep('/^#/', $lines);
     $unknowns = array();
