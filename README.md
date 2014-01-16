@@ -75,3 +75,23 @@ STDERR Please commit or stash them.
 [[ /home/me/drupal-demo/sites/all/modules/contrib/civicrm_developer ]]
 STDOUT Current branch master is up to date.
 ```
+
+Unit-Tests
+==========
+
+If you have previously installed [phpunit](http://phpunit.de/), then you can run the test suite. Something like:
+
+```
+$ composer create-project totten/git-scan
+$ cd git-scan
+$ phpunit
+PHPUnit 3.7.10 by Sebastian Bergmann.
+
+Configuration read from /home/me/src/git-scan/phpunit.xml.dist
+
+.................................................
+
+Time: 2 seconds, Memory: 6.50Mb
+
+OK (49 tests, 121 assertions)
+```
