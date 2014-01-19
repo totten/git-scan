@@ -123,6 +123,9 @@ class GitRepo {
     if (!$process->isSuccessful() && "@{upstream}" == $symbolicRef) {
       return NULL;
     }
+    if (preg_match('/No upstream configured/', $process->getOutput() . $process->getErrorOutput())) {
+      return NULL;
+    }
     if (preg_match(":[a-zA-Z0-9\_\.\/]+:", $symbolicRef)) {
       return $symbolicRef;
     }
