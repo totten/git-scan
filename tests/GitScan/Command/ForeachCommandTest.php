@@ -67,7 +67,7 @@ class ForeachCommandTest extends \GitScan\GitScanTestCase {
     $commandTester = $this->createCommandTester(array(
       'command' => 'foreach',
       'path' => array($this->fixturePath),
-      '--command' => 'if [ "$path" == "example-1/repo-1/" ]; then echo "found $toplevel: $path" > /dev/stderr; exit 2; fi'
+      '--command' => 'if [ "$path" = "example-1/repo-1/" ]; then echo "found $toplevel: $path" > /dev/stderr; exit 2; fi'
     ));
 
     $expected = ""
