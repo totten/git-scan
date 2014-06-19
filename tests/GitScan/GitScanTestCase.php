@@ -25,7 +25,10 @@ class GitScanTestCase extends \PHPUnit_Framework_TestCase {
   public function setup() {
     $runtimeClass = get_class($this);
     $this->originalCwd = getcwd();
-    $this->fixturePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . preg_replace('/[^A-Za-z0-9_]/', '', $runtimeClass);
+    $this->fixturePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR
+      . preg_replace('/[^A-Za-z0-9_]/', '', $runtimeClass)
+      . '_'
+      . rand(0, 1000000);
     $this->fs = new Filesystem();
     if ($this->fs->exists($this->fixturePath)) {
       $this->fs->remove(new \FilesystemIterator($this->fixturePath));
@@ -36,10 +39,12 @@ class GitScanTestCase extends \PHPUnit_Framework_TestCase {
 
   public function tearDown() {
     chdir($this->originalCwd);
-    // could remove, but when using --stop-on-failure it might be useful to keep this around
-    //if ($this->fixturePath) {
-    //  $this->fs->remove(new \FilesystemIterator($this->fixturePath));
-    // }
+    if ($this->fixturePath) {
+      if (!getenv('GITSCAN_KEEP_TMP')) {
+        $this->fs->remove(new \FilesystemIterator($this->fixturePath));
+        $this->fs->remove($this->fixturePath);
+      }
+    }
   }
 
   /**
@@ -70,7 +75,7 @@ class GitScanTestCase extends \PHPUnit_Framework_TestCase {
   /**
    * Create a helper for executing command-tests in our application.
    *
-   * @param array $args; must include key "command"
+   * @param array $args must include key "command"
    * @return \Symfony\Component\Console\Tester\CommandTester
    */
   public function createCommandTester($args) {
