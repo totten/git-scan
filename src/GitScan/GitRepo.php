@@ -129,6 +129,9 @@ class GitRepo {
     if (preg_match('/No such branch: \'\'/', $process->getOutput() . $process->getErrorOutput())) {
       return NULL;
     }
+    if (preg_match('/HEAD does not point to a branch/', $process->getOutput() . $process->getErrorOutput())) {
+      return NULL;
+    }
     if (preg_match(":[a-zA-Z0-9\_\.\/]+:", $symbolicRef)) {
       return $symbolicRef;
     }

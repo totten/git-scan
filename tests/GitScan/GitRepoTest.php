@@ -99,6 +99,20 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());
   }
 
+  public function testClonedTag() {
+    $upstream = $this->createUpstreamRepo();
+
+    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
+    $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $this->assertEquals("example text", $downstream->readFile("example.txt"));
+    ProcessUtil::runOk($downstream->command("git checkout 0.1"));
+
+    $this->assertEquals(NULL, $downstream->getLocalBranch());
+    $this->assertEquals(NULL, $downstream->getUpstreamBranch());
+    $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
+    $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());
+  }
+
   public function testClonedMyFeatureBranch_Fresh() {
     $upstream = $this->createUpstreamRepo();
 
@@ -224,6 +238,8 @@ class GitRepoTest extends GitScanTestCase {
 
     $gitRepo->commitFile("example.txt", "example text");
     ProcessUtil::runOk($gitRepo->command("git tag 0.1"));
+
+    $gitRepo->commitFile("changelog.txt", "new in v0.2: don't know yet!");
 
     ProcessUtil::runOk($gitRepo->command("git checkout -b my-feature"));
     $gitRepo->commitFile("example.txt", "example text plus my feature");
