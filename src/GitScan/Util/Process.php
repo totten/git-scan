@@ -16,4 +16,17 @@ class Process {
     }
     return $process;
   }
+
+  /**
+   * @param \Symfony\Component\Process\Process $process
+   */
+  public static function dump(\Symfony\Component\Process\Process $process) {
+    var_dump(array(
+      'Working Directory' => $process->getWorkingDirectory(),
+      'Command' => $process->getCommandLine(),
+      'Exit Code' => $process->getExitCode(),
+      'Output' => $process->getOutput(),
+      'Error Output' => $process->getErrorOutput(),
+    ));
+  }
 }
