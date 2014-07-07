@@ -21,7 +21,7 @@ class Application extends \Symfony\Component\Console\Application {
 
   public function __construct($name = 'UNKNOWN', $version = 'UNKNOWN') {
     parent::__construct($name, $version);
-    $this->setCatchExceptions(FALSE);
+    $this->setCatchExceptions(TRUE);
     $this->addCommands($this->createCommands());
   }
 

@@ -126,6 +126,12 @@ class GitRepo {
     if (preg_match('/No upstream configured/', $process->getOutput() . $process->getErrorOutput())) {
       return NULL;
     }
+    if (preg_match('/No such branch: \'\'/', $process->getOutput() . $process->getErrorOutput())) {
+      return NULL;
+    }
+    if (preg_match('/HEAD does not point to a branch/', $process->getOutput() . $process->getErrorOutput())) {
+      return NULL;
+    }
     if (preg_match(":[a-zA-Z0-9\_\.\/]+:", $symbolicRef)) {
       return $symbolicRef;
     }
@@ -191,18 +197,17 @@ class GitRepo {
       return FALSE;
     }
     $lines = explode("\n", $this->getStatus($fresh));
-    $lines = preg_grep('/^#/', $lines);
     $unknowns = array();
     foreach ($lines as $line) {
       $line = trim($line);
 
-      if (preg_match('/^# Your branch is ahead of /', $line)) {
+      if (preg_match('/^(# )?Your branch is ahead of /', $line)) {
         return FALSE;
       }
-      elseif (preg_match('/^# Your branch and .* diverged/', $line)) {
+      elseif (preg_match('/^(# )?Your branch and .* diverged/', $line)) {
         return FALSE;
       }
-      elseif (preg_match('/^# Your branch is behind.*can be fast-forwarded/', $line)) {
+      elseif (preg_match('/^(# )?Your branch is behind.*can be fast-forwarded/', $line)) {
         return TRUE;
       }
       /*
