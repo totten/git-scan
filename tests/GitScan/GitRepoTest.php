@@ -92,6 +92,10 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals('origin/master', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
     $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());
+
+    $this->assertEquals(array(), $upstream->getRemotes());
+    $this->assertEquals(array('origin'), $downstream->getRemotes());
+    $this->assertEquals("file://{$upstream->getPath()}", $downstream->getRemoteUrl('origin'));
   }
 
   public function testClonedMasterBranch_Fresh() {
@@ -107,6 +111,10 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals('origin/master', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
     $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());
+
+    $this->assertEquals(array(), $upstream->getRemotes());
+    $this->assertEquals(array('origin'), $downstream->getRemotes());
+    $this->assertEquals("file://{$upstream->getPath()}", $downstream->getRemoteUrl('origin'));
   }
 
   public function testClonedTag() {
@@ -123,6 +131,9 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals(NULL, $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
     $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());
+
+    $this->assertEquals(array(), $upstream->getRemotes());
+    $this->assertEquals(array('origin'), $downstream->getRemotes());
   }
 
   public function testClonedMyFeatureBranch_Fresh() {
@@ -137,6 +148,10 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
     $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());
+
+    $this->assertEquals(array(), $upstream->getRemotes());
+    $this->assertEquals(array('origin'), $downstream->getRemotes());
+    $this->assertEquals("file://{$upstream->getPath()}", $downstream->getRemoteUrl('origin'));
   }
 
   public function testCloned_CheckoutMyFeature_Fresh() {
@@ -152,6 +167,10 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
     $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());
+
+    $this->assertEquals(array(), $upstream->getRemotes());
+    $this->assertEquals(array('origin'), $downstream->getRemotes());
+    $this->assertEquals("file://{$upstream->getPath()}", $downstream->getRemoteUrl('origin'));
   }
 
   public function testCloned_CheckoutMyFeature_Modified() {
@@ -168,6 +187,10 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(TRUE, $downstream->hasUncommittedChanges());
     $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());
+
+    $this->assertEquals(array(), $upstream->getRemotes());
+    $this->assertEquals(array('origin'), $downstream->getRemotes());
+    $this->assertEquals("file://{$upstream->getPath()}", $downstream->getRemoteUrl('origin'));
   }
 
   public function testCloned_CheckoutMyFeature_Newfile() {
@@ -184,6 +207,10 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
     $this->assertEquals(TRUE, $downstream->hasUntrackedFiles());
+
+    $this->assertEquals(array(), $upstream->getRemotes());
+    $this->assertEquals(array('origin'), $downstream->getRemotes());
+    $this->assertEquals("file://{$upstream->getPath()}", $downstream->getRemoteUrl('origin'));
   }
 
   public function testIsFastForwardable_upstreamChanged() {

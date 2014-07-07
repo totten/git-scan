@@ -58,6 +58,15 @@ class GitRepo {
   }
 
   /**
+   * @param string $key
+   * @return string
+   */
+  public function getConfig($key) {
+    $process = ProcessUtil::runOk($this->command("git config --get " . escapeshellarg($key)));
+    return rtrim($process->getOutput(), "\r\n");
+  }
+
+  /**
    * Get short status code
    *
    * @param bool $fresh
@@ -104,6 +113,34 @@ class GitRepo {
     }
 
     return $this->statusCode;
+  }
+
+  /**
+   * @return array<string>
+   */
+  public function getRemotes() {
+    $process = $this->command("git remote");
+    $process->run();
+    if ($process->isSuccessful()) {
+      $output = trim($process->getOutput(), " \r\n");
+      if ($output) {
+        return explode("\n", $output);
+      } else {
+        return array();
+      }
+    } else {
+      throw new \RuntimeException("Failed to determine remotes");
+    }
+  }
+
+  /**
+   * Determine the FETCH URL for a remote
+   *
+   * @param string $remote name
+   * @return string
+   */
+  public function getRemoteUrl($remote) {
+    return $this->getConfig("remote.{$remote}.url");
   }
 
   /**
