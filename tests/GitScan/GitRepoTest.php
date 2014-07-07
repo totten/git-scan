@@ -7,6 +7,7 @@ class GitRepoTest extends GitScanTestCase {
   public function testLocalOnly_Empty() {
     $gitRepo = new GitRepo($this->fixturePath);
     $gitRepo->init();
+
     $this->assertEquals('master', $gitRepo->getLocalBranch());
     $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(FALSE, $gitRepo->hasUncommittedChanges());
@@ -18,6 +19,7 @@ class GitRepoTest extends GitScanTestCase {
     $gitRepo->init();
     $gitRepo->commitFile('example.txt', 'first');
 
+    $this->assertIsCommit($gitRepo->getCommit());
     $this->assertEquals('master', $gitRepo->getLocalBranch());
     $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(FALSE, $gitRepo->hasUncommittedChanges());
@@ -30,6 +32,7 @@ class GitRepoTest extends GitScanTestCase {
     $gitRepo->commitFile('example.txt', 'first');
     $gitRepo->writeFile('example.txt', 'second');
 
+    $this->assertIsCommit($gitRepo->getCommit());
     $this->assertEquals('master', $gitRepo->getLocalBranch());
     $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(TRUE, $gitRepo->hasUncommittedChanges());
@@ -42,6 +45,7 @@ class GitRepoTest extends GitScanTestCase {
     $gitRepo->commitFile('example.txt', 'first');
     $gitRepo->writeFile('example-2.txt', 'second');
 
+    $this->assertIsCommit($gitRepo->getCommit());
     $this->assertEquals('master', $gitRepo->getLocalBranch());
     $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(FALSE, $gitRepo->hasUncommittedChanges());
@@ -54,6 +58,7 @@ class GitRepoTest extends GitScanTestCase {
     $gitRepo->commitFile('example.txt', 'first');
     $gitRepo->writeFile('newdir/example.txt', 'second');
 
+    $this->assertIsCommit($gitRepo->getCommit());
     $this->assertEquals('master', $gitRepo->getLocalBranch());
     $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(FALSE, $gitRepo->hasUncommittedChanges());
@@ -67,6 +72,7 @@ class GitRepoTest extends GitScanTestCase {
     $gitRepo->writeFile('example.txt', 'second');
     $gitRepo->writeFile('newdir/example.txt', 'second');
 
+    $this->assertIsCommit($gitRepo->getCommit());
     $this->assertEquals('master', $gitRepo->getLocalBranch());
     $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(TRUE, $gitRepo->hasUncommittedChanges());
@@ -80,6 +86,8 @@ class GitRepoTest extends GitScanTestCase {
     $downstream = new GitRepo($this->fixturePath . '/downstream');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
+    $this->assertIsCommit($downstream->getCommit());
+    $this->assertEquals($upstream->getCommit(), $downstream->getCommit());
     $this->assertEquals('master', $downstream->getLocalBranch());
     $this->assertEquals('origin/master', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
@@ -93,6 +101,8 @@ class GitRepoTest extends GitScanTestCase {
     $downstream = new GitRepo($this->fixturePath . '/downstream');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
+    $this->assertIsCommit($downstream->getCommit());
+    $this->assertEquals($upstream->getCommit(), $downstream->getCommit());
     $this->assertEquals('master', $downstream->getLocalBranch());
     $this->assertEquals('origin/master', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
@@ -107,6 +117,8 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
     ProcessUtil::runOk($downstream->command("git checkout 0.1"));
 
+    $this->assertIsCommit($downstream->getCommit());
+    $this->assertNotEquals($upstream->getCommit(), $downstream->getCommit());
     $this->assertEquals(NULL, $downstream->getLocalBranch());
     $this->assertEquals(NULL, $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
@@ -120,6 +132,7 @@ class GitRepoTest extends GitScanTestCase {
     $downstream = new GitRepo($this->fixturePath . '/downstream');
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
 
+    $this->assertIsCommit($downstream->getCommit());
     $this->assertEquals('my-feature', $downstream->getLocalBranch());
     $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
@@ -134,6 +147,7 @@ class GitRepoTest extends GitScanTestCase {
     ProcessUtil::runOk($downstream->command("git checkout my-feature"));
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
 
+    $this->assertIsCommit($downstream->getCommit());
     $this->assertEquals('my-feature', $downstream->getLocalBranch());
     $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
@@ -149,6 +163,7 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
     $downstream->writeFile("example.txt", "ch-ch-changes");
 
+    $this->assertIsCommit($downstream->getCommit());
     $this->assertEquals('my-feature', $downstream->getLocalBranch());
     $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(TRUE, $downstream->hasUncommittedChanges());
@@ -164,6 +179,7 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
     $downstream->writeFile("example-2.txt", "second");
 
+    $this->assertIsCommit($downstream->getCommit());
     $this->assertEquals('my-feature', $downstream->getLocalBranch());
     $this->assertEquals('origin/my-feature', $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
@@ -178,6 +194,7 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
     // note: messages may appear different before/after fetching
+    $this->assertIsCommit($downstream->getCommit());
     $upstream->commitFile('example-from-upstream.txt', 'upstream change example');
     $this->assertEquals(TRUE, $downstream->isLocalFastForwardable(TRUE));
     ProcessUtil::runOk($downstream->command("git fetch"));
@@ -193,6 +210,9 @@ class GitRepoTest extends GitScanTestCase {
 
     $downstream->commitFile('example-from-downstream.txt', 'downstream change example');
     $this->assertEquals(FALSE, $downstream->isLocalFastForwardable(TRUE));
+
+    $this->assertIsCommit($upstream->getCommit());
+    $this->assertIsCommit($downstream->getCommit());
   }
 
   public function testIsFastForwardable_bothChanged() {
@@ -205,6 +225,10 @@ class GitRepoTest extends GitScanTestCase {
     $upstream->commitFile('example-from-upstream.txt', 'upstream change example');
     $downstream->commitFile('example-from-downstream.txt', 'downstream change example');
     $this->assertEquals(FALSE, $downstream->isLocalFastForwardable(TRUE));
+
+    $this->assertIsCommit($upstream->getCommit());
+    $this->assertIsCommit($downstream->getCommit());
+    $this->assertNotEquals($upstream->getCommit(), $downstream->getCommit());
   }
 
   public function testHasStash() {

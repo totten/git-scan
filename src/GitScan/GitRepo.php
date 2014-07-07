@@ -40,6 +40,24 @@ class GitRepo {
   /* --------------- Main interfaces --------------- */
 
   /**
+   * @return string 40-character hexadecimal commit name
+   * @throws \RuntimeException
+   */
+  public function getCommit() {
+    $process = $this->command("git rev-parse HEAD");
+    $process->run();
+    if ($process->isSuccessful()) {
+      $commit = trim($process->getOutput());
+      if (! \GitScan\Util\Commit::isValid($commit)) {
+        throw new \RuntimeException("Malformed commit [$commit]");
+      }
+      return $commit;
+    } else {
+      throw new \RuntimeException("Failed to determine commit");
+    }
+  }
+
+  /**
    * Get short status code
    *
    * @param bool $fresh
