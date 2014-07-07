@@ -32,9 +32,12 @@ class Application extends \Symfony\Component\Console\Application {
    */
   public function createCommands() {
     $commands = array();
+    //$commands[] = new \GitScan\Command\DiffCommand();
+    $commands[] = new \GitScan\Command\ExportCommand();
+    $commands[] = new \GitScan\Command\ForeachCommand();
+    //$commands[] = new \GitScan\Command\ImportCommand();
     $commands[] = new \GitScan\Command\StatusCommand();
     $commands[] = new \GitScan\Command\UpdateCommand();
-    $commands[] = new \GitScan\Command\ForeachCommand();
     return $commands;
   }
 
