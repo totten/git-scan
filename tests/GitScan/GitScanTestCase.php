@@ -89,4 +89,12 @@ class GitScanTestCase extends \PHPUnit_Framework_TestCase {
     return $commandTester;
   }
 
+  /**
+   * Assert that $commit looks like a real commit.
+   *
+   * @param string $commit
+   */
+  public function assertIsCommit($commit) {
+    $this->assertTrue(\GitScan\Util\Commit::isValid($commit));
+  }
 }
