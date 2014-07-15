@@ -11,7 +11,7 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals('master', $gitRepo->getLocalBranch());
     $this->assertEquals(NULL, $gitRepo->getUpstreamBranch());
     $this->assertEquals(FALSE, $gitRepo->hasUncommittedChanges());
-    $this->assertEquals(FALSE, $gitRepo->hasUntrackedFiles());
+    $this->assertEquals('totallywrong', $gitRepo->hasUntrackedFiles());
   }
 
   public function testLocalOnly_AllCommitted() {
