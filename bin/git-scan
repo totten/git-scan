@@ -1,5 +1,6 @@
-#!/usr/bin/env php -d display_errors=1
+#!/usr/bin/env php
 <?php
+ini_set('display_errors', 1);
 $found = 0;
 $autoloaders = array(
   dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php',
