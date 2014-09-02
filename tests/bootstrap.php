@@ -7,10 +7,11 @@ $autoloaders = array(
 );
 foreach ($autoloaders as $autoloader) {
   if (file_exists($autoloader)) {
-    $loader = require_once $autoloader;
+    $loader = require $autoloader;
     break;
   }
 }
+
 if (!isset($loader)) {
   die("Failed to find autoloader");
 }

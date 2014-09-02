@@ -2,3 +2,4 @@
 /.idea
 *~
 /bin/git-scan.phar
+/bin/phpunit
