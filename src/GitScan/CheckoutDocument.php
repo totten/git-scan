@@ -18,7 +18,7 @@ class CheckoutDocument {
   protected $details;
 
   /**
-   * @var
+   * @var \GitScan\Util\FileSystem
    */
   protected $fs;
 
