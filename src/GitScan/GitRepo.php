@@ -178,10 +178,10 @@ class GitRepo {
     if (!$process->isSuccessful() && "@{upstream}" == $symbolicRef) {
       return NULL;
     }
-    if (preg_match('/No upstream configured/', $process->getOutput() . $process->getErrorOutput())) {
+    if (preg_match('/[Nn]o upstream configured/', $process->getOutput() . $process->getErrorOutput())) {
       return NULL;
     }
-    if (preg_match('/No such branch: \'\'/', $process->getOutput() . $process->getErrorOutput())) {
+    if (preg_match('/[Nn]o such branch: \'/', $process->getOutput() . $process->getErrorOutput())) {
       return NULL;
     }
     if (preg_match('/HEAD does not point to a branch/', $process->getOutput() . $process->getErrorOutput())) {
