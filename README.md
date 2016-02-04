@@ -95,3 +95,15 @@ Time: 2 seconds, Memory: 6.50Mb
 
 OK (49 tests, 121 assertions)
 ```
+
+Build
+=====
+
+Use [box](http://box-project.github.io/box2/):
+
+```
+$ git clone https://github.com/totten/git-scan
+$ cd git-scan
+$ composer install
+$ php -dphar.readonly=0 `which box` build
+```
