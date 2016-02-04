@@ -15,6 +15,15 @@ Limitations:
 
  * IO-intensive -- Performs filesystem scan and does not cache results
 
+
+Download
+========
+
+```bash
+sudo curl -LsS https://download.civicrm.org/git-scan/git-scan.phar -o /usr/local/bin/git-scan
+sudo chmod +x /usr/local/bin/git-scan
+```
+
 Examples
 ========
 
