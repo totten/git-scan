@@ -154,7 +154,15 @@ class GitRepo {
     $process->run();
     $symbolicRef = trim($process->getOutput());
     if (empty($symbolicRef)) {
-      return NULL;
+      $process = $this->command("git describe --tags");
+      $process->run();
+      $describe = trim($process->getOutput());
+      if (empty($describe)) {
+        return null;
+      }
+      else {
+        return 'Tag: ' . $describe;
+      }
     }
     if (preg_match(":^refs/heads/(.*)$:", $symbolicRef, $matches)) {
       return $matches[1];
