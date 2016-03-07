@@ -37,6 +37,7 @@ class Application extends \Symfony\Component\Console\Application {
     $commands[] = new \GitScan\Command\ForeachCommand();
     $commands[] = new \GitScan\Command\HashCommand();
     //$commands[] = new \GitScan\Command\ImportCommand();
+    $commands[] = new \GitScan\Command\LsCommand();
     $commands[] = new \GitScan\Command\StatusCommand();
     $commands[] = new \GitScan\Command\UpdateCommand();
     return $commands;
