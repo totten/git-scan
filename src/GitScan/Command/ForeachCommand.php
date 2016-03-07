@@ -83,10 +83,9 @@ class ForeachCommand extends BaseCommand {
       }
       $process = new \Symfony\Component\Process\Process($input->getOption('command'));
       $process->setWorkingDirectory($gitRepo->getPath());
-      $process->setEnv(array(
-        'path' => $this->fs->makePathRelative($gitRepo->getPath(), $topLevel),
-        'toplevel' => $topLevel,
-      ));
+      // $process->setEnv(...); sucks in Debian/Ubuntu
+      putenv("path=" . $this->fs->makePathRelative($gitRepo->getPath(), $topLevel));
+      putenv("toplevel=" . $topLevel);
       $errorOutput = $output;
       if (is_callable($output, 'getErrorOutput') && $output->getErrorOutput()) {
         $errorOutput = $output->getErrorOutput();
@@ -110,6 +109,8 @@ class ForeachCommand extends BaseCommand {
         $statusCode = 2;
       }
     }
+    putenv("path");
+    putenv("toplevel");
 
     return $statusCode;
   }
