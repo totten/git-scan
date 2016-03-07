@@ -15,6 +15,7 @@ Limitations:
 
  * IO-intensive -- Performs filesystem scan and does not cache results
 
+The concepts and use-case are described in more depth in the blog post, [Developer Tip: Managing Multiple Git Repos](https://civicrm.org/blogs/totten/developer-tip-managing-multiple-git-repositories)
 
 Download
 ========
