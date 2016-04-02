@@ -3,6 +3,7 @@ namespace GitScan;
 
 use GitScan\Util\Process as ProcessUtil;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 
 class GitRepo {
 
@@ -37,7 +38,19 @@ class GitRepo {
     $this->flush();
   }
 
+
   /* --------------- Main interfaces --------------- */
+
+  /**
+   * Merge a patch (based on a URL)
+   *
+   * @param string $patch
+   * @return Process
+   */
+  public function applyPatch($patch) {
+    ProcessUtil::runOk($this->command("git apply --check")->setInput($patch));
+    return ProcessUtil::runOk($this->command("git am")->setInput($patch));
+  }
 
   /**
    * @return string 40-character hexadecimal commit name
@@ -141,6 +154,22 @@ class GitRepo {
    */
   public function getRemoteUrl($remote) {
     return $this->getConfig("remote.{$remote}.url");
+  }
+
+  /**
+   * Get the FETCH URLs for all remtoes.
+   *
+   * @return array
+   *   Array(string $remoteName => string $remoteUrl).
+   */
+  public function getRemoteUrls() {
+    // FIXME: This is silly inefficient.
+    // Don't think caching is a good, but we really only need one call to `git remote -v`.
+    $remoteUrls = array();
+    foreach ($this->getRemotes() as $remote) {
+      $remoteUrls[$remote] = $this->getRemoteUrl($remote);
+    }
+    return $remoteUrls;
   }
 
   /**
