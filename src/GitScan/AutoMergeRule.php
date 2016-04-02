@@ -37,7 +37,7 @@ class AutoMergeRule {
       return;
     }
 
-    if (preg_match(';github.com/([^/]+)/([^/]+)/pull/([0-9]+)(|.diff|.patch);', $this->expr, $matches)) {
+    if (preg_match(';^http.*github.com/([^/]+)/([^/]+)/pull/([0-9]+)(|.diff|.patch);', $this->expr, $matches)) {
       $owner = $matches[1];
       $repoName = $matches[2];
       $prNum = $matches[3];
