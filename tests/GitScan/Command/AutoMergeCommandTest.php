@@ -10,9 +10,11 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
   }
 
   /**
-   * Ex: git scan automerge ;upstreamurlregex;/path/to/patchfile
+   * Make a new branch while merging a patch.
+   *
+   * Ex: git scan automerge -b ;upstreamurlregex;/path/to/patchfile
    */
-  public function testAutoMergeUpstream() {
+  public function testAutoMergeBranch() {
     $upstream = $this->createUpstreamRepo();
 
     mkdir("{$this->fixturePath}/subdir");
@@ -30,6 +32,7 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
     $commandTester = $this->createCommandTester(array(
       'command' => 'automerge',
       '--path' => $this->fixturePath,
+      '--branch' => 1,
       'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
     ));
     $this->assertContains(
@@ -48,6 +51,7 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
     $commandTester = $this->createCommandTester(array(
       'command' => 'automerge',
       '--path' => $this->fixturePath,
+      '--branch' => 1,
       '--force' => 1,
       'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
     ));
@@ -63,7 +67,9 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
   }
 
   /**
-   * Ex: git scan automerge --branch=current ;upstreamurlregex;/path/to/patchfile
+   * Merge a patch into the currently-active branch.
+   *
+   * Ex: git scan automerge ;upstreamurlregex;/path/to/patchfile
    */
   public function testAutoMergeCurrent() {
     $upstream = $this->createUpstreamRepo();
@@ -81,7 +87,7 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
     $commandTester = $this->createCommandTester(array(
       'command' => 'automerge',
       '--path' => $this->fixturePath,
-      '--branch' => 'current',
+      '--no-branch' => 1,
       'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
     ));
     $this->assertContains(
@@ -94,6 +100,35 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
     $this->assertEquals("master", $downstream->getLocalBranch()); // because --branch=current
     $this->assertRegExp('/the future has been patched/', $downstream->readFile('changelog.txt'));
   }
+
+  /**
+   * The command requires -b or -B, otherwise it dies with an error.
+   */
+  public function testAutoMergeMissingMode() {
+    $upstream = $this->createUpstreamRepo();
+
+    mkdir("{$this->fixturePath}/subdir");
+    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} {$this->fixturePath}/subdir/downstream"));
+    $downstream = new GitRepo($this->fixturePath . '/subdir/downstream');
+    $this->assertEquals("example text", $downstream->readFile("example.txt"));
+    $this->assertEquals("master", $downstream->getLocalBranch());
+
+    $patchFile = $this->createPatchFile($upstream, 'mypatch');
+
+    $this->assertNotRegExp('/the future has been patched/', $downstream->readFile('changelog.txt'));
+
+    try {
+      $commandTester = $this->createCommandTester(array(
+        'command' => 'automerge',
+        '--path' => $this->fixturePath,
+        'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
+      ));
+      $this->fail('Expected error');
+    } catch (\RuntimeException $e) {
+      $this->assertRegExp('/Missing required option.*no-branch/', $e->getMessage());
+    }
+  }
+
 
   protected function createUpstreamRepo($checkout = 'master') {
     $gitRepo = new GitRepo($this->fixturePath . '/upstream');

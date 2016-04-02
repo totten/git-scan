@@ -39,19 +39,16 @@ class AutoMergeCommand extends BaseCommand {
 
       git clone https://github.com/example/foo.git mylocalbuild/foo
       git clone https://github.com/example/bar.git mylocalbuild/bar
-      git scan automerge https://github.com/example/foo/pull/1234 https://github.com/example/bar/pull/5678
-
-      If the branch mode is "current", then changes will be applied on the current branches.
-      If the branch mode is "upstream", then a new branch (e.g. "master-automerge") will be
-      created based on the upstream-tracking branch.
+      git scan automerge -b https://github.com/example/foo/pull/1234 https://github.com/example/bar/pull/5678
 
       The URLs passed to automerge may be Github PR URLs.
       If Github is not available, you may use expressions like:
 
-      git scan automerge ;upstream-url-regex;patchfile
-      git scan automerge ;foo-bar;http://example.com/foo-bar/my.patch
+      git scan automerge -b ;upstream-url-regex;patchfile
+      git scan automerge -b ;foo-bar;http://example.com/foo-bar/my.patch
       ')
-      ->addOption('branch', NULL, InputOption::VALUE_REQUIRED, 'How to handle branching (current|upstream)', 'upstream')
+      ->addOption('branch', 'b', InputOption::VALUE_NONE, 'Automatically create a new branch (e.g. "master-automerge")')
+      ->addOption('no-branch', 'B', InputOption::VALUE_NONE, 'Do not create a new branch. Apply patches on the current branch.')
       ->addOption('suffix', NULL, InputOption::VALUE_REQUIRED, 'The name to append when making new branches', '-automerge')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
       ->addOption('force', 'f', InputOption::VALUE_NONE, 'If necessary, destroy local branches')
@@ -64,6 +61,10 @@ class AutoMergeCommand extends BaseCommand {
   }
 
   protected function execute(InputInterface $input, OutputInterface $output) {
+    if (!$input->getOption('branch') && !$input->getOption('no-branch')) {
+      throw new \RuntimeException("Missing required option: [-b|--branch] or [-B|--no-branch]");
+    }
+
     $rules = array();
     foreach ($input->getArgument('url') as $url) {
       $rule = new AutoMergeRule($url);
@@ -111,55 +112,46 @@ class AutoMergeCommand extends BaseCommand {
    * Ensure that we've checked out a branch where we can do merges.
    *
    * @param \GitScan\GitRepo $gitRepo
-   * @return string
-   *   Local branch name
    */
   protected function checkoutAutomergeBranch(InputInterface $input, OutputInterface $output, GitRepo $gitRepo, $repoName) {
-    $mode = $input->getOption('branch');
-    $suffix = $input->getOption('suffix');
-
     $localBranch = $gitRepo->getLocalBranch();
+    if ($input->getOption('no-branch')) {
+      $output->writeln("<info>In {$repoName}, keeping current branch \"$localBranch\".</info>");
+      return;
+    }
 
-    switch ($mode) {
-      case 'current':
-        $output->writeln("<info>In {$repoName}, keeping current branch \"$localBranch\".</info>");
-        return;
+    if ($input->getOption('branch')) {
+      $upstreamBranch = $gitRepo->getUpstreamBranch();
+      if (!$upstreamBranch) {
+        throw new \RuntimeException("Cannot automerge. In {$gitRepo->getPath()}, failed to find upstream branch for \"$localBranch\"");
+      }
+      $suffixedBranchName = basename($upstreamBranch) . $input->getOption('suffix');
 
-      case 'upstream':
-        $upstreamBranch = $gitRepo->getUpstreamBranch();
-        if (!$upstreamBranch) {
-          throw new \RuntimeException("Cannot automerge. In {$gitRepo->getPath()}, failed to find upstream branch for \"$localBranch\"");
+      Process::runOk($gitRepo->command("git fetch " . dirname($upstreamBranch)));
+
+      if (!in_array($suffixedBranchName, $gitRepo->getBranches())) {
+        $output->writeln("<info>In {$repoName}, create branch \"$suffixedBranchName\" using \"$upstreamBranch\".</info>");
+      }
+      else {
+        $output->writeln("<error>In {$repoName}, the branch \"$suffixedBranchName\" already exists.</error>");
+        $output->writeln("<error>To proceed with automerge, we must destroy \"$suffixedBranchName\" and recreate it (based on $upstreamBranch).</error>");
+
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion("<question>Proceed with re-creating \"$suffixedBranchName\"? [y/n]</question> ", false);
+        if ($input->getOption('force')) {
+          $output->writeln($question->getQuestion() . "y");
         }
-        $suffixedBranchName = basename($upstreamBranch) . $suffix;
-
-        Process::runOk($gitRepo->command("git fetch " . dirname($upstreamBranch)));
-
-        if (!in_array($suffixedBranchName, $gitRepo->getBranches())) {
-          $output->writeln("<info>In {$repoName}, create branch \"$suffixedBranchName\" using \"$upstreamBranch\".</info>");
+        elseif (!$helper->ask($input, $output, $question)) {
+          throw new \RuntimeException("In {$repoName}, the branch \"$suffixedBranchName\" already exists.");
         }
-        else {
-          $output->writeln("<error>In {$repoName}, the branch \"$suffixedBranchName\" already exists.</error>");
-          $output->writeln("<error>To proceed with automerge, we must destroy \"$suffixedBranchName\" and recreate it (based on $upstreamBranch).</error>");
+        $commit = $gitRepo->getCommit();
+        Process::runOk($gitRepo->command("git checkout $commit"));
+        $gitRepo->command("git branch -D $suffixedBranchName")->run();
+      }
 
-          $helper = $this->getHelper('question');
-          $question = new ConfirmationQuestion("<question>Proceed with re-creating \"$suffixedBranchName\"? [y/n]</question> ", false);
-          if ($input->getOption('force')) {
-            $output->writeln($question->getQuestion() . "y");
-          }
-          elseif (!$helper->ask($input, $output, $question)) {
-            throw new \RuntimeException("In {$repoName}, the branch \"$suffixedBranchName\" already exists.");
-          }
-          $commit = $gitRepo->getCommit();
-          Process::runOk($gitRepo->command("git checkout $commit"));
-          $gitRepo->command("git branch -D $suffixedBranchName")->run();
-        }
+      Process::runOk($gitRepo->command("git checkout $upstreamBranch -b $suffixedBranchName"));
 
-        Process::runOk($gitRepo->command("git checkout $upstreamBranch -b $suffixedBranchName"));
-
-        return $suffixedBranchName;
-
-      default:
-        throw new \RuntimeException("Unrecognized checkout mode: $mode");
+      return;
     }
   }
 
