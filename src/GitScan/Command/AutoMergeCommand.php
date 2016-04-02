@@ -10,7 +10,9 @@ use GitScan\Util\Process;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 
@@ -39,19 +41,17 @@ class AutoMergeCommand extends BaseCommand {
 
       git clone https://github.com/example/foo.git mylocalbuild/foo
       git clone https://github.com/example/bar.git mylocalbuild/bar
-      git scan automerge -b https://github.com/example/foo/pull/1234 https://github.com/example/bar/pull/5678
+      git scan automerge https://github.com/example/foo/pull/1234 https://github.com/example/bar/pull/5678
 
       The URLs passed to automerge may be Github PR URLs.
       If Github is not available, you may use expressions like:
 
-      git scan automerge -b ;upstream-url-regex;patchfile
-      git scan automerge -b ;foo-bar;http://example.com/foo-bar/my.patch
+      git scan automerge ;upstream-url-regex;patchfile
+      git scan automerge ;foo-bar;http://example.com/foo-bar/my.patch
       ')
-      ->addOption('branch', 'b', InputOption::VALUE_NONE, 'Automatically create a new branch (e.g. "master-automerge")')
-      ->addOption('no-branch', 'B', InputOption::VALUE_NONE, 'Do not create a new branch. Apply patches on the current branch.')
-      ->addOption('suffix', NULL, InputOption::VALUE_REQUIRED, 'The name to append when making new branches', '-automerge')
+      ->addOption('rebuild', 'r', InputOption::VALUE_NONE, 'When applying patches, rebuild a clean history based on upstream. Destroy local changes.')
+      ->addOption('keep', 'k', InputOption::VALUE_NONE, 'When applying patches, keep the current branch. Preserve local changes.')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
-      ->addOption('force', 'f', InputOption::VALUE_NONE, 'If necessary, destroy local branches')
       ->addArgument('url', InputArgument::IS_ARRAY, 'The URL(s) of any PRs to merge');
   }
 
@@ -61,10 +61,6 @@ class AutoMergeCommand extends BaseCommand {
   }
 
   protected function execute(InputInterface $input, OutputInterface $output) {
-    if (!$input->getOption('branch') && !$input->getOption('no-branch')) {
-      throw new \RuntimeException("Missing required option: [-b|--branch] or [-B|--no-branch]");
-    }
-
     $rules = array();
     foreach ($input->getArgument('url') as $url) {
       $rule = new AutoMergeRule($url);
@@ -92,7 +88,7 @@ class AutoMergeCommand extends BaseCommand {
             $checkouts[$gitRepo->getPath()] = 1;
           }
 
-          $output->writeln("<info>In {$relPath}, merge \"{$rule->getExpr()}\".</info>");
+          $output->writeln("In \"<info>{$relPath}</info>\", apply \"<info>{$rule->getExpr()}</info>\".");
           $process = $gitRepo->applyPatch($rule->getPatch());
           $output->writeln($process->getOutput());
         }
@@ -114,45 +110,61 @@ class AutoMergeCommand extends BaseCommand {
    * @param \GitScan\GitRepo $gitRepo
    */
   protected function checkoutAutomergeBranch(InputInterface $input, OutputInterface $output, GitRepo $gitRepo, $repoName) {
+    if ($gitRepo->hasUncommittedChanges(TRUE)) {
+      throw new \RuntimeException("Cannot apply patch");
+    }
+
     $localBranch = $gitRepo->getLocalBranch();
-    if ($input->getOption('no-branch')) {
-      $output->writeln("<info>In {$repoName}, keeping current branch \"$localBranch\".</info>");
-      return;
+    $upstreamBranch = $gitRepo->getUpstreamBranch();
+    $mode = $this->getAutomergeMode($input, $output, $repoName, $localBranch, $upstreamBranch);
+
+    switch ($mode) {
+      case 'keep':
+        $output->writeln("In \"<info>$repoName</info>\", keep the current branch \"<info>$localBranch</info>\".");
+        return; // OK, nothing to do.
+
+      case 'rebuild':
+        $backupBranch = $localBranch . '-' . date('YmdHis') . '-' . rand(0,100);
+        $output->writeln("In \"<info>$repoName</info>\", rename \"<info>$localBranch</info>\" to \"<info>$backupBranch</info>\".");
+        Process::runOk($gitRepo->command("git branch -m $localBranch $backupBranch"));
+        $output->writeln("In \"<info>$repoName</info>\", create \"<info>$localBranch</info>\" using \"<info>$upstreamBranch</info>\".");
+        Process::runOk($gitRepo->command("git checkout $upstreamBranch -b $localBranch"));
+        return;
+
+      case 'abort':
+        // Pass through...
+
+      default:
+        throw new \RuntimeException("Could not decide how to base local branch.");
     }
 
-    if ($input->getOption('branch')) {
-      $upstreamBranch = $gitRepo->getUpstreamBranch();
-      if (!$upstreamBranch) {
-        throw new \RuntimeException("Cannot automerge. In {$gitRepo->getPath()}, failed to find upstream branch for \"$localBranch\"");
-      }
-      $suffixedBranchName = basename($upstreamBranch) . $input->getOption('suffix');
+    echo "[[$mode]]\n";
+    exit();
+  }
 
-      Process::runOk($gitRepo->command("git fetch " . dirname($upstreamBranch)));
-
-      if (!in_array($suffixedBranchName, $gitRepo->getBranches())) {
-        $output->writeln("<info>In {$repoName}, create branch \"$suffixedBranchName\" using \"$upstreamBranch\".</info>");
-      }
-      else {
-        $output->writeln("<error>In {$repoName}, the branch \"$suffixedBranchName\" already exists.</error>");
-        $output->writeln("<error>To proceed with automerge, we must destroy \"$suffixedBranchName\" and recreate it (based on $upstreamBranch).</error>");
-
-        $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion("<question>Proceed with re-creating \"$suffixedBranchName\"? [y/n]</question> ", false);
-        if ($input->getOption('force')) {
-          $output->writeln($question->getQuestion() . "y");
-        }
-        elseif (!$helper->ask($input, $output, $question)) {
-          throw new \RuntimeException("In {$repoName}, the branch \"$suffixedBranchName\" already exists.");
-        }
-        $commit = $gitRepo->getCommit();
-        Process::runOk($gitRepo->command("git checkout $commit"));
-        $gitRepo->command("git branch -D $suffixedBranchName")->run();
-      }
-
-      Process::runOk($gitRepo->command("git checkout $upstreamBranch -b $suffixedBranchName"));
-
-      return;
+  public function getAutomergeMode(InputInterface $input, OutputInterface $output, $repoName, $localBranch, $upstreamBranch) {
+    if ($input->getOption('rebuild')) {
+      return 'rebuild';
     }
+    if ($input->getOption('keep')) {
+      return 'keep';
+    }
+    if (!$input->isInteractive()) {
+      return 'abort';
+    }
+
+    $helper = $this->getHelper('question');
+    $question = new ChoiceQuestion(
+      "In \"<info>$repoName</info>\", the current branch is \"<info>$localBranch</info>\". What would you like to do it?",
+      array(
+        'keep' => "Keep the current branch \"<info>$localBranch</info>\" along with any local changes. Apply patches on top.",
+        'rebuild' => "Rebuild the branch \"<info>$localBranch</info>\" based on \"<info>$upstreamBranch</info>\". Destroy any local changes. Apply changes on top.",
+        'abort' => "Abort the auto-merge process. (default)",
+      ),
+      'abort'
+    );
+
+    return $helper->ask($input, $output, $question);
   }
 
 }

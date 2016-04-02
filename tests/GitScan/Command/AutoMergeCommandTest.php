@@ -10,11 +10,11 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
   }
 
   /**
-   * Make a new branch while merging a patch.
+   * Rebuild the branch with clean history (based on upstream).
    *
-   * Ex: git scan automerge -b ;upstreamurlregex;/path/to/patchfile
+   * Ex: git scan automerge --rebuild ;upstreamurlregex;/path/to/patchfile
    */
-  public function testAutoMergeBranch() {
+  public function testAutoMergeRebuild() {
     $upstream = $this->createUpstreamRepo();
 
     mkdir("{$this->fixturePath}/subdir");
@@ -27,43 +27,29 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
 
     $this->assertNotRegExp('/the future has been patched/', $downstream->readFile('changelog.txt'));
 
+    $downstream->commitFile("example.txt", "some unrelated local changes");
+    $this->assertRegExp('/some unrelated local changes/', $downstream->readFile('example.txt'));
+
     // Run it the first time
 
     $commandTester = $this->createCommandTester(array(
       'command' => 'automerge',
       '--path' => $this->fixturePath,
-      '--branch' => 1,
+      '--rebuild' => 1,
       'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
     ));
     $this->assertContains(
-      'In subdir/downstream/, create branch "master-automerge" using "origin/master".',
+      'In "subdir/downstream/", rename "master" to "master-',
       $commandTester->getDisplay(FALSE));
     $this->assertContains(
-      'In subdir/downstream/, merge',
+      'In "subdir/downstream/", apply',
       $commandTester->getDisplay(FALSE));
     $this->assertEquals(0, $commandTester->getStatusCode());
-    $this->assertEquals("master-automerge", $downstream->getLocalBranch()); // because --branch=upstream
+    $this->assertEquals("master", $downstream->getLocalBranch());
     $this->assertRegExp('/the future has been patched/', $downstream->readFile('changelog.txt'));
 
-    // Run it a second time. On the second, it has to work harder to reset
-    // the old branch.
-
-    $commandTester = $this->createCommandTester(array(
-      'command' => 'automerge',
-      '--path' => $this->fixturePath,
-      '--branch' => 1,
-      '--force' => 1,
-      'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
-    ));
-    $this->assertContains(
-      'Proceed with re-creating "master-automerge"? [y/n] y',
-      $commandTester->getDisplay(FALSE));
-    $this->assertContains(
-      'In subdir/downstream/, merge',
-      $commandTester->getDisplay(FALSE));
-    $this->assertEquals(0, $commandTester->getStatusCode());
-    $this->assertEquals("master-automerge", $downstream->getLocalBranch()); // because --branch=upstream
-    $this->assertRegExp('/the future has been patched/', $downstream->readFile('changelog.txt'));
+    // Rebuilt from upstream. Local changes were lost.
+    $this->assertNotRegExp('/some unrelated local changes/', $downstream->readFile('example.txt'));
   }
 
   /**
@@ -81,54 +67,30 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
     $this->assertEquals("master", $downstream->getLocalBranch());
 
     $patchFile = $this->createPatchFile($upstream, 'mypatch');
-
     $this->assertNotRegExp('/the future has been patched/', $downstream->readFile('changelog.txt'));
+
+    $downstream->commitFile("example.txt", "some unrelated local changes");
+    $this->assertRegExp('/some unrelated local changes/', $downstream->readFile('example.txt'));
 
     $commandTester = $this->createCommandTester(array(
       'command' => 'automerge',
       '--path' => $this->fixturePath,
-      '--no-branch' => 1,
+      '--keep' => 1,
       'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
     ));
     $this->assertContains(
-      'In subdir/downstream/, keeping current branch "master"',
+      'In "subdir/downstream/", keep the current branch "master"',
       $commandTester->getDisplay(FALSE));
     $this->assertContains(
-      'In subdir/downstream/, merge',
+      'In "subdir/downstream/", apply',
       $commandTester->getDisplay(FALSE));
     $this->assertEquals(0, $commandTester->getStatusCode());
     $this->assertEquals("master", $downstream->getLocalBranch()); // because --branch=current
     $this->assertRegExp('/the future has been patched/', $downstream->readFile('changelog.txt'));
+
+    // Preserved local changes.
+    $this->assertRegExp('/some unrelated local changes/', $downstream->readFile('example.txt'));
   }
-
-  /**
-   * The command requires -b or -B, otherwise it dies with an error.
-   */
-  public function testAutoMergeMissingMode() {
-    $upstream = $this->createUpstreamRepo();
-
-    mkdir("{$this->fixturePath}/subdir");
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} {$this->fixturePath}/subdir/downstream"));
-    $downstream = new GitRepo($this->fixturePath . '/subdir/downstream');
-    $this->assertEquals("example text", $downstream->readFile("example.txt"));
-    $this->assertEquals("master", $downstream->getLocalBranch());
-
-    $patchFile = $this->createPatchFile($upstream, 'mypatch');
-
-    $this->assertNotRegExp('/the future has been patched/', $downstream->readFile('changelog.txt'));
-
-    try {
-      $commandTester = $this->createCommandTester(array(
-        'command' => 'automerge',
-        '--path' => $this->fixturePath,
-        'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
-      ));
-      $this->fail('Expected error');
-    } catch (\RuntimeException $e) {
-      $this->assertRegExp('/Missing required option.*no-branch/', $e->getMessage());
-    }
-  }
-
 
   protected function createUpstreamRepo($checkout = 'master') {
     $gitRepo = new GitRepo($this->fixturePath . '/upstream');
