@@ -37,7 +37,7 @@ class AutoMergeCommand extends BaseCommand {
       ->setDescription('Automatically match pull-requests to repos and merge them')
       ->setHelp('
       Suppose you have local build with a handful of repos, and you have a list
-      list of PRs that you wish to test.
+      of pull-requests that you wish to test.
 
       git clone https://github.com/example/foo.git mylocalbuild/foo
       git clone https://github.com/example/bar.git mylocalbuild/bar
