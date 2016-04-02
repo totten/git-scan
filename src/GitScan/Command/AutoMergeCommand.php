@@ -50,7 +50,8 @@ class AutoMergeCommand extends BaseCommand {
       git scan automerge ;foo-bar;http://example.com/foo-bar/my.patch
       ')
       ->addOption('rebuild', 'r', InputOption::VALUE_NONE, 'When applying patches, rebuild a clean history based on upstream. Destroy local changes.')
-      ->addOption('keep', 'k', InputOption::VALUE_NONE, 'When applying patches, keep the current branch. Preserve local changes.')
+      ->addOption('keep', NULL, InputOption::VALUE_NONE, 'When applying patches, keep the current branch. Preserve local changes.')
+      ->addOption('new', NULL, InputOption::VALUE_NONE, 'When applying patches, create a new merge branch.')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
       ->addArgument('url', InputArgument::IS_ARRAY, 'The URL(s) of any PRs to merge');
   }
@@ -116,7 +117,8 @@ class AutoMergeCommand extends BaseCommand {
 
     $localBranch = $gitRepo->getLocalBranch();
     $upstreamBranch = $gitRepo->getUpstreamBranch();
-    $mode = $this->getAutomergeMode($input, $output, $repoName, $localBranch, $upstreamBranch);
+    $newLocalBranch = "merge-{$localBranch}-" . date('YmdHis');
+    $mode = $this->getAutomergeMode($input, $output, $repoName, $localBranch, $upstreamBranch, $newLocalBranch);
 
     switch ($mode) {
       case 'keep':
@@ -131,18 +133,20 @@ class AutoMergeCommand extends BaseCommand {
         Process::runOk($gitRepo->command("git checkout $upstreamBranch -b $localBranch"));
         return;
 
+      case 'new':
+        $output->writeln("In \"<info>$repoName</info>\", create \"<info>$newLocalBranch</info>\" using \"<info>$upstreamBranch</info>\".");
+        Process::runOk($gitRepo->command("git checkout $upstreamBranch -b $newLocalBranch"));
+        return;
+
       case 'abort':
         // Pass through...
 
       default:
         throw new \RuntimeException("Could not decide how to base local branch.");
     }
-
-    echo "[[$mode]]\n";
-    exit();
   }
 
-  public function getAutomergeMode(InputInterface $input, OutputInterface $output, $repoName, $localBranch, $upstreamBranch) {
+  public function getAutomergeMode(InputInterface $input, OutputInterface $output, $repoName, $localBranch, $upstreamBranch, $newLocalBranch) {
     if ($input->getOption('rebuild')) {
       return 'rebuild';
     }
@@ -159,6 +163,7 @@ class AutoMergeCommand extends BaseCommand {
       array(
         'keep' => "Keep the current branch \"<info>$localBranch</info>\" along with any local changes. Apply patches on top.",
         'rebuild' => "Rebuild the branch \"<info>$localBranch</info>\" based on \"<info>$upstreamBranch</info>\". Destroy any local changes. Apply changes on top.",
+        'new' => "Create a new branch \"<info>$newLocalBranch</info>\" based on \"<info>$upstreamBranch</info>\". Apply changes on top.",
         'abort' => "Abort the auto-merge process. (default)",
       ),
       'abort'
