@@ -131,6 +131,28 @@ class GitRepo {
   /**
    * @return array<string>
    */
+  public function getBranches() {
+    $process = $this->command("git branch");
+    $process->run();
+    if ($process->isSuccessful()) {
+      $output = trim($process->getOutput(), " \r\n");
+      if ($output) {
+        $lines = array();
+        foreach (explode("\n", $output) as $line) {
+          $lines[] = trim($line, " \r\n*");
+        }
+        return $lines;
+      } else {
+        return array();
+      }
+    } else {
+      throw new \RuntimeException("Failed to determine branches");
+    }
+  }
+
+  /**
+   * @return array<string>
+   */
   public function getRemotes() {
     $process = $this->command("git remote");
     $process->run();

@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 
 class AutoMergeCommand extends BaseCommand {
@@ -53,6 +54,7 @@ class AutoMergeCommand extends BaseCommand {
       ->addOption('branch', NULL, InputOption::VALUE_REQUIRED, 'How to handle branching (current|upstream)', 'upstream')
       ->addOption('suffix', NULL, InputOption::VALUE_REQUIRED, 'The name to append when making new branches', '-automerge')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
+      ->addOption('force', 'f', InputOption::VALUE_NONE, 'If necessary, destroy local branches')
       ->addArgument('url', InputArgument::IS_ARRAY, 'The URL(s) of any PRs to merge');
   }
 
@@ -130,14 +132,27 @@ class AutoMergeCommand extends BaseCommand {
         }
         $suffixedBranchName = basename($upstreamBranch) . $suffix;
 
-        $output->writeln("<info>In {$repoName}, (re)initialize branch \"$suffixedBranchName\" using \"$upstreamBranch\".</info>");
-
         Process::runOk($gitRepo->command("git fetch " . dirname($upstreamBranch)));
 
-        // Get off branch in case that's the one we need to delete.
-        $commit = $gitRepo->getCommit();
-        Process::runOk($gitRepo->command("git checkout $commit"));
-        $gitRepo->command("git branch -D $suffixedBranchName")->run();
+        if (!in_array($suffixedBranchName, $gitRepo->getBranches())) {
+          $output->writeln("<info>In {$repoName}, create branch \"$suffixedBranchName\" using \"$upstreamBranch\".</info>");
+        }
+        else {
+          $output->writeln("<error>In {$repoName}, the branch \"$suffixedBranchName\" already exists.</error>");
+          $output->writeln("<error>To proceed with automerge, we must destroy \"$suffixedBranchName\" and recreate it (based on $upstreamBranch).</error>");
+
+          $helper = $this->getHelper('question');
+          $question = new ConfirmationQuestion("<question>Proceed with re-creating \"$suffixedBranchName\"? [y/n]</question> ", false);
+          if ($input->getOption('force')) {
+            $output->writeln($question->getQuestion() . "y");
+          }
+          elseif (!$helper->ask($input, $output, $question)) {
+            throw new \RuntimeException("In {$repoName}, the branch \"$suffixedBranchName\" already exists.");
+          }
+          $commit = $gitRepo->getCommit();
+          Process::runOk($gitRepo->command("git checkout $commit"));
+          $gitRepo->command("git branch -D $suffixedBranchName")->run();
+        }
 
         Process::runOk($gitRepo->command("git checkout $upstreamBranch -b $suffixedBranchName"));
 
