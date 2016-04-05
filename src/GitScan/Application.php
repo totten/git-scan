@@ -42,21 +42,4 @@ class Application extends \Symfony\Component\Console\Application {
     return $commands;
   }
 
-  /*
-  public function doRun(InputInterface $input, OutputInterface $output) {
-    $commandName = $input->getFirstArgument();
-    if (empty($commandName)) {
-      if (TRUE === $input->hasParameterOption(array('--help', '-h'))) {
-        $input = new ArrayInput(array('command' => 'list'));
-      }
-    }
-    return parent::doRun($input, $output);
-  }
-
-  protected function getCommandName(InputInterface $input) {
-    $name = parent::getCommandName($input);
-    return empty($name) ? 'status' : $name;
-  }
-  */
-
 }
