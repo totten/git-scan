@@ -14,7 +14,7 @@ class GitRepoScanner {
   /**
    * @param FileSystem $fs
    */
-  function __construct($fs = NULL) {
+  public function __construct($fs = NULL) {
     $this->fs = $fs ? : new Filesystem();
   }
 
@@ -59,4 +59,5 @@ class GitRepoScanner {
     }
     return md5($buf);
   }
+
 }

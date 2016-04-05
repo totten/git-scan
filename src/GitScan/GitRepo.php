@@ -32,7 +32,7 @@ class GitRepo {
    */
   private $status;
 
-  function __construct($path) {
+  public function __construct($path) {
     $this->fs = new Filesystem();
     $this->path = $path;
     $this->flush();
@@ -61,11 +61,12 @@ class GitRepo {
     $process->run();
     if ($process->isSuccessful()) {
       $commit = trim($process->getOutput());
-      if (! \GitScan\Util\Commit::isValid($commit)) {
+      if (!\GitScan\Util\Commit::isValid($commit)) {
         throw new \RuntimeException("Malformed commit [$commit]");
       }
       return $commit;
-    } else {
+    }
+    else {
       throw new \RuntimeException("Failed to determine commit");
     }
   }
@@ -142,10 +143,12 @@ class GitRepo {
           $lines[] = trim($line, " \r\n*");
         }
         return $lines;
-      } else {
+      }
+      else {
         return array();
       }
-    } else {
+    }
+    else {
       throw new \RuntimeException("Failed to determine branches");
     }
   }
@@ -160,10 +163,12 @@ class GitRepo {
       $output = trim($process->getOutput(), " \r\n");
       if ($output) {
         return explode("\n", $output);
-      } else {
+      }
+      else {
         return array();
       }
-    } else {
+    }
+    else {
       throw new \RuntimeException("Failed to determine remotes");
     }
   }

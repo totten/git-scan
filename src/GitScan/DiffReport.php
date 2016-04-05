@@ -81,7 +81,7 @@ class DiffReport {
    * @param array $to
    * @return int|null
    */
-  function getChangeCount($from, $to) {
+  public function getChangeCount($from, $to) {
     if ($from['commit'] == $to['commit']) {
       return 0;
     }
@@ -95,7 +95,8 @@ class DiffReport {
     $process->run();
     if ($process->isSuccessful()) {
       return count(explode("\n", trim($process->getOutput(), "\n")));
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -105,7 +106,7 @@ class DiffReport {
    * @param array $details
    * @return GitRepo|null
    */
-  function findRepo($rootNames, $details) {
+  public function findRepo($rootNames, $details) {
     foreach ($rootNames as $rootName) {
       $root = $this->{$rootName}->getRoot();
       if ($root && is_dir($root . DIRECTORY_SEPARATOR . $details['path'] . DIRECTORY_SEPARATOR . '.git')) {
@@ -114,4 +115,5 @@ class DiffReport {
     }
     return NULL;
   }
+
 }

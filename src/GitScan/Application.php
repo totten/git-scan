@@ -11,8 +11,6 @@ class Application extends \Symfony\Component\Console\Application {
 
   /**
    * Primary entry point for execution of the standalone command.
-   *
-   * @return
    */
   public static function main($binDir) {
     $application = new Application('git-scan', '@package_version@');

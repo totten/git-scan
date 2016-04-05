@@ -124,10 +124,10 @@ class AutoMergeCommand extends BaseCommand {
     switch ($mode) {
       case 'keep':
         $output->writeln("In \"<info>$repoName</info>\", keep the current branch \"<info>$localBranch</info>\".");
-        return; // OK, nothing to do.
+        return;
 
       case 'rebuild':
-        $backupBranch = $localBranch . '-' . date('YmdHis') . '-' . rand(0,100);
+        $backupBranch = $localBranch . '-' . date('YmdHis') . '-' . rand(0, 100);
         $output->writeln("In \"<info>$repoName</info>\", rename \"<info>$localBranch</info>\" to \"<info>$backupBranch</info>\".");
         Process::runOk($gitRepo->command("git branch -m $localBranch $backupBranch"));
         $output->writeln("In \"<info>$repoName</info>\", create \"<info>$localBranch</info>\" using \"<info>$upstreamBranch</info>\".");
