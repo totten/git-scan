@@ -92,8 +92,8 @@ STDERR Please commit or stash them.
 STDOUT Current branch master is up to date.
 ```
 
-Unit-Tests
-==========
+Development: Unit-Tests
+=======================
 
 If you have previously installed [phpunit](http://phpunit.de/), then you can run the test suite. Something like:
 
@@ -112,10 +112,13 @@ Time: 2 seconds, Memory: 6.50Mb
 OK (49 tests, 121 assertions)
 ```
 
-Build
-=====
+Development: Build (PHAR)
+=========================
 
-Use [box](http://box-project.github.io/box2/):
+If you are developing new changes to `git-scan` and want to create a custom
+build of `git-scan.phar` from source, you must have
+[`git`](https://git-scm.com), [`composer`](https://getcomposer.org/), and
+[`box`](http://box-project.github.io/box2/) installed.  Then run:
 
 ```
 $ git clone https://github.com/totten/git-scan
