@@ -53,6 +53,7 @@ class AutoMergeCommand extends BaseCommand {
       ->addOption('keep', NULL, InputOption::VALUE_NONE, 'When applying patches, keep the current branch. Preserve local changes.')
       ->addOption('new', NULL, InputOption::VALUE_NONE, 'When applying patches, create a new merge branch.')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
+      ->addOption('url-split', NULL, InputOption::VALUE_REQUIRED, 'If listing multiple URLs in one argument, use the given delimiter', '|')
       ->addArgument('url', InputArgument::IS_ARRAY, 'The URL(s) of any PRs to merge');
   }
 
@@ -63,8 +64,8 @@ class AutoMergeCommand extends BaseCommand {
 
   protected function execute(InputInterface $input, OutputInterface $output) {
     $rules = array();
-    foreach ($input->getArgument('url') as $url) {
-      $rule = new AutoMergeRule($url);
+    foreach ($this->getPatchExprs($input, $output) as $expr) {
+      $rule = new AutoMergeRule($expr);
       $rules[] = $rule;
     }
 
@@ -170,6 +171,24 @@ class AutoMergeCommand extends BaseCommand {
     );
 
     return $helper->ask($input, $output, $question);
+  }
+
+  /**
+   * Get a list of patch expressions (e.g. github URLs).
+   *
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
+   * @return array
+   */
+  public function getPatchExprs(InputInterface $input, OutputInterface $output) {
+    $urls = array();
+    $delim = $input->getOption('url-split');
+    foreach ($input->getArgument('url') as $urlArg) {
+      foreach (explode($delim, trim($urlArg, $delim)) as $url) {
+        $urls[] = $url;
+      }
+    }
+    return $urls;
   }
 
 }
