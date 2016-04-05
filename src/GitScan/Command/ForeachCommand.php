@@ -17,7 +17,6 @@ class ForeachCommand extends BaseCommand {
 
   /**
    * @param string|null $name
-   * @param array $parameters list of configuration parameters to accept ($key => $label)
    */
   public function __construct($name = NULL) {
     $this->fs = new Filesystem();
@@ -95,13 +94,13 @@ class ForeachCommand extends BaseCommand {
           if (OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity()) {
             $errorOutput->write("<error>STDERR</error> ");
           }
-          $errorOutput->write($buffer, false, OutputInterface::OUTPUT_RAW);
+          $errorOutput->write($buffer, FALSE, OutputInterface::OUTPUT_RAW);
         }
         else {
           if (OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity()) {
             $output->write("<comment>STDOUT</comment> ");
           }
-          $output->write($buffer, false, OutputInterface::OUTPUT_RAW);
+          $output->write($buffer, FALSE, OutputInterface::OUTPUT_RAW);
         }
       });
       if (!$process->isSuccessful()) {
@@ -114,4 +113,5 @@ class ForeachCommand extends BaseCommand {
 
     return $statusCode;
   }
+
 }

@@ -14,7 +14,7 @@ class PlainFormatter implements GitFormatterInterface {
    *  - upstreamBranch: string|NULL, the name of he checked-out branch's upstream counterpart
    * @return string
    */
-  function formatRef($details) {
+  public function formatRef($details) {
     return sprintf("%s (%s)", $details['localBranch'] ? $details['localBranch'] : '', $this->toAbbrev($details));
   }
 
@@ -33,7 +33,7 @@ class PlainFormatter implements GitFormatterInterface {
    *  - upstreamBranch: string|NULL, the name of he checked-out branch's upstream counterpart
    * @return string
    */
-  function formatComparison($from, $to) {
+  public function formatComparison($from, $to) {
     return sprintf('[RUN: git log %s...%s]', $this->toAbbrev($from), $this->toAbbrev($to));
   }
 
@@ -41,7 +41,8 @@ class PlainFormatter implements GitFormatterInterface {
    * @param array $details
    * @return string
    */
-  function toAbbrev($details) {
+  public function toAbbrev($details) {
     return substr($details['commit'], 0, self::ABBREV_LENGTH);
   }
+
 }

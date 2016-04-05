@@ -11,7 +11,7 @@ interface GitFormatterInterface {
    *  - upstreamBranch: string|NULL, the name of he checked-out branch's upstream counterpart
    * @return string
    */
-  function formatRef($details);
+  public function formatRef($details);
 
   /**
    * @param array $from
@@ -28,5 +28,6 @@ interface GitFormatterInterface {
    *  - upstreamBranch: string|NULL, the name of he checked-out branch's upstream counterpart
    * @return string
    */
-  function formatComparison($from, $to);
+  public function formatComparison($from, $to);
+
 }
