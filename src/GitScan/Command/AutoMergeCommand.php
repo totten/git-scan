@@ -36,7 +36,7 @@ class AutoMergeCommand extends BaseCommand {
       ->setName('automerge')
       ->setDescription('Automatically match pull-requests to repos and merge them')
       ->setHelp('
-Suppose you have local build with a handful of repos, e.g.
+Suppose you have a local build with a handful of repos, e.g.
 
 $ git clone https://github.com/example/foo.git mylocalbuild/foo
 $ git clone https://github.com/example/bar.git mylocalbuild/bar
