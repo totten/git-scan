@@ -36,20 +36,29 @@ class AutoMergeCommand extends BaseCommand {
       ->setName('automerge')
       ->setDescription('Automatically match pull-requests to repos and merge them')
       ->setHelp('
-      Suppose you have local build with a handful of repos, and you have a list
-      of pull-requests that you wish to test.
+Suppose you have local build with a handful of repos, e.g.
 
-      git clone https://github.com/example/foo.git mylocalbuild/foo
-      git clone https://github.com/example/bar.git mylocalbuild/bar
-      git scan automerge https://github.com/example/foo/pull/1234 https://github.com/example/bar/pull/5678
+$ git clone https://github.com/example/foo.git mylocalbuild/foo
+$ git clone https://github.com/example/bar.git mylocalbuild/bar
 
-      The URLs passed to automerge may be Github PR URLs.
-      If Github is not available, you may use expressions like:
+And suppose you have a handful of patches you want. To apply them in
+the appropriate repos, run:
 
-      git scan automerge ;upstream-url-regex;patchfile
-      git scan automerge ;foo-bar;http://example.com/foo-bar/my.patch
+$ git scan automerge https://github.com/example/foo/pull/1234 https://github.com/example/bar/pull/5678
+
+The URLs passed to automerge may be Github PR URLs.
+If Github is not available, you may use expressions like:
+
+$ git scan automerge ;upstream-url-regex;patchfile
+$ git scan automerge ;foo-bar;http://example.com/foo-bar/my.patch
+
+When applying patches to a repo, it will prompt for how to setup the branches, e.g.
+
+  --keep: Keep the current branch. Apply patch(es) on top of it.
+  --rebuild: Recreate the current branch, using upstream code and *only* the listed patch(es).
+  --new: Create a new merge branch. Apply patch(es) on top of it.
       ')
-      ->addOption('rebuild', 'r', InputOption::VALUE_NONE, 'When applying patches, rebuild a clean history based on upstream. Destroy local changes.')
+      ->addOption('rebuild', NULL, InputOption::VALUE_NONE, 'When applying patches, rebuild a clean history based on upstream. Destroy local changes.')
       ->addOption('keep', NULL, InputOption::VALUE_NONE, 'When applying patches, keep the current branch. Preserve local changes.')
       ->addOption('new', NULL, InputOption::VALUE_NONE, 'When applying patches, create a new merge branch.')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
@@ -127,7 +136,7 @@ class AutoMergeCommand extends BaseCommand {
         return;
 
       case 'rebuild':
-        $backupBranch = $localBranch . '-' . date('YmdHis') . '-' . rand(0, 100);
+        $backupBranch = 'backup-' . $localBranch . '-' . date('YmdHis') . '-' . rand(0, 100);
         $output->writeln("In \"<info>$repoName</info>\", rename \"<info>$localBranch</info>\" to \"<info>$backupBranch</info>\".");
         Process::runOk($gitRepo->command("git branch -m $localBranch $backupBranch"));
         $output->writeln("In \"<info>$repoName</info>\", create \"<info>$localBranch</info>\" using \"<info>$upstreamBranch</info>\".");

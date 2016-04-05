@@ -39,7 +39,7 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
       'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
     ));
     $this->assertContains(
-      'In "subdir/downstream/", rename "master" to "master-',
+      'In "subdir/downstream/", rename "master" to "backup-master-',
       $commandTester->getDisplay(FALSE));
     $this->assertContains(
       'In "subdir/downstream/", apply',
