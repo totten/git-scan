@@ -34,6 +34,7 @@ class AutoMergeCommand extends BaseCommand {
   protected function configure() {
     $this
       ->setName('automerge')
+      ->setAliases(array('am'))
       ->setDescription('Automatically match pull-requests to repos and merge them')
       ->setHelp('
 Suppose you have a local build with a handful of repos, e.g.
