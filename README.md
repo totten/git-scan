@@ -90,6 +90,14 @@ STDERR Please commit or stash them.
 [[ /home/me/drupal-demo/sites/all/modules/civicrm/packages: exit code = 1 ]]
 [[ /home/me/drupal-demo/sites/all/modules/contrib/civicrm_developer ]]
 STDOUT Current branch master is up to date.
+
+me@localhost:~/drupal-demo$ git scan am https://github.com/example/mymodule/pull/1234
+In "sites/all/modules/mymodule/", the current branch is "master" based on "origin/master". What would you like to do it?
+  [keep   ] Keep the current branch "master" along with any local changes. Apply patches on top.
+  [rebuild] Rebuild the branch "master" based on "origin/master". Destroy any local changes. Apply changes on top.
+  [new    ] Create a new branch "merge-master-20160411152732" based on "origin/master". Apply changes on top.
+  [abort  ] Abort the auto-merge process. (default)
+> new
 ```
 
 Development: Unit-Tests
