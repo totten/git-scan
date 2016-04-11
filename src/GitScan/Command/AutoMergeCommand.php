@@ -59,9 +59,9 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
   --rebuild: Recreate the current branch, using upstream code and *only* the listed patch(es).
   --new: Create a new merge branch. Apply patch(es) on top of it.
       ')
-      ->addOption('rebuild', NULL, InputOption::VALUE_NONE, 'When applying patches, rebuild a clean history based on upstream. Destroy local changes.')
-      ->addOption('keep', NULL, InputOption::VALUE_NONE, 'When applying patches, keep the current branch. Preserve local changes.')
-      ->addOption('new', NULL, InputOption::VALUE_NONE, 'When applying patches, create a new merge branch.')
+      ->addOption('rebuild', 'R', InputOption::VALUE_NONE, 'When applying patches, rebuild a clean history based on upstream. Destroy local changes.')
+      ->addOption('keep', 'K', InputOption::VALUE_NONE, 'When applying patches, keep the current branch. Preserve local changes.')
+      ->addOption('new', 'N', InputOption::VALUE_NONE, 'When applying patches, create a new merge branch.')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
       ->addOption('url-split', NULL, InputOption::VALUE_REQUIRED, 'If listing multiple URLs in one argument, use the given delimiter', '|')
       ->addArgument('url', InputArgument::IS_ARRAY, 'The URL(s) of any PRs to merge');
