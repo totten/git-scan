@@ -170,7 +170,7 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
 
     $helper = $this->getHelper('question');
     $question = new ChoiceQuestion(
-      "In \"<info>$repoName</info>\", the current branch is \"<info>$localBranch</info>\". What would you like to do it?",
+      "In \"<info>$repoName</info>\", the current branch is \"<info>$localBranch</info>\" based on \"<info>$upstreamBranch</info>\". What would you like to do it?",
       array(
         'keep' => "Keep the current branch \"<info>$localBranch</info>\" along with any local changes. Apply patches on top.",
         'rebuild' => "Rebuild the branch \"<info>$localBranch</info>\" based on \"<info>$upstreamBranch</info>\". Destroy any local changes. Apply changes on top.",
