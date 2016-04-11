@@ -123,14 +123,17 @@ OK (49 tests, 121 assertions)
 Development: Build (PHAR)
 =========================
 
-If you are developing new changes to `git-scan` and want to create a custom
+If you are developing new changes to `git-scan` and want to create a new
 build of `git-scan.phar` from source, you must have
 [`git`](https://git-scm.com), [`composer`](https://getcomposer.org/), and
-[`box`](http://box-project.github.io/box2/) installed.  Then run:
+[`box`](http://box-project.github.io/box2/) installed.  Then run commands
+like:
 
 ```
 $ git clone https://github.com/totten/git-scan
 $ cd git-scan
 $ composer install
-$ php -dphar.readonly=0 `which box` build
+$ which box
+/usr/local/bin/box
+$ php -dphar.readonly=0 /usr/local/bin/box build
 ```
