@@ -1,6 +1,7 @@
 <?php
 namespace GitScan\Command;
 
+use GitScan\Exception\ProcessErrorException;
 use GitScan\GitRepo;
 use GitScan\Util\Process as ProcessUtil;
 
@@ -90,6 +91,45 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
 
     // Preserved local changes.
     $this->assertRegExp('/some unrelated local changes/', $downstream->readFile('example.txt'));
+  }
+
+  /**
+   * Merge a patch into the currently-active branch.
+   *
+   * Ex: git scan automerge ;upstreamurlregex;/path/to/patchfile
+   */
+  public function testAutoMergeCurrentConflict() {
+    $upstream = $this->createUpstreamRepo();
+
+    mkdir("{$this->fixturePath}/subdir");
+    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} {$this->fixturePath}/subdir/downstream"));
+    $downstream = new GitRepo($this->fixturePath . '/subdir/downstream');
+    $this->assertEquals("example text", $downstream->readFile("example.txt"));
+    $this->assertEquals("master", $downstream->getLocalBranch());
+
+    $patchFile = $this->createPatchFile($upstream, 'mypatch');
+    $this->assertNotRegExp('/the future has been patched/', $downstream->readFile('changelog.txt'));
+
+    $downstream->commitFile("example.txt", "some unrelated local changes");
+    $this->assertRegExp('/some unrelated local changes/', $downstream->readFile('example.txt'));
+
+    // Introduce a conflict
+    $downstream->commitFile("changelog.txt", "this is bad! it has  conflict!");
+
+    try {
+      $commandTester = $this->createCommandTester(array(
+        'command' => 'automerge',
+        '--path' => $this->fixturePath,
+        '--keep' => 1,
+        'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
+      ));
+      $this->fail("Expected ProcessErrorException");
+    } catch (ProcessErrorException $e) {
+      $this->assertEquals(1, $e->getProcess()->getExitCode());
+      $this->assertContains(
+        'patch failed',
+        $e->getProcess()->getErrorOutput());
+    }
   }
 
   protected function createUpstreamRepo($checkout = 'master') {
