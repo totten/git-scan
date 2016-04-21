@@ -163,6 +163,9 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
   }
 
   public function getAutomergeMode(InputInterface $input, OutputInterface $output, $repoName, $localBranch, $upstreamBranch, $newLocalBranch) {
+    if ($input->getOption('new')) {
+      return 'new';
+    }
     if ($input->getOption('rebuild')) {
       return 'rebuild';
     }
