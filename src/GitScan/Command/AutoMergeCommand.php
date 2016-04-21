@@ -87,6 +87,7 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
     foreach ($gitRepos as $gitRepo) {
       /** @var GitRepo $gitRepo */
       $relPath = $this->fs->makePathRelative($gitRepo->getPath(), $input->getOption('path'));
+      $hasPatch = 0;
 
       foreach (array_keys($rules) as $ruleId) {
         /** @var AutoMergeRule $rule */
@@ -94,16 +95,20 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
         $rule->fetch();
         if ($rule->isMatch($gitRepo)) {
           unset($rules[$ruleId]);
+          $hasPatch = 1;
 
           if (!isset($checkouts[$gitRepo->getPath()])) {
             $this->checkoutAutomergeBranch($input, $output, $gitRepo, $relPath);
             $checkouts[$gitRepo->getPath()] = 1;
           }
 
-          $output->writeln("In \"<info>{$relPath}</info>\", apply \"<info>{$rule->getExpr()}</info>\".");
+          $output->writeln("In \"<info>{$relPath}</info>\", apply \"<info>{$rule->getExpr()}</info>\" on top of \"<info>{$gitRepo->getCommit()}</info>\".");
           $process = $gitRepo->applyPatch($rule->getPatch());
           $output->writeln($process->getOutput());
         }
+      }
+      if ($hasPatch) {
+        $output->writeln("In \"<info>{$relPath}</info>\", final commit is \"<info>{$gitRepo->getCommit()}</info>\".");
       }
     }
 
