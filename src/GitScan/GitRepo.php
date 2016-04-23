@@ -200,6 +200,30 @@ class GitRepo {
   }
 
   /**
+   * @return array<string>
+   */
+  public function getTags() {
+    $process = $this->command("git tag");
+    $process->run();
+    if ($process->isSuccessful()) {
+      $output = trim($process->getOutput(), " \r\n");
+      if ($output) {
+        $lines = array();
+        foreach (explode("\n", $output) as $line) {
+          $lines[] = trim($line, " \r\n*");
+        }
+        return $lines;
+      }
+      else {
+        return array();
+      }
+    }
+    else {
+      throw new \RuntimeException("Failed to determine branches");
+    }
+  }
+
+  /**
    * Determine the name of the local branch
    *
    * @return string|NULL the name of the local branch (eg "master"); NULL if detached
