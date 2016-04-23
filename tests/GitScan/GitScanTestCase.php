@@ -85,7 +85,8 @@ class GitScanTestCase extends \PHPUnit_Framework_TestCase {
     $application = new Application();
     $command = $application->find($args['command']);
     $commandTester = new CommandTester($command);
-    $commandTester->execute($args);
+    $options = array('interactive' => FALSE);
+    $commandTester->execute($args, $options);
     return $commandTester;
   }
 
