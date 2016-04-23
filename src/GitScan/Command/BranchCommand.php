@@ -6,6 +6,7 @@ use GitScan\Util\ArrayUtil;
 use GitScan\Util\Filesystem;
 use GitScan\Util\Process as ProcessUtil;
 use GitScan\Util\Process;
+use GitScan\Util\ProcessBatch;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -49,14 +50,14 @@ class BranchCommand extends BaseCommand {
     $helper = $this->getHelper('question');
     $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getOption('path'));
-    $commands = array();
+    $batch = new ProcessBatch('Creating branch(es)...');
 
     $g = new \GitScan\GitBranchGenerator($gitRepos);
     $g->generate(
       $input->getArgument('head'),
       $input->getArgument('branchName'),
       $input->getOption('prefix'),
-      function (GitRepo $gitRepo, $oldBranch, $newBranch) use ($input, $output, $helper, &$commands) {
+      function (GitRepo $gitRepo, $oldBranch, $newBranch) use ($input, $output, $helper, &$batch) {
         $relPath = $this->fs->makePathRelative($gitRepo->getPath(), $input->getOption('path'));
 
         $question = new ChoiceQuestion("\n<comment>In \"<info>{$relPath}</info>\", found existing branch \"<info>$oldBranch</info>\". Create a new branch \"<info>$newBranch</info>\"?</comment>",
@@ -76,31 +77,14 @@ class BranchCommand extends BaseCommand {
         }
 
         $label = "In \"<info>{$relPath}</info>\", make branch \"<info>$newBranch</info>\" from \"<info>$oldBranch</info>\"";
-        $commands[$label] = $gitRepo->command(sprintf(
+        $batch->add($label, $gitRepo->command(sprintf(
           "git branch %s %s",
           escapeshellarg($newBranch),
           escapeshellarg($oldBranch)
-        ));
+        )));
       });
 
-    if ($commands) {
-      $output->writeln("<comment>Creating branch(es)...</comment>");
-      foreach ($commands as $label => $command) {
-        /** @var \Symfony\Component\Process\Process $command */
-        $output->writeln($label);
-        if (!$input->getOption('dry-run')) {
-          Process::runOk($command);
-        }
-        else {
-          $output->writeln("\$ cd " . escapeshellarg($command->getWorkingDirectory()));
-          $output->writeln("\$ " . $command->getCommandLine());
-        }
-      }
-      $output->writeln("<comment>Done.</comment>");
-    }
-    else {
-      $output->writeln("<comment>Nothing to do</comment>");
-    }
+    $batch->runAllOk($output, $input->getOption('dry-run'));
   }
 
 }
