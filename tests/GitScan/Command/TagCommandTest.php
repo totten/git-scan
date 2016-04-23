@@ -109,4 +109,22 @@ class TagCommandTest extends \GitScan\GitScanTestCase {
     $this->assertNotContains('7.x-3.0.1', $this->repo2->getTags());
   }
 
+  public function testTag_delete() {
+    Process::runOk($this->repo1b->command("git branch -m master 1.x-master"));
+    Process::runOk($this->repo1b->command("git tag 1.x-1.0 1.x-master"));
+
+    $commandTester = $this->createCommandTester(array(
+      'command' => 'tag',
+      '--path' => $this->fixturePath,
+      '--delete' => 1,
+      '--prefix' => 1,
+      '--dry-run' => 1,
+      'tagName' => '1.0',
+    ));
+    $output = $commandTester->getDisplay(FALSE);
+    $this->assertEquals(0, $commandTester->getStatusCode());
+    $this->assertContains('In "example-1/repo-1/repo-1b/", delete tag "1.x-1.0"', $output);
+    $this->assertContains("repo-1b'\n$ git tag -d '1.x-1.0'", $output);
+  }
+
 }

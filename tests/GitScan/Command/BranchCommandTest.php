@@ -109,4 +109,38 @@ class BranchCommandTest extends \GitScan\GitScanTestCase {
     $this->assertNotContains('7.x-3.0.1', $this->repo2->getBranches());
   }
 
+  public function testBranch_delete() {
+    Process::runOk($this->repo1b->command("git branch -m master 1.x-master"));
+
+    $commandTester = $this->createCommandTester(array(
+      'command' => 'branch',
+      '--path' => $this->fixturePath,
+      '--delete' => 1,
+      '--prefix' => 1,
+      '--dry-run' => 1,
+      'branchName' => 'master',
+    ));
+    $output = $commandTester->getDisplay(FALSE);
+    $this->assertEquals(0, $commandTester->getStatusCode());
+    $this->assertContains('In "example-1/repo-1/repo-1b/", delete branch "1.x-master"', $output);
+    $this->assertContains("repo-1b'\n$ git branch -d '1.x-master'", $output);
+  }
+
+  public function testBranch_forceDelete() {
+    Process::runOk($this->repo1b->command("git branch -m master 1.x-master"));
+
+    $commandTester = $this->createCommandTester(array(
+      'command' => 'branch',
+      '--path' => $this->fixturePath,
+      '--force-delete' => 1,
+      '--prefix' => 1,
+      '--dry-run' => 1,
+      'branchName' => 'master',
+    ));
+    $output = $commandTester->getDisplay(FALSE);
+    $this->assertEquals(0, $commandTester->getStatusCode());
+    $this->assertContains('In "example-1/repo-1/repo-1b/", delete branch "1.x-master"', $output);
+    $this->assertContains("repo-1b'\n$ git branch -D '1.x-master'", $output);
+  }
+
 }

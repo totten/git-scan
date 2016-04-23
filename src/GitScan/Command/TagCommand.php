@@ -37,9 +37,10 @@ class TagCommand extends BaseCommand {
       ->setDescription('Create tags across repos')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
       ->addOption('prefix', 'p', InputOption::VALUE_NONE, 'Autodetect prefixed variations')
+      ->addOption('delete', 'd', InputOption::VALUE_NONE, 'Delete fully merged branches')
       ->addOption('dry-run', 'T', InputOption::VALUE_NONE, 'Display what would be done')
       ->addArgument('tagName', InputArgument::REQUIRED, 'The name of the new tag(s)')
-      ->addArgument('head', InputArgument::REQUIRED, 'The name of the head(s) to use for new tag(s). *Must* be a branch name.');
+      ->addArgument('head', InputArgument::OPTIONAL, 'The name of the head(s) to use for new tag(s). *Must* be a branch name.');
   }
 
   protected function initialize(InputInterface $input, OutputInterface $output) {
@@ -48,6 +49,19 @@ class TagCommand extends BaseCommand {
   }
 
   protected function execute(InputInterface $input, OutputInterface $output) {
+    if ($input->getOption('delete')) {
+      return $this->executeDelete($input, $output);
+    }
+    else {
+      return $this->executeCreate($input, $output);
+    }
+  }
+
+  protected function executeCreate(InputInterface $input, OutputInterface $output) {
+    if (!$input->getArgument('head')) {
+      throw new \RuntimeException("Missing argument \"head\". Please specify the name of original base branch.");
+    }
+
     $helper = $this->getHelper('question');
     $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getOption('path'));
@@ -84,6 +98,38 @@ class TagCommand extends BaseCommand {
           escapeshellarg($oldBranch)
         )));
       });
+
+    $batch->runAllOk($output, $input->getOption('dry-run'));
+  }
+
+  protected function executeDelete(InputInterface $input, OutputInterface $output) {
+    $scanner = new \GitScan\GitRepoScanner();
+    $gitRepos = $scanner->scan($input->getOption('path'));
+    $batch = new ProcessBatch('Deleting branch(es)...');
+
+    $tagName = $input->getArgument('tagName');
+    $tagQuoted = preg_quote($tagName, '/');
+
+    foreach ($gitRepos as $gitRepo) {
+      /** @var \GitScan\GitRepo $gitRepo */
+      $relPath = $this->fs->makePathRelative($gitRepo->getPath(), $input->getOption('path'));
+
+      $tags = $gitRepo->getTags();
+      $matches = array();
+      if ($input->getOption('prefix')) {
+        $matches = preg_grep("/[-_]$tagQuoted\$/", $tags);
+      }
+      if (in_array($tagName, $tags)) {
+        $matches[] = $tagName;
+      }
+
+      // TODO: Verify that user wants to delete these.
+
+      foreach ($matches as $match) {
+        $label = "In \"<info>{$relPath}</info>\", delete tag \"<info>$match</info>\" .";
+        $batch->add($label, $gitRepo->command("git tag -d " . escapeshellarg($match)));
+      }
+    }
 
     $batch->runAllOk($output, $input->getOption('dry-run'));
   }

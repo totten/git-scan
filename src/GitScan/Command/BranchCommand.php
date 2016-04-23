@@ -36,9 +36,11 @@ class BranchCommand extends BaseCommand {
       ->setDescription('Create branches across repos')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
       ->addOption('prefix', 'p', InputOption::VALUE_NONE, 'Autodetect prefixed variations')
+      ->addOption('delete', 'd', InputOption::VALUE_NONE, 'Delete fully merged branches')
+      ->addOption('force-delete', 'D', InputOption::VALUE_NONE, 'Delete branch (even if not merged)')
       ->addOption('dry-run', 'T', InputOption::VALUE_NONE, 'Display what would be done')
       ->addArgument('branchName', InputArgument::REQUIRED, 'The name of the new branch(es)')
-      ->addArgument('head', InputArgument::REQUIRED, 'The name of the head(s) to use for new branch(s). *Must* be a branch name.');
+      ->addArgument('head', InputArgument::OPTIONAL, 'The name of the head(s) to use for new branch(s). *Must* be a branch name.');
   }
 
   protected function initialize(InputInterface $input, OutputInterface $output) {
@@ -47,6 +49,19 @@ class BranchCommand extends BaseCommand {
   }
 
   protected function execute(InputInterface $input, OutputInterface $output) {
+    if ($input->getOption('delete') || $input->getOption('force-delete')) {
+      return $this->executeDelete($input, $output);
+    }
+    else {
+      return $this->executeCreate($input, $output);
+    }
+  }
+
+  protected function executeCreate(InputInterface $input, OutputInterface $output) {
+    if (!$input->getArgument('head')) {
+      throw new \RuntimeException("Missing argument \"head\". Please specify the name of original base branch.");
+    }
+
     $helper = $this->getHelper('question');
     $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getOption('path'));
@@ -83,6 +98,40 @@ class BranchCommand extends BaseCommand {
           escapeshellarg($oldBranch)
         )));
       });
+
+    $batch->runAllOk($output, $input->getOption('dry-run'));
+  }
+
+  protected function executeDelete(InputInterface $input, OutputInterface $output) {
+    $helper = $this->getHelper('question');
+    $scanner = new \GitScan\GitRepoScanner();
+    $gitRepos = $scanner->scan($input->getOption('path'));
+    $batch = new ProcessBatch('Deleting branch(es)...');
+
+    $branchName = $input->getArgument('branchName');
+    $branchQuoted = preg_quote($branchName, '/');
+
+    foreach ($gitRepos as $gitRepo) {
+      /** @var \GitScan\GitRepo $gitRepo */
+      $relPath = $this->fs->makePathRelative($gitRepo->getPath(), $input->getOption('path'));
+
+      $branches = $gitRepo->getBranches();
+      $matches = array();
+      if ($input->getOption('prefix')) {
+        $matches = preg_grep("/[-_]$branchQuoted\$/", $branches);
+      }
+      if (in_array($branchName, $branches)) {
+        $matches[] = $branchName;
+      }
+
+      // TODO: Verify that user wants to delete these.
+
+      foreach ($matches as $match) {
+        $label = "In \"<info>{$relPath}</info>\", delete branch \"<info>$match</info>\" .";
+        $modifier = $input->getOption('force-delete') ? '-D' : '-d';
+        $batch->add($label, $gitRepo->command("git branch $modifier " . escapeshellarg($match)));
+      }
+    }
 
     $batch->runAllOk($output, $input->getOption('dry-run'));
   }
