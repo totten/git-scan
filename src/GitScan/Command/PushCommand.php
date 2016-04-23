@@ -75,7 +75,7 @@ class PushCommand extends BaseCommand {
 
       foreach ($matchedNames as $name) {
         $batch->add(
-          "",
+          "In \"<info>$relPath</info>\", push \"<info>$name</info>\" to \"<info>$remote</info>\"",
           $gitRepo->command(sprintf(
             "git push %s %s",
             escapeshellarg($remote),
