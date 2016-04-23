@@ -31,6 +31,7 @@ class Application extends \Symfony\Component\Console\Application {
   public function createCommands() {
     $commands = array();
     $commands[] = new \GitScan\Command\AutoMergeCommand();
+    $commands[] = new \GitScan\Command\BranchCommand();
     $commands[] = new \GitScan\Command\DiffCommand();
     $commands[] = new \GitScan\Command\ExportCommand();
     $commands[] = new \GitScan\Command\ForeachCommand();
