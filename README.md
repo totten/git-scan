@@ -104,7 +104,7 @@ Configuration
 =============
 
 You may optionally create a file, `~/.git-scan.json`, to customize the
-bahavior. Supported options:
+behavior. Supported options:
 
  * `excludes`: An array of path names to skip when scanning (e.g. `.svn` or `.hg`).
 
