@@ -64,6 +64,7 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
       ->addOption('new', 'N', InputOption::VALUE_NONE, 'When applying patches, create a new merge branch.')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
       ->addOption('url-split', NULL, InputOption::VALUE_REQUIRED, 'If listing multiple URLs in one argument, use the given delimiter', '|')
+      ->addOption('passthru', NULL, InputOption::VALUE_REQUIRED, 'Pass through extra args to "git am" and "git apply"', '')
       ->addArgument('url', InputArgument::IS_ARRAY, 'The URL(s) of any PRs to merge');
   }
 
@@ -103,7 +104,7 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
           }
 
           $output->writeln("In \"<info>{$relPath}</info>\", apply \"<info>{$rule->getExpr()}</info>\" on top of \"<info>{$gitRepo->getCommit()}</info>\".");
-          $process = $gitRepo->applyPatch($rule->getPatch());
+          $process = $gitRepo->applyPatch($rule->getPatch(), $input->getOption('passthru'));
           $output->writeln($process->getOutput());
         }
       }

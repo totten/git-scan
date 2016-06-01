@@ -45,11 +45,12 @@ class GitRepo {
    * Merge a patch (based on a URL)
    *
    * @param string $patch
+   * @param string $passthru
    * @return Process
    */
-  public function applyPatch($patch) {
-    ProcessUtil::runOk($this->command("git apply --check")->setInput($patch));
-    return ProcessUtil::runOk($this->command("git am")->setInput($patch));
+  public function applyPatch($patch, $passthru = '') {
+    ProcessUtil::runOk($this->command("git apply --check $passthru")->setInput($patch));
+    return ProcessUtil::runOk($this->command("git am $passthru")->setInput($patch));
   }
 
   /**
