@@ -23,7 +23,7 @@ Download
 git-scan is distributed in PHAR format, which is a portable executable file (for PHP). It should run on most
 Unix-like systems where PHP 5.3+ is installed.
 
-Simply download [git-scan](https://download.civicrm.org/git-scan/git-scan.phar) to somewhere in your [PATH](https://en.wikipedia.org/wiki/PATH_(variable\)), and make it executable, eg.
+Simply download [git-scan](https://download.civicrm.org/git-scan/git-scan.phar) to somewhere in your [PATH](https://en.wikipedia.org/wiki/PATH_%28variable%29), and make it executable, eg.
 
 ```bash
 cd /usr/local/bin  # or wherever else you want it to go, such as ~/bin
