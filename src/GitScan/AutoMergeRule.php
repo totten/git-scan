@@ -68,6 +68,12 @@ class AutoMergeRule {
         if ($baseUrl === "https://github.com/$owner/$repoName") {
           return TRUE;
         }
+        if ($baseUrl === "https://github.com/$owner/$repoName/") {
+          return TRUE;
+        }
+        if ($baseUrl === "https://github.com/$owner/$repoName.git") {
+          return TRUE;
+        }
         if ($baseUrl === "git@github.com:$owner/$repoName") {
           return TRUE;
         }
