@@ -49,4 +49,5 @@ class HashCommand extends BaseCommand {
 
     $output->writeln($scanner->hash($paths[0]));
   }
+
 }

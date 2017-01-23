@@ -12,10 +12,16 @@ class GitRepoScanner {
   protected $fs;
 
   /**
+   * @var \GitScan\Config
+   */
+  protected $config;
+
+  /**
    * @param FileSystem $fs
    */
-  function __construct($fs = NULL) {
-    $this->fs = $fs ? : new Filesystem();
+  public function __construct($fs = NULL, \GitScan\Config $config = NULL) {
+    $this->fs = $fs ?: new Filesystem();
+    $this->config = $config ?: Config::load();
   }
 
   /**
@@ -30,8 +36,9 @@ class GitRepoScanner {
     $finder = new Finder();
     $finder->in($basedir)
       ->ignoreUnreadableDirs()
-      ->ignoreVCS(FALSE)
+      ->ignoreVCS(FALSE) // Specifically looking for .git files!
       ->ignoreDotFiles(FALSE)
+      ->exclude($this->config->excludes)
       ->directories()
       ->name('.git');
     foreach ($finder as $file) {
@@ -59,4 +66,5 @@ class GitRepoScanner {
     }
     return md5($buf);
   }
+
 }

@@ -14,7 +14,7 @@ class HtmlFormatter implements GitFormatterInterface {
    *  - upstreamBranch: string|NULL, the name of he checked-out branch's upstream counterpart
    * @return string
    */
-  function formatRef($details) {
+  public function formatRef($details) {
     // eg https://github.com/civicrm/civicrm-core/commit/{$commit}
     return sprintf("%s (%s)", $details['localBranch'] ? $details['localBranch'] : '', $this->toAbbrev($details));
   }
@@ -34,7 +34,7 @@ class HtmlFormatter implements GitFormatterInterface {
    *  - upstreamBranch: string|NULL, the name of he checked-out branch's upstream counterpart
    * @return string
    */
-  function formatComparison($from, $to) {
+  public function formatComparison($from, $to) {
     // eg https://github.com/civicrm/civicrm-core/compare/{$commit}...{$commit}
     return sprintf('[RUN: git log %s...%s]', $this->toAbbrev($from), $this->toAbbrev($to));
   }
@@ -43,7 +43,8 @@ class HtmlFormatter implements GitFormatterInterface {
    * @param array $details
    * @return string
    */
-  function toAbbrev($details) {
+  public function toAbbrev($details) {
     return substr($details['commit'], 0, self::ABBREV_LENGTH);
   }
+
 }

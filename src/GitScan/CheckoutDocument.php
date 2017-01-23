@@ -87,12 +87,12 @@ class CheckoutDocument {
   /**
    * @param string $path
    * @return array|NULL with these keys:
-   *  - path: string, local path
-   *  - remotes: array (string $name => string $fetchUrl)
-   *  - commit: string, the name of the checked-out HEAD commit
-   *  - localBranch: string|NULL, the name of the checked-out branch (if applicable)
-   *  - upstreamBranch: string|NULL, the name of he checked-out branch's upstream counterpart
-   *  - modified: bool, whether there are uncommitted, local modifications
+   *   - path: string, local path
+   *   - remotes: array (string $name => string $fetchUrl)
+   *   - commit: string, the name of the checked-out HEAD commit
+   *   - localBranch: string|NULL, the name of the checked-out branch (if applicable)
+   *   - upstreamBranch: string|NULL, the name of he checked-out branch's upstream counterpart
+   *   - modified: bool, whether there are uncommitted, local modifications
    */
   public function getDetails($path) {
     return isset($this->details[$path]) ? $this->details[$path] : NULL;
@@ -105,4 +105,5 @@ class CheckoutDocument {
       'details' => array_values($this->details),
     ));
   }
+
 }

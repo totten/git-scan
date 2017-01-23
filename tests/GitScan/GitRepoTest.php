@@ -96,6 +96,7 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals(array(), $upstream->getRemotes());
     $this->assertEquals(array('origin'), $downstream->getRemotes());
     $this->assertEquals("file://{$upstream->getPath()}", $downstream->getRemoteUrl('origin'));
+    $this->assertEquals(array('origin' => "file://{$upstream->getPath()}"), $downstream->getRemoteUrls());
   }
 
   public function testClonedMasterBranch_Fresh() {
@@ -115,6 +116,7 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals(array(), $upstream->getRemotes());
     $this->assertEquals(array('origin'), $downstream->getRemotes());
     $this->assertEquals("file://{$upstream->getPath()}", $downstream->getRemoteUrl('origin'));
+    $this->assertEquals(array('origin' => "file://{$upstream->getPath()}"), $downstream->getRemoteUrls());
   }
 
   public function testClonedTag() {
@@ -152,6 +154,7 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals(array(), $upstream->getRemotes());
     $this->assertEquals(array('origin'), $downstream->getRemotes());
     $this->assertEquals("file://{$upstream->getPath()}", $downstream->getRemoteUrl('origin'));
+    $this->assertEquals(array('origin' => "file://{$upstream->getPath()}"), $downstream->getRemoteUrls());
   }
 
   public function testCloned_CheckoutMyFeature_Fresh() {
@@ -171,6 +174,7 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals(array(), $upstream->getRemotes());
     $this->assertEquals(array('origin'), $downstream->getRemotes());
     $this->assertEquals("file://{$upstream->getPath()}", $downstream->getRemoteUrl('origin'));
+    $this->assertEquals(array('origin' => "file://{$upstream->getPath()}"), $downstream->getRemoteUrls());
   }
 
   public function testCloned_CheckoutMyFeature_Modified() {
@@ -191,6 +195,7 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals(array(), $upstream->getRemotes());
     $this->assertEquals(array('origin'), $downstream->getRemotes());
     $this->assertEquals("file://{$upstream->getPath()}", $downstream->getRemoteUrl('origin'));
+    $this->assertEquals(array('origin' => "file://{$upstream->getPath()}"), $downstream->getRemoteUrls());
   }
 
   public function testCloned_CheckoutMyFeature_Newfile() {
@@ -211,6 +216,7 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals(array(), $upstream->getRemotes());
     $this->assertEquals(array('origin'), $downstream->getRemotes());
     $this->assertEquals("file://{$upstream->getPath()}", $downstream->getRemoteUrl('origin'));
+    $this->assertEquals(array('origin' => "file://{$upstream->getPath()}"), $downstream->getRemoteUrls());
   }
 
   public function testIsFastForwardable_upstreamChanged() {

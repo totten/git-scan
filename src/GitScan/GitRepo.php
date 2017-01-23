@@ -3,6 +3,7 @@ namespace GitScan;
 
 use GitScan\Util\Process as ProcessUtil;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 
 class GitRepo {
 
@@ -31,13 +32,26 @@ class GitRepo {
    */
   private $status;
 
-  function __construct($path) {
+  public function __construct($path) {
     $this->fs = new Filesystem();
     $this->path = $path;
     $this->flush();
   }
 
+
   /* --------------- Main interfaces --------------- */
+
+  /**
+   * Merge a patch (based on a URL)
+   *
+   * @param string $patch
+   * @param string $passthru
+   * @return Process
+   */
+  public function applyPatch($patch, $passthru = '') {
+    ProcessUtil::runOk($this->command("git apply --check $passthru")->setInput($patch));
+    return ProcessUtil::runOk($this->command("git am $passthru")->setInput($patch));
+  }
 
   /**
    * @return string 40-character hexadecimal commit name
@@ -48,11 +62,12 @@ class GitRepo {
     $process->run();
     if ($process->isSuccessful()) {
       $commit = trim($process->getOutput());
-      if (! \GitScan\Util\Commit::isValid($commit)) {
+      if (!\GitScan\Util\Commit::isValid($commit)) {
         throw new \RuntimeException("Malformed commit [$commit]");
       }
       return $commit;
-    } else {
+    }
+    else {
       throw new \RuntimeException("Failed to determine commit");
     }
   }
@@ -118,6 +133,30 @@ class GitRepo {
   /**
    * @return array<string>
    */
+  public function getBranches() {
+    $process = $this->command("git branch");
+    $process->run();
+    if ($process->isSuccessful()) {
+      $output = trim($process->getOutput(), " \r\n");
+      if ($output) {
+        $lines = array();
+        foreach (explode("\n", $output) as $line) {
+          $lines[] = trim($line, " \r\n*");
+        }
+        return $lines;
+      }
+      else {
+        return array();
+      }
+    }
+    else {
+      throw new \RuntimeException("Failed to determine branches");
+    }
+  }
+
+  /**
+   * @return array<string>
+   */
   public function getRemotes() {
     $process = $this->command("git remote");
     $process->run();
@@ -125,10 +164,12 @@ class GitRepo {
       $output = trim($process->getOutput(), " \r\n");
       if ($output) {
         return explode("\n", $output);
-      } else {
+      }
+      else {
         return array();
       }
-    } else {
+    }
+    else {
       throw new \RuntimeException("Failed to determine remotes");
     }
   }
@@ -141,6 +182,46 @@ class GitRepo {
    */
   public function getRemoteUrl($remote) {
     return $this->getConfig("remote.{$remote}.url");
+  }
+
+  /**
+   * Get the FETCH URLs for all remtoes.
+   *
+   * @return array
+   *   Array(string $remoteName => string $remoteUrl).
+   */
+  public function getRemoteUrls() {
+    // FIXME: This is silly inefficient.
+    // Don't think caching is a good, but we really only need one call to `git remote -v`.
+    $remoteUrls = array();
+    foreach ($this->getRemotes() as $remote) {
+      $remoteUrls[$remote] = $this->getRemoteUrl($remote);
+    }
+    return $remoteUrls;
+  }
+
+  /**
+   * @return array<string>
+   */
+  public function getTags() {
+    $process = $this->command("git tag");
+    $process->run();
+    if ($process->isSuccessful()) {
+      $output = trim($process->getOutput(), " \r\n");
+      if ($output) {
+        $lines = array();
+        foreach (explode("\n", $output) as $line) {
+          $lines[] = trim($line, " \r\n*");
+        }
+        return $lines;
+      }
+      else {
+        return array();
+      }
+    }
+    else {
+      throw new \RuntimeException("Failed to determine branches");
+    }
   }
 
   /**

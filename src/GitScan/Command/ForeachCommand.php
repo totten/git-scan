@@ -17,7 +17,6 @@ class ForeachCommand extends BaseCommand {
 
   /**
    * @param string|null $name
-   * @param array $parameters list of configuration parameters to accept ($key => $label)
    */
   public function __construct($name = NULL) {
     $this->fs = new Filesystem();
@@ -83,10 +82,9 @@ class ForeachCommand extends BaseCommand {
       }
       $process = new \Symfony\Component\Process\Process($input->getOption('command'));
       $process->setWorkingDirectory($gitRepo->getPath());
-      $process->setEnv(array(
-        'path' => $this->fs->makePathRelative($gitRepo->getPath(), $topLevel),
-        'toplevel' => $topLevel,
-      ));
+      // $process->setEnv(...); sucks in Debian/Ubuntu
+      putenv("path=" . $this->fs->makePathRelative($gitRepo->getPath(), $topLevel));
+      putenv("toplevel=" . $topLevel);
       $errorOutput = $output;
       if (is_callable($output, 'getErrorOutput') && $output->getErrorOutput()) {
         $errorOutput = $output->getErrorOutput();
@@ -96,13 +94,13 @@ class ForeachCommand extends BaseCommand {
           if (OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity()) {
             $errorOutput->write("<error>STDERR</error> ");
           }
-          $errorOutput->write($buffer, false, OutputInterface::OUTPUT_RAW);
+          $errorOutput->write($buffer, FALSE, OutputInterface::OUTPUT_RAW);
         }
         else {
           if (OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity()) {
             $output->write("<comment>STDOUT</comment> ");
           }
-          $output->write($buffer, false, OutputInterface::OUTPUT_RAW);
+          $output->write($buffer, FALSE, OutputInterface::OUTPUT_RAW);
         }
       });
       if (!$process->isSuccessful()) {
@@ -110,7 +108,10 @@ class ForeachCommand extends BaseCommand {
         $statusCode = 2;
       }
     }
+    putenv("path");
+    putenv("toplevel");
 
     return $statusCode;
   }
+
 }

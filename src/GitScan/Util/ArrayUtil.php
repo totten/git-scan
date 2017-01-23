@@ -1,5 +1,6 @@
 <?php
 namespace GitScan\Util;
+
 class ArrayUtil {
   public static  function collect($array, $index) {
     $result = array();
@@ -10,4 +11,5 @@ class ArrayUtil {
     }
     return $result;
   }
+
 }

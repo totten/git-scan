@@ -11,8 +11,6 @@ class Application extends \Symfony\Component\Console\Application {
 
   /**
    * Primary entry point for execution of the standalone command.
-   *
-   * @return
    */
   public static function main($binDir) {
     $application = new Application('git-scan', '@package_version@');
@@ -32,31 +30,19 @@ class Application extends \Symfony\Component\Console\Application {
    */
   public function createCommands() {
     $commands = array();
+    $commands[] = new \GitScan\Command\AutoMergeCommand();
+    $commands[] = new \GitScan\Command\BranchCommand();
     $commands[] = new \GitScan\Command\DiffCommand();
     $commands[] = new \GitScan\Command\ExportCommand();
     $commands[] = new \GitScan\Command\ForeachCommand();
     $commands[] = new \GitScan\Command\HashCommand();
     //$commands[] = new \GitScan\Command\ImportCommand();
+    $commands[] = new \GitScan\Command\LsCommand();
+    $commands[] = new \GitScan\Command\PushCommand();
     $commands[] = new \GitScan\Command\StatusCommand();
+    $commands[] = new \GitScan\Command\TagCommand();
     $commands[] = new \GitScan\Command\UpdateCommand();
     return $commands;
   }
-
-  /*
-  public function doRun(InputInterface $input, OutputInterface $output) {
-    $commandName = $input->getFirstArgument();
-    if (empty($commandName)) {
-      if (TRUE === $input->hasParameterOption(array('--help', '-h'))) {
-        $input = new ArrayInput(array('command' => 'list'));
-      }
-    }
-    return parent::doRun($input, $output);
-  }
-
-  protected function getCommandName(InputInterface $input) {
-    $name = parent::getCommandName($input);
-    return empty($name) ? 'status' : $name;
-  }
-  */
 
 }

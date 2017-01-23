@@ -1,5 +1,8 @@
 <?php
 namespace GitScan\Util;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
 class Process {
 
   /**
@@ -29,4 +32,5 @@ class Process {
       'Error Output' => $process->getErrorOutput(),
     ));
   }
+
 }

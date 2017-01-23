@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
-class ExportCommand extends BaseCommand {
+class LsCommand extends BaseCommand {
 
   /**
    * @var Filesystem
@@ -28,9 +28,13 @@ class ExportCommand extends BaseCommand {
 
   protected function configure() {
     $this
-      ->setName('export')
-      ->setDescription('Show the status of any nested git repositories')
-      ->setHelp("Export the current checkout information to JSON format")
+      ->setName('ls')
+      ->setDescription('List any nested git repositories')
+      ->setHelp('Create a list of git repos. This may be useful for piping and shell scripting.
+
+      Example: git scan ls | while read dir; do ls -la $dir ; done
+      ')
+      ->addOption('absolute', 'A', InputOption::VALUE_NONE, 'Output absolute paths')
       ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()));
   }
 
@@ -48,11 +52,14 @@ class ExportCommand extends BaseCommand {
     }
 
     $gitRepos = $scanner->scan($paths);
-    $output->writeln(
-      \GitScan\CheckoutDocument::create($paths[0])
-        ->importRepos($gitRepos)
-        ->toJson()
-    );
+    foreach ($gitRepos as $gitRepo) {
+      /** @var GitRepo $gitRepo */
+      $path = $input->getOption('absolute')
+        ? $gitRepo->getPath()
+        : $this->fs->makePathRelative($gitRepo->getPath(), $paths[0]);
+      $path = rtrim($path, '/');
+      $output->writeln($path);
+    }
   }
 
 }

@@ -136,7 +136,7 @@ class StatusCommand extends BaseCommand {
     }
   }
 
-  function getUniqueChars($items) {
+  public function getUniqueChars($items) {
     $chars = array();
     foreach ($items as $item) {
       foreach (str_split($item) as $char) {
@@ -146,4 +146,5 @@ class StatusCommand extends BaseCommand {
     ksort($chars);
     return array_keys($chars);
   }
+
 }

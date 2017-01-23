@@ -15,9 +15,16 @@ Limitations:
 
  * IO-intensive -- Performs filesystem scan and does not cache results
 
+The concepts and use-case are described in more depth in the blog post, [Developer Tip: Managing Multiple Git Repos](https://civicrm.org/blogs/totten/developer-tip-managing-multiple-git-repositories)
 
 Download
 ========
+
+git-scan is distributed in PHAR format, which is a portable executable file (for PHP). It should run on most
+Unix-like systems where PHP 5.3+ is installed.
+
+Simply download [git-scan](https://download.civicrm.org/git-scan/git-scan.phar) and put it
+somewhere in the PATH, eg
 
 ```bash
 sudo curl -LsS https://download.civicrm.org/git-scan/git-scan.phar -o /usr/local/bin/git-scan
@@ -83,10 +90,26 @@ STDERR Please commit or stash them.
 [[ /home/me/drupal-demo/sites/all/modules/civicrm/packages: exit code = 1 ]]
 [[ /home/me/drupal-demo/sites/all/modules/contrib/civicrm_developer ]]
 STDOUT Current branch master is up to date.
+
+me@localhost:~/drupal-demo$ git scan am https://github.com/example/mymodule/pull/1234
+In "sites/all/modules/mymodule/", the current branch is "master" based on "origin/master". What would you like to do it?
+  [keep   ] Keep the current branch "master" along with any local changes. Apply patches on top.
+  [rebuild] Rebuild the branch "master" based on "origin/master". Destroy any local changes. Apply changes on top.
+  [new    ] Create a new branch "merge-master-20160411152732" based on "origin/master". Apply changes on top.
+  [abort  ] Abort the auto-merge process. (default)
+> new
 ```
 
-Unit-Tests
-==========
+Configuration
+=============
+
+You may optionally create a file, `~/.git-scan.json`, to customize the
+behavior. Supported options:
+
+ * `excludes`: An array of path names to skip when scanning (e.g. `.svn` or `.hg`).
+
+Development: Unit-Tests
+=======================
 
 If you have previously installed [phpunit](http://phpunit.de/), then you can run the test suite. Something like:
 
@@ -105,14 +128,20 @@ Time: 2 seconds, Memory: 6.50Mb
 OK (49 tests, 121 assertions)
 ```
 
-Build
-=====
+Development: Build (PHAR)
+=========================
 
-Use [box](http://box-project.github.io/box2/):
+If you are developing new changes to `git-scan` and want to create a new
+build of `git-scan.phar` from source, you must have
+[`git`](https://git-scm.com), [`composer`](https://getcomposer.org/), and
+[`box`](http://box-project.github.io/box2/) installed.  Then run commands
+like:
 
 ```
 $ git clone https://github.com/totten/git-scan
 $ cd git-scan
 $ composer install
-$ php -dphar.readonly=0 `which box` build
+$ which box
+/usr/local/bin/box
+$ php -dphar.readonly=0 /usr/local/bin/box build
 ```

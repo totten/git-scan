@@ -21,7 +21,6 @@ class DiffCommand extends BaseCommand {
 
   /**
    * @param string|null $name
-   * @param array $parameters list of configuration parameters to accept ($key => $label)
    */
   public function __construct($name = NULL) {
     $this->fs = new Filesystem();
@@ -60,6 +59,7 @@ class DiffCommand extends BaseCommand {
       case 'json':
         $output->write(json_encode($report->getRows()));
         break;
+
       case 'text':
         $output->writeln(sprintf("Compare <info>%s</info> to <info>%s</info>",
           $input->getArgument('from'),
@@ -75,6 +75,7 @@ class DiffCommand extends BaseCommand {
           ->setRows($rows);
         $table->render($output);
         break;
+
       case 'html':
         // TODO
       default:
@@ -101,4 +102,5 @@ class DiffCommand extends BaseCommand {
         ->importJson($json);
     }
   }
+
 }
