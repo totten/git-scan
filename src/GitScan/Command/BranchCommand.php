@@ -66,14 +66,15 @@ class BranchCommand extends BaseCommand {
     $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getOption('path'));
     $batch = new ProcessBatch('Creating branch(es)...');
+    $self = $this;
 
     $g = new \GitScan\GitBranchGenerator($gitRepos);
     $g->generate(
       $input->getArgument('head'),
       $input->getArgument('branchName'),
       $input->getOption('prefix'),
-      function (GitRepo $gitRepo, $oldBranch, $newBranch) use ($input, $output, $helper, &$batch) {
-        $relPath = $this->fs->makePathRelative($gitRepo->getPath(), $input->getOption('path'));
+      function (GitRepo $gitRepo, $oldBranch, $newBranch) use ($input, $output, $helper, &$batch, $self) {
+        $relPath = $self->fs->makePathRelative($gitRepo->getPath(), $input->getOption('path'));
 
         $question = new ChoiceQuestion("\n<comment>In \"<info>{$relPath}</info>\", found existing branch \"<info>$oldBranch</info>\". Create a new branch \"<info>$newBranch</info>\"?</comment>",
           array("y" => "yes (default)", "n" => "no", "c" => "customize"),
