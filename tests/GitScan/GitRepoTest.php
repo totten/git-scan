@@ -129,7 +129,7 @@ class GitRepoTest extends GitScanTestCase {
 
     $this->assertIsCommit($downstream->getCommit());
     $this->assertNotEquals($upstream->getCommit(), $downstream->getCommit());
-    $this->assertEquals(NULL, $downstream->getLocalBranch());
+    $this->assertEquals('tags/0.1', $downstream->getLocalBranch());
     $this->assertEquals(NULL, $downstream->getUpstreamBranch());
     $this->assertEquals(FALSE, $downstream->hasUncommittedChanges());
     $this->assertEquals(FALSE, $downstream->hasUntrackedFiles());

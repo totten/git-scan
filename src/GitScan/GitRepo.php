@@ -242,7 +242,7 @@ class GitRepo {
         return null;
       }
       else {
-        return 'Tag: ' . $describe;
+        return 'tags/' . $describe;
       }
     }
     if (preg_match(":^refs/heads/(.*)$:", $symbolicRef, $matches)) {
