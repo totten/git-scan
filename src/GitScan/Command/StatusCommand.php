@@ -89,7 +89,7 @@ class StatusCommand extends BaseCommand {
     if (!empty($rows)) {
       $table = $this->getApplication()->getHelperSet()->get('table');
       $table
-        ->setHeaders(array('Status', 'Path', 'Local Branch', 'Remote Branch'))
+        ->setHeaders(array('Status', 'Path', 'Local Branch / Tag', 'Remote Branch'))
         ->setRows($rows);
       $table->render($output);
 
