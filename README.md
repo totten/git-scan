@@ -27,8 +27,8 @@ Simply download [git-scan](https://download.civicrm.org/git-scan/git-scan.phar) 
 
 ```bash
 cd /usr/local/bin  # or wherever else you want it to go, such as ~/bin
-sudo curl -LsS https://download.civicrm.org/git-scan/git-scan.phar -o ./git-scan  # download it
-sudo chmod +x ./git-scan  # make it executable
+sudo curl -LsS https://download.civicrm.org/git-scan/git-scan.phar -o git-scan
+sudo chmod +x git-scan
 ```
 
 Examples
