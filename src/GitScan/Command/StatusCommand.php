@@ -66,8 +66,6 @@ class StatusCommand extends BaseCommand {
     $rows = array();
     $hiddenCount = 0;
 
-//    var_dump($gitRepos);
-
     foreach ($gitRepos as $gitRepo) {
       /** @var \GitScan\GitRepo $gitRepo */
       if ($input->getOption('fetch') && $gitRepo->getUpstreamBranch() !== NULL) {
