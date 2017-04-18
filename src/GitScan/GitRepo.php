@@ -201,6 +201,15 @@ class GitRepo {
   }
 
   /**
+   * Get the Origin URL.
+   *
+   * @return string|null
+   */
+  public function getOriginUrl() {
+    return array_key_exists('origin', $this->getRemoteUrls()) ? $this->getRemoteUrls()['origin'] : NULL;
+  }
+
+    /**
    * @return array<string>
    */
   public function getTags() {
