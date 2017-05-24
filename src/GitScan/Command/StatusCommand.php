@@ -65,6 +65,7 @@ class StatusCommand extends BaseCommand {
     $progress->advance();
     $rows = array();
     $hiddenCount = 0;
+
     foreach ($gitRepos as $gitRepo) {
       /** @var \GitScan\GitRepo $gitRepo */
       if ($input->getOption('fetch') && $gitRepo->getUpstreamBranch() !== NULL) {
@@ -76,6 +77,7 @@ class StatusCommand extends BaseCommand {
           $this->fs->formatPrettyPath($gitRepo->getPath(), $input->getArgument('path')),
           $gitRepo->getLocalBranch(),
           $gitRepo->getUpstreamBranch(),
+          $gitRepo->getOriginUrl()
         );
       }
       else {
@@ -89,7 +91,7 @@ class StatusCommand extends BaseCommand {
     if (!empty($rows)) {
       $table = $this->getApplication()->getHelperSet()->get('table');
       $table
-        ->setHeaders(array('Status', 'Path', 'Local Branch / Tag', 'Remote Branch'))
+        ->setHeaders(array('Status', 'Path', 'Local Branch / Tag', 'Remote Branch', 'Remote URL'))
         ->setRows($rows);
       $table->render($output);
 

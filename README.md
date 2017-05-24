@@ -141,7 +141,5 @@ like:
 $ git clone https://github.com/totten/git-scan
 $ cd git-scan
 $ composer install
-$ which box
-/usr/local/bin/box
-$ php -dphar.readonly=0 /usr/local/bin/box build
+$ php -dphar.readonly=0 $(which box) build
 ```
