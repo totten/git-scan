@@ -203,13 +203,13 @@ class GitRepo {
   /**
    * Get the Origin URL.
    *
-   * @return string|null
+   * @return string|NULL
    */
   public function getOriginUrl() {
     return array_key_exists(dirname($this->getUpstreamBranch()), $this->getRemoteUrls()) ? $this->getRemoteUrls()['origin'] : NULL;
   }
 
-    /**
+  /**
    * @return array<string>
    */
   public function getTags() {
@@ -248,7 +248,7 @@ class GitRepo {
       $process->run();
       $describe = trim($process->getOutput());
       if (empty($describe)) {
-        return null;
+        return NULL;
       }
       else {
         return 'tags/' . $describe;
@@ -363,23 +363,21 @@ class GitRepo {
       elseif (preg_match('/^(# )?Your branch is behind.*can be fast-forwarded/', $line)) {
         return TRUE;
       }
-      /*
-      elseif ($line == '#') {
-        continue; // ignore
-      }
-      elseif (preg_match('/^# (On branch|Not currently on any branch)/', $line)) {
-        continue; // ignore
-      }
-      elseif (preg_match('/^# Untracked files/', $line)) {
-        continue; // ignore
-      }
-      elseif (preg_match('/^#(\t|   )/', $line)) {
-        continue; // ignore
-      }
-      else {
-        $unknowns[] = $line;
-      }
-      */
+      //elseif ($line == '#') {
+      //  continue; // ignore
+      //}
+      //elseif (preg_match('/^# (On branch|Not currently on any branch)/', $line)) {
+      //  continue; // ignore
+      //}
+      //elseif (preg_match('/^# Untracked files/', $line)) {
+      //  continue; // ignore
+      //}
+      //elseif (preg_match('/^#(\t|   )/', $line)) {
+      //  continue; // ignore
+      //}
+      //else {
+      //  $unknowns[] = $line;
+      //}
     }
     // If there's no explicit mention of merge-ability, then it should be clean.
     // However, it's possible that the status message language has changed and we
@@ -417,8 +415,11 @@ class GitRepo {
     $this->statusCode = NULL;
   }
 
-  /* --------------- Helpers to facilitate testing --------------- */
+  // --------------- Helpers to facilitate testing ---------------
 
+  /**
+   * Get the status in "porcelain" (easy-to-parse) format.
+   */
   public function getPorcelain($fresh = FALSE) {
     if ($fresh || $this->porcelain === NULL) {
       $process = ProcessUtil::runOk($this->command("git status --porcelain"));
@@ -485,7 +486,7 @@ class GitRepo {
   /**
    * @param string $relPath
    * @param string $content
-   * @param string|null $commitMessage
+   * @param string|NULL $commitMessage
    */
   public function commitFile($relPath, $content, $commitMessage = NULL) {
     if ($commitMessage === NULL) {

@@ -16,7 +16,7 @@ class ForeachCommand extends BaseCommand {
   var $fs;
 
   /**
-   * @param string|null $name
+   * @param string|NULL $name
    */
   public function __construct($name = NULL) {
     $this->fs = new Filesystem();
@@ -40,16 +40,19 @@ class ForeachCommand extends BaseCommand {
         . "   foreach /home/me/download /home/me/src -c 'echo Examine \$path in \$toplevel'\n"
         . "\n"
         . "Important: The example uses single-quotes to escape the $'s\n"
-    )
+      )
       ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()))
       ->addOption('command', 'c', InputOption::VALUE_REQUIRED, 'The command to execute')
       ->addOption('status', NULL, InputOption::VALUE_REQUIRED, 'Filter table output by repo statuses ("all","novel","boring")', 'all');
   }
 
   //public function getSynopsis() {
-//    return $this->getName() . ' [--status="..."] [--path="..."] [command]';
+  //    return $this->getName() . ' [--status="..."] [--path="..."] [command]';
   //}
 
+  /**
+   * @inheritDoc
+   */
   protected function initialize(InputInterface $input, OutputInterface $output) {
     $input->setArgument('path', $this->fs->toAbsolutePaths($input->getArgument('path')));
     $this->fs->validateExists($input->getArgument('path'));

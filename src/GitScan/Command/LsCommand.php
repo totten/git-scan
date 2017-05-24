@@ -19,7 +19,7 @@ class LsCommand extends BaseCommand {
   var $fs;
 
   /**
-   * @param string|null $name
+   * @param string|NULL $name
    */
   public function __construct($name = NULL) {
     $this->fs = new Filesystem();

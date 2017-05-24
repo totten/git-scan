@@ -79,7 +79,7 @@ class DiffReport {
   /**
    * @param array $from
    * @param array $to
-   * @return int|null
+   * @return int|NULL
    */
   public function getChangeCount($from, $to) {
     if ($from['commit'] == $to['commit']) {
@@ -104,7 +104,7 @@ class DiffReport {
   /**
    * @param array $rootNames list of possible root paths, in order of preference; e.g. array('to','from') or array('from','to')
    * @param array $details
-   * @return GitRepo|null
+   * @return GitRepo|NULL
    */
   public function findRepo($rootNames, $details) {
     foreach ($rootNames as $rootName) {

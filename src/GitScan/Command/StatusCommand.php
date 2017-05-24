@@ -21,8 +21,7 @@ class StatusCommand extends BaseCommand {
   var $fs;
 
   /**
-   * @param string|null $name
-   * @param array $parameters list of configuration parameters to accept ($key => $label)
+   * @param string|NULL $name
    */
   public function __construct($name = NULL) {
     $this->fs = new Filesystem();
@@ -77,7 +76,7 @@ class StatusCommand extends BaseCommand {
           $this->fs->formatPrettyPath($gitRepo->getPath(), $input->getArgument('path')),
           $gitRepo->getLocalBranch(),
           $gitRepo->getUpstreamBranch(),
-          $gitRepo->getOriginUrl()
+          $gitRepo->getOriginUrl(),
         );
       }
       else {
@@ -100,21 +99,27 @@ class StatusCommand extends BaseCommand {
         switch ($char) {
           case ' ':
             break;
+
           case 'M':
             $output->writeln("[M] Modifications have not been committed");
             break;
+
           case 'N':
             $output->writeln("[N] New files have not been committed");
             break;
+
           case 'F':
             $output->writeln("[F] Fast-forwards are not possible");
             break;
+
           case 'B':
             $output->writeln("[B] Branch names are suspiciously different");
             break;
+
           case 'S':
             $output->writeln("[S] Stash contains data");
             break;
+
           default:
             throw new \RuntimeException("Unrecognized status code [$char]");
         }
@@ -129,9 +134,11 @@ class StatusCommand extends BaseCommand {
         case 'novel':
           $output->writeln("NOTE: Omitted information about $hiddenCount boring repo(s). To display all, use --status=all.");
           break;
+
         case 'boring':
           $output->writeln("NOTE: Omitted information about $hiddenCount novel repo(s). To display all, use --status=all.");
           break;
+
         default:
           $output->writeln("NOTE: Omitted information about $hiddenCount repo(s). To display all, use --status=all.");
       }
