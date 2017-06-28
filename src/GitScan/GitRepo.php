@@ -206,7 +206,8 @@ class GitRepo {
    * @return string|NULL
    */
   public function getOriginUrl() {
-    return array_key_exists(dirname($this->getUpstreamBranch()), $this->getRemoteUrls()) ? $this->getRemoteUrls()['origin'] : NULL;
+    $remoteUrls = $this->getRemoteUrls();
+    return array_key_exists(dirname($this->getUpstreamBranch()), $remoteUrls) ? $remoteUrls['origin'] : NULL;
   }
 
   /**
