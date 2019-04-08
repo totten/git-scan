@@ -67,7 +67,7 @@ class ForeachCommand extends BaseCommand {
     $statusCode = 0;
 
     if (OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity()) {
-      $output->writeln("<info>[[ Finding repositories ]]</info>");
+      $output->writeln("<comment>[[ Finding repositories ]]</comment>");
     }
     $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getArgument('path'));
@@ -81,7 +81,7 @@ class ForeachCommand extends BaseCommand {
       $topLevel = $this->fs->findFirstParent($gitRepo->getPath(), $input->getArgument('path'));
 
       if (OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity()) {
-        $output->writeln("<info>[[ {$gitRepo->getPath()} ]]</info>");
+        $output->writeln("<comment>[[ <info>{$gitRepo->getPath()}</info> ]]</comment>");
       }
       $process = new \Symfony\Component\Process\Process($input->getOption('command'));
       $process->setWorkingDirectory($gitRepo->getPath());

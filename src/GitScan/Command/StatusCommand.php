@@ -46,7 +46,7 @@ class StatusCommand extends BaseCommand {
   }
 
   protected function execute(InputInterface $input, OutputInterface $output) {
-    $output->writeln("<info>[[ Finding repositories ]]</info>");
+    $output->writeln("<comment>[[ Finding repositories ]]</comment>");
     $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getArgument('path'));
 
@@ -55,8 +55,8 @@ class StatusCommand extends BaseCommand {
     }
 
     $output->writeln($input->getOption('fetch')
-        ? "<info>[[ Fetching statuses ]]</info>"
-        : "<info>[[ Checking statuses ]]</info>"
+        ? "<comment>[[ Fetching statuses ]]</comment>"
+        : "<comment>[[ Checking statuses ]]</comment>"
     );
     /** @var \Symfony\Component\Console\Helper\ProgressHelper $progress */
     $progress = $this->getApplication()->getHelperSet()->get('progress');
@@ -86,7 +86,7 @@ class StatusCommand extends BaseCommand {
     }
     $progress->finish();
 
-    $output->writeln("<info>[[ Results ]]</info>\n");
+    $output->writeln("<comment>[[ Results ]]</comment>\n");
     if (!empty($rows)) {
       $table = $this->getApplication()->getHelperSet()->get('table');
       $table

@@ -43,22 +43,22 @@ class UpdateCommand extends BaseCommand {
   protected function execute(InputInterface $input, OutputInterface $output) {
     $statusCode = 0;
 
-    $output->writeln("<info>[[ Finding repositories ]]</info>");
+    $output->writeln("<comment>[[ Finding repositories ]]</comment>");
     $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getArgument('path'));
 
-    $output->writeln("<info>[[ Fast-forwarding ]]</info>");
+    $output->writeln("<comment>[[ Fast-forwarding ]]</comment>");
     foreach ($gitRepos as $gitRepo) {
       /** @var \GitScan\GitRepo $gitRepo */
       $path = $this->fs->formatPrettyPath($gitRepo->getPath(), $input->getArgument('path'));
       if ($gitRepo->getUpstreamBranch() === NULL) {
-        $output->writeln("<comment>Skip $path: No upstream tracking branch</comment>");
+        $output->writeln("<comment>Skip <info>$path</info>: No upstream tracking branch</comment>");
       }
       elseif (!$gitRepo->isLocalFastForwardable()) {
-        $output->writeln("<comment>Skip $path: Cannot be fast-forwarded</comment>");
+        $output->writeln("<comment>Skip <info>$path</info>: Cannot be fast-forwarded</comment>");
       }
       else {
-        $output->writeln("<comment>Fast-forward $path ({$gitRepo->getLocalBranch()} <= {$gitRepo->getUpstreamBranch()})...</comment>");
+        $output->writeln("<comment>Fast-forward <info>$path</info> (<info>{$gitRepo->getLocalBranch()}</info> <= <info>{$gitRepo->getUpstreamBranch()}</info>)...</comment>");
         $process = $gitRepo->command('git pull --ff-only');
         $process->run();
         if (!$process->isSuccessful()) {
