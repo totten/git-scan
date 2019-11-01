@@ -74,9 +74,10 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
   }
 
   protected function execute(InputInterface $input, OutputInterface $output) {
+    $registeredSources = json_decode(file_get_contents(dirname(__DIR__) . '/AutoMergeRule.json'), 1);
     $rules = array();
     foreach ($this->getPatchExprs($input, $output) as $expr) {
-      $rule = new AutoMergeRule($expr);
+      $rule = new AutoMergeRule($expr, $registeredSources);
       $rules[] = $rule;
     }
 
