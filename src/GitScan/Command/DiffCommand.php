@@ -11,13 +11,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 class DiffCommand extends BaseCommand {
 
   /**
-   * @var Filesystem
+   * @var \GitScan\Util\Filesystem
    */
-  var $fs;
+  public $fs;
 
   /**
    * @param string|NULL $name
@@ -86,7 +85,7 @@ class DiffCommand extends BaseCommand {
 
   /**
    * @param string $path path to a directory or JSON file
-   * @return CheckoutDocument
+   * @return \GitScan\CheckoutDocument
    */
   protected function getCheckoutDocument($path) {
     if (is_dir($path)) {

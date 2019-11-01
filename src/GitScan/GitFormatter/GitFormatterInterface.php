@@ -2,6 +2,7 @@
 namespace GitScan\GitFormatter;
 
 interface GitFormatterInterface {
+
   /**
    * @param array $details
    *  - path: string, local path

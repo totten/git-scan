@@ -1,22 +1,17 @@
 <?php
 namespace GitScan\Command;
 
-use GitScan\GitRepo;
-use GitScan\Util\ArrayUtil;
 use GitScan\Util\Filesystem;
-use GitScan\Util\Process as ProcessUtil;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 
 class ExportCommand extends BaseCommand {
 
   /**
-   * @var Filesystem
+   * @var \GitScan\Util\Filesystem
    */
-  var $fs;
+  public $fs;
 
   /**
    * @param string|NULL $name

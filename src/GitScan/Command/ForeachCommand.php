@@ -1,7 +1,6 @@
 <?php
 namespace GitScan\Command;
 
-use GitScan\GitRepo;
 use GitScan\Util\Filesystem;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,9 +10,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ForeachCommand extends BaseCommand {
 
   /**
-   * @var Filesystem
+   * @var \GitScan\Util\Filesystem
    */
-  var $fs;
+  public $fs;
 
   /**
    * @param string|NULL $name

@@ -1,7 +1,6 @@
 <?php
 namespace GitScan\Command;
 
-use GitScan\GitRepo;
 use GitScan\Util\ArrayUtil;
 use GitScan\Util\Filesystem;
 use GitScan\Util\Process as ProcessUtil;
@@ -10,15 +9,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 class StatusCommand extends BaseCommand {
 
   const DISPLAY_ALL_THRESHOLD = 10;
 
   /**
-   * @var Filesystem
+   * @var \GitScan\Util\Filesystem
    */
-  var $fs;
+  public $fs;
 
   /**
    * @param string|NULL $name

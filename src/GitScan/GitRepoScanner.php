@@ -18,6 +18,7 @@ class GitRepoScanner {
 
   /**
    * @param FileSystem $fs
+   * @param \GitScan\Config|NULL $config
    */
   public function __construct($fs = NULL, \GitScan\Config $config = NULL) {
     $this->fs = $fs ?: new Filesystem();
@@ -36,7 +37,8 @@ class GitRepoScanner {
     $finder = new Finder();
     $finder->in($basedir)
       ->ignoreUnreadableDirs()
-      ->ignoreVCS(FALSE) // Specifically looking for .git files!
+    // Specifically looking for .git files!
+      ->ignoreVCS(FALSE)
       ->ignoreDotFiles(FALSE)
       ->exclude($this->config->excludes)
       ->directories()

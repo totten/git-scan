@@ -2,10 +2,7 @@
 namespace GitScan\Command;
 
 use GitScan\GitRepo;
-use GitScan\Util\ArrayUtil;
 use GitScan\Util\Filesystem;
-use GitScan\Util\Process as ProcessUtil;
-use GitScan\Util\Process;
 use GitScan\Util\ProcessBatch;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,13 +11,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
-
 class BranchCommand extends BaseCommand {
 
   /**
-   * @var Filesystem
+   * @var \GitScan\Util\Filesystem
    */
-  var $fs;
+  public $fs;
 
   /**
    * @param string|NULL $name

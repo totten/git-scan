@@ -2,6 +2,7 @@
 namespace GitScan\Util;
 
 class Filesystem extends \Symfony\Component\Filesystem\Filesystem {
+
   /**
    * @param string $path
    * @return string updated $path

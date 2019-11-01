@@ -1,9 +1,7 @@
 <?php
 namespace GitScan;
 
-use GitScan\Exception\ProcessErrorException;
 use GitScan\Util\PatchUtil;
-use GitScan\Util\Process;
 
 /**
  * Class GithubAutoMergeRule

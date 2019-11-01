@@ -1,8 +1,6 @@
 <?php
 namespace GitScan;
 
-use Symfony\Component\Finder\Finder;
-
 /**
  * Class Config
  * @package GitScan

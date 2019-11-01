@@ -3,7 +3,6 @@ namespace GitScan;
 
 use GitScan\Util\Process as ProcessUtil;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Process\Process;
 
 class GitRepo {
 
@@ -13,7 +12,7 @@ class GitRepo {
   private $statusCode;
 
   /**
-   * @var Filesystem
+   * @var \Symfony\Component\Filesystem\Filesystem
    */
   private $fs;
 
@@ -38,7 +37,6 @@ class GitRepo {
     $this->flush();
   }
 
-
   /* --------------- Main interfaces --------------- */
 
   /**
@@ -46,7 +44,7 @@ class GitRepo {
    *
    * @param string $patch
    * @param string $passthru
-   * @return Process
+   * @return \Symfony\Component\Process\Process
    */
   public function applyPatch($patch, $passthru = '') {
     ProcessUtil::runOk($this->command("git apply --check $passthru")->setInput($patch));

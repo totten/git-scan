@@ -3,25 +3,20 @@ namespace GitScan\Command;
 
 use GitScan\AutoMergeRule;
 use GitScan\GitRepo;
-use GitScan\Util\ArrayUtil;
 use GitScan\Util\Filesystem;
-use GitScan\Util\Process as ProcessUtil;
 use GitScan\Util\Process;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
-
 
 class AutoMergeCommand extends BaseCommand {
 
   /**
-   * @var Filesystem
+   * @var \GitScan\Util\Filesystem
    */
-  var $fs;
+  public $fs;
 
   /**
    * @param string|NULL $name
@@ -84,15 +79,16 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
     $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getOption('path'));
 
-    $checkouts = array(); // array(string $absDir => TRUE)
+    // array(string $absDir => TRUE)
+    $checkouts = array();
 
     foreach ($gitRepos as $gitRepo) {
-      /** @var GitRepo $gitRepo */
+      /** @var \GitScan\GitRepo $gitRepo */
       $relPath = $this->fs->makePathRelative($gitRepo->getPath(), $input->getOption('path'));
       $hasPatch = 0;
 
       foreach (array_keys($rules) as $ruleId) {
-        /** @var AutoMergeRule $rule */
+        /** @var \GitScan\AutoMergeRule $rule */
         $rule = $rules[$ruleId];
         $rule->fetch();
         if ($rule->isMatch($gitRepo)) {
@@ -126,7 +122,10 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
   /**
    * Ensure that we've checked out a branch where we can do merges.
    *
+   * @param \Symfony\Component\Console\Input\InputInterface $input
+   * @param \Symfony\Component\Console\Output\OutputInterface $output
    * @param \GitScan\GitRepo $gitRepo
+   * @param string $repoName
    */
   protected function checkoutAutomergeBranch(InputInterface $input, OutputInterface $output, GitRepo $gitRepo, $repoName) {
     if ($gitRepo->hasUncommittedChanges(TRUE)) {

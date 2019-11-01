@@ -1,22 +1,18 @@
 <?php
 namespace GitScan\Command;
 
-use GitScan\GitRepo;
-use GitScan\Util\ArrayUtil;
 use GitScan\Util\Filesystem;
-use GitScan\Util\Process as ProcessUtil;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 class LsCommand extends BaseCommand {
 
   /**
-   * @var Filesystem
+   * @var \GitScan\Util\Filesystem
    */
-  var $fs;
+  public $fs;
 
   /**
    * @param string|NULL $name
@@ -53,7 +49,7 @@ class LsCommand extends BaseCommand {
 
     $gitRepos = $scanner->scan($paths);
     foreach ($gitRepos as $gitRepo) {
-      /** @var GitRepo $gitRepo */
+      /** @var \GitScan\GitRepo $gitRepo */
       $path = $input->getOption('absolute')
         ? $gitRepo->getPath()
         : $this->fs->makePathRelative($gitRepo->getPath(), $paths[0]);
