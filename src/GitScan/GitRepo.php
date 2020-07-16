@@ -7,7 +7,8 @@ use Symfony\Component\Filesystem\Filesystem;
 class GitRepo {
 
   /**
-   * @var string status code (cached)
+   * @var string
+   *   Status code (cached)
    */
   private $statusCode;
 
@@ -17,17 +18,20 @@ class GitRepo {
   private $fs;
 
   /**
-   * @var string the bath in which "git" commands are executed
+   * @var string
+   *  The path in which "git" commands are executed
    */
   private $path;
 
   /**
-   * @var string command-line output from "git status --porcelain" (cached)
+   * @var string
+   *  Command-line output from "git status --porcelain" (cached)
    */
   private $porcelain;
 
   /**
-   * @var string command-line output from "git status" (cached)
+   * @var string
+   *  Command-line output from "git status" (cached)
    */
   private $status;
 
@@ -63,7 +67,6 @@ class GitRepo {
   public function applyPatch($patch, $passthru = '') {
     return ProcessUtil::runOk($this->command("git am $passthru")->setInput($patch));
   }
-
 
   /**
    * @return string 40-character hexadecimal commit name

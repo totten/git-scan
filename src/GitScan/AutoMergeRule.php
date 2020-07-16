@@ -22,7 +22,7 @@ class AutoMergeRule {
   protected $patch;
 
   /**
-   * @var array|NULL
+   * @var array|null
    *   Ex: ['src' => ..., 'vars' => ['!1' =>...]]
    */
   protected $registeredSource;

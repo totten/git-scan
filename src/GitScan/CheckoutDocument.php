@@ -13,7 +13,8 @@ class CheckoutDocument {
   protected $root;
 
   /**
-   * @var array (string $path => array $details)
+   * @var array
+   *   Array(string $path => array $details)
    */
   protected $details;
 
