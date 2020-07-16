@@ -40,16 +40,30 @@ class GitRepo {
   /* --------------- Main interfaces --------------- */
 
   /**
-   * Merge a patch (based on a URL)
+   * Check if a patch can be applied
+   *
+   * @param string $patch
+   * @param string $passthru
+   * @return bool
+   *   TRUE on success.
+   *   Throws an exception on error.
+   */
+  public function checkPatch($patch, $passthru = '') {
+    ProcessUtil::runOk($this->command("git apply --check $passthru")->setInput($patch));
+    return TRUE;
+  }
+
+  /**
+   * Merge a patch
    *
    * @param string $patch
    * @param string $passthru
    * @return \Symfony\Component\Process\Process
    */
   public function applyPatch($patch, $passthru = '') {
-    ProcessUtil::runOk($this->command("git apply --check $passthru")->setInput($patch));
     return ProcessUtil::runOk($this->command("git am $passthru")->setInput($patch));
   }
+
 
   /**
    * @return string 40-character hexadecimal commit name

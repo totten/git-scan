@@ -59,6 +59,8 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
       ->addOption('new', 'N', InputOption::VALUE_NONE, 'When applying patches, create a new merge branch.')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
       ->addOption('url-split', NULL, InputOption::VALUE_REQUIRED, 'If listing multiple URLs in one argument, use the given delimiter', '|')
+      // The preflight check is optional because  'git apply --check' can be too picky sometimes (e.g. commit A adds a file; commit B renames the file)
+      ->addOption('check', NULL, InputOption::VALUE_NONE, 'Before applying patches, do a preflight check.')
       ->addOption('passthru', NULL, InputOption::VALUE_REQUIRED, 'Pass through extra args to "git am" and "git apply"', '')
       ->addArgument('url', InputArgument::IS_ARRAY, 'The URL(s) of any PRs to merge');
   }
@@ -101,6 +103,9 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
           }
 
           $output->writeln("In \"<info>{$relPath}</info>\", apply \"<info>{$rule->getExpr()}</info>\" on top of \"<info>{$gitRepo->getCommit()}</info>\".");
+          if ($input->getOption('check')) {
+            $gitRepo->checkPatch($rule->getPatch(), $input->getOption('passthru'));
+          }
           $process = $gitRepo->applyPatch($rule->getPatch(), $input->getOption('passthru'));
           $output->writeln($process->getOutput());
         }
