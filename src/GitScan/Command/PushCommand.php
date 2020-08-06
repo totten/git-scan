@@ -30,6 +30,7 @@ class PushCommand extends BaseCommand {
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
       ->addOption('prefix', 'p', InputOption::VALUE_NONE, 'Autodetect prefixed variations')
       ->addOption('dry-run', 'T', InputOption::VALUE_NONE, 'Display what would be done')
+      ->addOption('set-upstream', 'u', InputOption::VALUE_NONE, 'Set remote branch as upstream for local branch')
       ->addArgument('remote', InputArgument::REQUIRED, 'The name of the remote')
       ->addArgument('refspec', InputArgument::REQUIRED, 'The tag or branch to push');
   }
@@ -70,7 +71,8 @@ class PushCommand extends BaseCommand {
         $batch->add(
           "In \"<info>$relPath</info>\", push \"<info>$name</info>\" to \"<info>$remote</info>\"",
           $gitRepo->command(sprintf(
-            "git push %s %s",
+            "git push%s %s %s",
+            $input->getOption('set-upstream') ? ' -u' : '',
             escapeshellarg($remote),
             escapeshellarg($name)))
         );
