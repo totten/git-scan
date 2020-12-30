@@ -30,9 +30,11 @@ class GitRepoScanner {
    * given base dir.
    *
    * @param string|array $basedir
+   * @param int $depth The maximum directory depth to scan.
+   * @param int $start The directory depth to start the scan from.
    * @return array of GitRepo
    */
-  public function scan($basedir) {
+  public function scan($basedir, $depth = null, $start = null) {
     $gitRepos = array();
     $finder = new Finder();
     $finder->in($basedir)
@@ -43,6 +45,10 @@ class GitRepoScanner {
       ->exclude($this->config->excludes)
       ->directories()
       ->name('.git');
+
+    if ($depth) $finder->depth("< {$depth}");
+    if ($start) $finder->depth("> {$start}");
+
     foreach ($finder as $file) {
       $path = dirname($file);
       $gitRepos[(string) $path] = new GitRepo($path);

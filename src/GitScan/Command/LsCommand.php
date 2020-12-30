@@ -31,7 +31,10 @@ class LsCommand extends BaseCommand {
       Example: git scan ls | while read dir; do ls -la $dir ; done
       ')
       ->addOption('absolute', 'A', InputOption::VALUE_NONE, 'Output absolute paths')
-      ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()));
+      ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()))
+      ->addOption('depth','d', InputOption::VALUE_OPTIONAL, 'The maximum directory depth to scan.')
+      ->addOption('start','s', InputOption::VALUE_OPTIONAL, 'The directory depth to start the scan from.')
+    ;
   }
 
   protected function initialize(InputInterface $input, OutputInterface $output) {
@@ -47,7 +50,7 @@ class LsCommand extends BaseCommand {
       return;
     }
 
-    $gitRepos = $scanner->scan($paths);
+    $gitRepos = $scanner->scan($paths, $input->getOption('depth'), $input->getOption('start'));
     foreach ($gitRepos as $gitRepo) {
       /** @var \GitScan\GitRepo $gitRepo */
       $path = $input->getOption('absolute')
