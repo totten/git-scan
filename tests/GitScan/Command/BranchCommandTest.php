@@ -10,8 +10,8 @@ class BranchCommandTest extends \GitScan\GitScanTestCase {
    */
   protected $repo1, $repo1b, $repo2;
 
-  public function setup() {
-    parent::setup();
+  public function setUp(): void {
+    parent::setUp();
 
     $this->createExampleRepo($this->fixturePath . '/example-1/repo-1');
     $this->createExampleRepo($this->fixturePath . '/example-1/repo-1/repo-1b');

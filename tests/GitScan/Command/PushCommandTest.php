@@ -11,8 +11,8 @@ class PushCommandTest extends \GitScan\GitScanTestCase {
    */
   protected $repo1, $repo1b, $repo2;
 
-  public function setup() {
-    parent::setup();
+  public function setUp(): void {
+    parent::setUp();
   }
 
   public function testInvalidRemote() {

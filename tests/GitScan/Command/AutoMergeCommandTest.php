@@ -6,8 +6,8 @@ use GitScan\GitRepo;
 use GitScan\Util\Process as ProcessUtil;
 
 class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
-  public function setup() {
-    parent::setup();
+  public function setUp(): void {
+    parent::setUp();
   }
 
   /**
@@ -125,7 +125,7 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
       ));
       $this->fail("Expected ProcessErrorException");
     } catch (ProcessErrorException $e) {
-      $this->assertEquals(1, $e->getProcess()->getExitCode());
+      $this->assertTrue($e->getProcess()->getExitCode() > 0);
       $this->assertContains(
         'patch failed',
         $e->getProcess()->getErrorOutput());

@@ -2,8 +2,8 @@
 namespace GitScan\Command;
 
 class ForeachCommandTest extends \GitScan\GitScanTestCase {
-  public function setup() {
-    parent::setup();
+  public function setUp(): void {
+    parent::setUp();
     $this->createExampleRepo($this->fixturePath . '/example-1/repo-1');
     $this->createExampleRepo($this->fixturePath . '/example-1/repo-1/repo-1b');
     $this->createExampleRepo($this->fixturePath . '/example-2/repo-2');
