@@ -42,9 +42,9 @@ class TagCommandTest extends \GitScan\GitScanTestCase {
     ));
     $output = $commandTester->getDisplay(FALSE);
     $this->assertEquals(0, $commandTester->getStatusCode());
-    $this->assertContains('In "example-1/repo-1/", make tag "3.0.1" from "3.0"', $output);
-    $this->assertNotContains('In "example-1/repo-1/repo-1b/", make tag "1.x-3.0.1" from "1.x-3.0"', $output);
-    $this->assertNotContains('In "example-2/repo-2/", make tag "7.x-3.0.1" from "7.x-3.0"', $output);
+    $this->assertStringContainsString('In "example-1/repo-1/", make tag "3.0.1" from "3.0"', $output);
+    $this->assertStringNotContainsString('In "example-1/repo-1/repo-1b/", make tag "1.x-3.0.1" from "1.x-3.0"', $output);
+    $this->assertStringNotContainsString('In "example-2/repo-2/", make tag "7.x-3.0.1" from "7.x-3.0"', $output);
 
     $this->assertContains('3.0.1', $this->repo1->getTags());
     $this->assertNotContains('1.x-3.0.1', $this->repo1b->getTags());
@@ -72,9 +72,9 @@ class TagCommandTest extends \GitScan\GitScanTestCase {
     ));
     $output = $commandTester->getDisplay(FALSE);
     $this->assertEquals(0, $commandTester->getStatusCode());
-    $this->assertContains('In "example-1/repo-1/", make tag "3.0.1" from "3.0"', $output);
-    $this->assertContains('In "example-1/repo-1/repo-1b/", make tag "1.x-3.0.1" from "1.x-3.0"', $output);
-    $this->assertContains('In "example-2/repo-2/", make tag "7.x-3.0.1" from "7.x-3.0"', $output);
+    $this->assertStringContainsString('In "example-1/repo-1/", make tag "3.0.1" from "3.0"', $output);
+    $this->assertStringContainsString('In "example-1/repo-1/repo-1b/", make tag "1.x-3.0.1" from "1.x-3.0"', $output);
+    $this->assertStringContainsString('In "example-2/repo-2/", make tag "7.x-3.0.1" from "7.x-3.0"', $output);
 
     $this->assertContains('3.0.1', $this->repo1->getTags());
     $this->assertContains('1.x-3.0.1', $this->repo1b->getTags());
@@ -100,9 +100,9 @@ class TagCommandTest extends \GitScan\GitScanTestCase {
     ));
     $output = $commandTester->getDisplay(FALSE);
     $this->assertEquals(0, $commandTester->getStatusCode());
-    $this->assertNotContains('In "example-1/repo-1/", make tag "3.0.1" from "3.0"', $output);
-    $this->assertContains('In "example-1/repo-1/repo-1b/", make tag "1.x-3.0.1" from "1.x-3.0"', $output);
-    $this->assertNotContains('In "example-2/repo-2/", make tag "7.x-3.0.1" from "7.x-3.0"', $output);
+    $this->assertStringNotContainsString('In "example-1/repo-1/", make tag "3.0.1" from "3.0"', $output);
+    $this->assertStringContainsString('In "example-1/repo-1/repo-1b/", make tag "1.x-3.0.1" from "1.x-3.0"', $output);
+    $this->assertStringNotContainsString('In "example-2/repo-2/", make tag "7.x-3.0.1" from "7.x-3.0"', $output);
 
     $this->assertNotContains('3.0.1', $this->repo1->getTags());
     $this->assertContains('1.x-3.0.1', $this->repo1b->getTags());
@@ -123,8 +123,8 @@ class TagCommandTest extends \GitScan\GitScanTestCase {
     ));
     $output = $commandTester->getDisplay(FALSE);
     $this->assertEquals(0, $commandTester->getStatusCode());
-    $this->assertContains('In "example-1/repo-1/repo-1b/", delete tag "1.x-1.0"', $output);
-    $this->assertContains("repo-1b'\n$ git tag -d '1.x-1.0'", $output);
+    $this->assertStringContainsString('In "example-1/repo-1/repo-1b/", delete tag "1.x-1.0"', $output);
+    $this->assertStringContainsString("repo-1b'\n$ git tag -d '1.x-1.0'", $output);
   }
 
 }
