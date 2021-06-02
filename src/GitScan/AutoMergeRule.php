@@ -47,7 +47,7 @@ class AutoMergeRule {
       $patchUrl = strtr($this->registeredSource['src']['patch_url'], $this->registeredSource['vars']);
       $this->patch = file_get_contents($patchUrl);
     }
-    elseif ($this->expr{0} == ';') {
+    elseif ($this->expr[0] == ';') {
       list (, $regex, $patchFile) = explode(';', $this->expr);
       $this->patch = file_get_contents($patchFile);
     }
@@ -71,7 +71,7 @@ class AutoMergeRule {
         }
       }
     }
-    elseif ($this->expr{0} == ';') {
+    elseif ($this->expr[0] == ';') {
       list (, $regex, $patchFile) = explode(';', $this->expr);
       foreach ($gitRepo->getRemoteUrls() as $remote => $remoteUrl) {
         if (preg_match(";$regex;", $remoteUrl)) {
