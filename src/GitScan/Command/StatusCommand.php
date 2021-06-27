@@ -147,7 +147,7 @@ class StatusCommand extends BaseCommand {
     $chars = array();
     foreach ($items as $item) {
       foreach (str_split($item) as $char) {
-        $chars{$char} = 1;
+        $chars[$char] = 1;
       }
     }
     ksort($chars);

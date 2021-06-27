@@ -6,7 +6,7 @@ use GitScan\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
-class GitScanTestCase extends \PHPUnit_Framework_TestCase {
+class GitScanTestCase extends \PHPUnit\Framework\TestCase {
   /**
    * @var string
    */
@@ -22,7 +22,7 @@ class GitScanTestCase extends \PHPUnit_Framework_TestCase {
    */
   private $originalCwd;
 
-  public function setup() {
+  public function setUp(): void {
     $runtimeClass = get_class($this);
     $this->originalCwd = getcwd();
     $this->fixturePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR
@@ -37,7 +37,7 @@ class GitScanTestCase extends \PHPUnit_Framework_TestCase {
     chdir($this->fixturePath);
   }
 
-  public function tearDown() {
+  public function tearDown(): void {
     chdir($this->originalCwd);
     if ($this->fixturePath) {
       if (!getenv('GITSCAN_KEEP_TMP')) {

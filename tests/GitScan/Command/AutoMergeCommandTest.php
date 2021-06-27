@@ -6,8 +6,8 @@ use GitScan\GitRepo;
 use GitScan\Util\Process as ProcessUtil;
 
 class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
-  public function setup() {
-    parent::setup();
+  public function setUp(): void {
+    parent::setUp();
   }
 
   /**
@@ -39,10 +39,10 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
       '--rebuild' => 1,
       'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
     ));
-    $this->assertContains(
+    $this->assertStringContainsString(
       'In "subdir/downstream/", rename "master" to "backup-master-',
       $commandTester->getDisplay(FALSE));
-    $this->assertContains(
+    $this->assertStringContainsString(
       'In "subdir/downstream/", apply',
       $commandTester->getDisplay(FALSE));
     $this->assertEquals(0, $commandTester->getStatusCode());
@@ -79,10 +79,10 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
       '--keep' => 1,
       'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
     ));
-    $this->assertContains(
+    $this->assertStringContainsString(
       'In "subdir/downstream/", keep the current branch "master"',
       $commandTester->getDisplay(FALSE));
-    $this->assertContains(
+    $this->assertStringContainsString(
       'In "subdir/downstream/", apply',
       $commandTester->getDisplay(FALSE));
     $this->assertEquals(0, $commandTester->getStatusCode());
@@ -125,8 +125,8 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
       ));
       $this->fail("Expected ProcessErrorException");
     } catch (ProcessErrorException $e) {
-      $this->assertEquals(1, $e->getProcess()->getExitCode());
-      $this->assertContains(
+      $this->assertTrue($e->getProcess()->getExitCode() > 0);
+      $this->assertStringContainsString(
         'patch failed',
         $e->getProcess()->getErrorOutput());
     }

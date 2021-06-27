@@ -6,8 +6,8 @@ use GitScan\Util\Process as ProcessUtil;
 use Symfony\Component\Filesystem\Filesystem;
 
 class DiffCommandTest extends \GitScan\GitScanTestCase {
-  public function setup() {
-    parent::setup();
+  public function setUp(): void {
+    parent::setUp();
   }
 
   public function testDiff_empty_json() {
