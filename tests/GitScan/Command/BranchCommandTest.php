@@ -10,8 +10,8 @@ class BranchCommandTest extends \GitScan\GitScanTestCase {
    */
   protected $repo1, $repo1b, $repo2;
 
-  public function setup() {
-    parent::setup();
+  public function setUp(): void {
+    parent::setUp();
 
     $this->createExampleRepo($this->fixturePath . '/example-1/repo-1');
     $this->createExampleRepo($this->fixturePath . '/example-1/repo-1/repo-1b');
@@ -42,9 +42,9 @@ class BranchCommandTest extends \GitScan\GitScanTestCase {
     ));
     $output = $commandTester->getDisplay(FALSE);
     $this->assertEquals(0, $commandTester->getStatusCode());
-    $this->assertContains('In "example-1/repo-1/", make branch "3.0.1" from "3.0"', $output);
-    $this->assertNotContains('In "example-1/repo-1/repo-1b/", make branch "1.x-3.0.1" from "1.x-3.0"', $output);
-    $this->assertNotContains('In "example-2/repo-2/", make branch "7.x-3.0.1" from "7.x-3.0"', $output);
+    $this->assertStringContainsString('In "example-1/repo-1/", make branch "3.0.1" from "3.0"', $output);
+    $this->assertStringNotContainsString('In "example-1/repo-1/repo-1b/", make branch "1.x-3.0.1" from "1.x-3.0"', $output);
+    $this->assertStringNotContainsString('In "example-2/repo-2/", make branch "7.x-3.0.1" from "7.x-3.0"', $output);
 
     $this->assertContains('3.0.1', $this->repo1->getBranches());
     $this->assertNotContains('1.x-3.0.1', $this->repo1b->getBranches());
@@ -72,9 +72,9 @@ class BranchCommandTest extends \GitScan\GitScanTestCase {
     ));
     $output = $commandTester->getDisplay(FALSE);
     $this->assertEquals(0, $commandTester->getStatusCode());
-    $this->assertContains('In "example-1/repo-1/", make branch "3.0.1" from "3.0"', $output);
-    $this->assertContains('In "example-1/repo-1/repo-1b/", make branch "1.x-3.0.1" from "1.x-3.0"', $output);
-    $this->assertContains('In "example-2/repo-2/", make branch "7.x-3.0.1" from "7.x-3.0"', $output);
+    $this->assertStringContainsString('In "example-1/repo-1/", make branch "3.0.1" from "3.0"', $output);
+    $this->assertStringContainsString('In "example-1/repo-1/repo-1b/", make branch "1.x-3.0.1" from "1.x-3.0"', $output);
+    $this->assertStringContainsString('In "example-2/repo-2/", make branch "7.x-3.0.1" from "7.x-3.0"', $output);
 
     $this->assertContains('3.0.1', $this->repo1->getBranches());
     $this->assertContains('1.x-3.0.1', $this->repo1b->getBranches());
@@ -100,9 +100,9 @@ class BranchCommandTest extends \GitScan\GitScanTestCase {
     ));
     $output = $commandTester->getDisplay(FALSE);
     $this->assertEquals(0, $commandTester->getStatusCode());
-    $this->assertNotContains('In "example-1/repo-1/", make branch "3.0.1" from "3.0"', $output);
-    $this->assertContains('In "example-1/repo-1/repo-1b/", make branch "1.x-3.0.1" from "1.x-3.0"', $output);
-    $this->assertNotContains('In "example-2/repo-2/", make branch "7.x-3.0.1" from "7.x-3.0"', $output);
+    $this->assertStringNotContainsString('In "example-1/repo-1/", make branch "3.0.1" from "3.0"', $output);
+    $this->assertStringContainsString('In "example-1/repo-1/repo-1b/", make branch "1.x-3.0.1" from "1.x-3.0"', $output);
+    $this->assertStringNotContainsString('In "example-2/repo-2/", make branch "7.x-3.0.1" from "7.x-3.0"', $output);
 
     $this->assertNotContains('3.0.1', $this->repo1->getBranches());
     $this->assertContains('1.x-3.0.1', $this->repo1b->getBranches());
@@ -122,8 +122,8 @@ class BranchCommandTest extends \GitScan\GitScanTestCase {
     ));
     $output = $commandTester->getDisplay(FALSE);
     $this->assertEquals(0, $commandTester->getStatusCode());
-    $this->assertContains('In "example-1/repo-1/repo-1b/", delete branch "1.x-master"', $output);
-    $this->assertContains("repo-1b'\n$ git branch -d '1.x-master'", $output);
+    $this->assertStringContainsString('In "example-1/repo-1/repo-1b/", delete branch "1.x-master"', $output);
+    $this->assertStringContainsString("repo-1b'\n$ git branch -d '1.x-master'", $output);
   }
 
   public function testBranch_forceDelete() {
@@ -139,8 +139,8 @@ class BranchCommandTest extends \GitScan\GitScanTestCase {
     ));
     $output = $commandTester->getDisplay(FALSE);
     $this->assertEquals(0, $commandTester->getStatusCode());
-    $this->assertContains('In "example-1/repo-1/repo-1b/", delete branch "1.x-master"', $output);
-    $this->assertContains("repo-1b'\n$ git branch -D '1.x-master'", $output);
+    $this->assertStringContainsString('In "example-1/repo-1/repo-1b/", delete branch "1.x-master"', $output);
+    $this->assertStringContainsString("repo-1b'\n$ git branch -D '1.x-master'", $output);
   }
 
 }

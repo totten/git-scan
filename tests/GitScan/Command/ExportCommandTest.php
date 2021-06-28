@@ -2,8 +2,8 @@
 namespace GitScan\Command;
 
 class ExportCommandTest extends \GitScan\GitScanTestCase {
-  public function setup() {
-    parent::setup();
+  public function setUp(): void {
+    parent::setUp();
   }
 
   /**

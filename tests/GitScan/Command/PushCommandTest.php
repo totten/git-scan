@@ -11,8 +11,8 @@ class PushCommandTest extends \GitScan\GitScanTestCase {
    */
   protected $repo1, $repo1b, $repo2;
 
-  public function setup() {
-    parent::setup();
+  public function setUp(): void {
+    parent::setUp();
   }
 
   public function testInvalidRemote() {
@@ -31,7 +31,7 @@ class PushCommandTest extends \GitScan\GitScanTestCase {
     ));
     $output = $commandTester->getDisplay(FALSE);
     $this->assertEquals(1, $commandTester->getStatusCode());
-    $this->assertContains("does not have remote \"theremote\"", $output);
+    $this->assertStringContainsString("does not have remote \"theremote\"", $output);
   }
 
   public function testOK() {
@@ -50,7 +50,7 @@ class PushCommandTest extends \GitScan\GitScanTestCase {
     ));
     $output = $commandTester->getDisplay(FALSE);
     $this->assertEquals(0, $commandTester->getStatusCode());
-    $this->assertContains("/downstream'\n\$ git push 'origin' '1.x-master'", $output);
+    $this->assertStringContainsString("/downstream'\n\$ git push 'origin' '1.x-master'", $output);
   }
 
   /**
