@@ -1,0 +1,56 @@
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - '20*' # Push events to matching "20*", i.e. 2020-08-05, 2022-07-01, 2088-02-04
+
+name: Release
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Set env
+        run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:11})
+
+      - name: Checkout code
+        uses: actions/checkout@v1
+
+      - name: Setup PHP
+        uses: nanasess/setup-php@v3
+        with:
+          php-version: '7.4'
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Build PHAR
+        run: ./scripts/build.sh
+        continue-on-error: false
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: true
+          prerelease: false
+
+      - name: Upload PHAR
+        id: upload_release
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: ./bin/git-scan.phar
+          asset_name: git-scan-${{ env.RELEASE_VERSION }}.phar
+          asset_content_type: application/octet-stream
