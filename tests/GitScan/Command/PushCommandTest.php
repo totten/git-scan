@@ -12,8 +12,8 @@ class PushCommandTest extends \GitScan\GitScanTestCase {
 
   public function testInvalidRemote() {
     $upstream = $this->createUpstreamRepo();
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b 1.x-master"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $downstream->initClone($upstream, '1.x-master');
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
 
     $commandTester = $this->createCommandTester(array(
@@ -31,8 +31,8 @@ class PushCommandTest extends \GitScan\GitScanTestCase {
 
   public function testOK() {
     $upstream = $this->createUpstreamRepo();
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b 1.x-master"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $downstream->initClone($upstream, '1.x-master');
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
 
     $commandTester = $this->createCommandTester(array(
