@@ -4,6 +4,8 @@ namespace GitScan\Command;
 use GitScan\Util\ArrayUtil;
 use GitScan\Util\Filesystem;
 use GitScan\Util\Process as ProcessUtil;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -57,8 +59,8 @@ class StatusCommand extends BaseCommand {
         : "<comment>[[ Checking statuses ]]</comment>"
     );
     /** @var \Symfony\Component\Console\Helper\ProgressHelper $progress */
-    $progress = $this->getApplication()->getHelperSet()->get('progress');
-    $progress->start($output, 1 + count($gitRepos));
+    $progress = new ProgressBar($output);
+    $progress->start(1 + count($gitRepos));
     $progress->advance();
     $rows = array();
     $hiddenCount = 0;
@@ -86,11 +88,11 @@ class StatusCommand extends BaseCommand {
 
     $output->writeln("<comment>[[ Results ]]</comment>\n");
     if (!empty($rows)) {
-      $table = $this->getApplication()->getHelperSet()->get('table');
+      $table = new Table($output);
       $table
         ->setHeaders(array('Status', 'Path', 'Local Branch / Tag', 'Remote Branch', 'Remote URL'))
         ->setRows($rows);
-      $table->render($output);
+      $table->render();
 
       $chars = $this->getUniqueChars(ArrayUtil::collect($rows, 0));
       foreach ($chars as $char) {

@@ -6,6 +6,7 @@ use GitScan\DiffReport;
 use GitScan\GitFormatter\PlainFormatter;
 use GitScan\GitFormatter\HtmlFormatter;
 use GitScan\Util\Filesystem;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -68,11 +69,11 @@ class DiffCommand extends BaseCommand {
         foreach ($report->getRows() as $row) {
           $rows[] = array($row['status'], $row['path'], $row['from'], $row['to'], $row['changes']);
         }
-        $table = $this->getApplication()->getHelperSet()->get('table');
+        $table = new Table($output);
         $table
           ->setHeaders(array(' ', 'Path', 'From', 'To', 'Changes'))
           ->setRows($rows);
-        $table->render($output);
+        $table->render();
         break;
 
       case 'html':
