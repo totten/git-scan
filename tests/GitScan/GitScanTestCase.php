@@ -53,7 +53,9 @@ class GitScanTestCase extends \PHPUnit\Framework\TestCase {
    */
   protected function command($subdir, $command) {
     $process = new \Symfony\Component\Process\Process($command);
-    $process->setWorkingDirectory($subdir);
+    if ($subdir !== NULL && $subdir !== "") {
+      $process->setWorkingDirectory($subdir);
+    }
     return $process;
   }
 

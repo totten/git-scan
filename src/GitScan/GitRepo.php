@@ -106,7 +106,7 @@ class GitRepo {
     if ($this->statusCode === NULL || $fresh) {
       $this->statusCode = '';
 
-      if (basename($this->getLocalBranch()) != basename($this->getUpstreamBranch())) {
+      if (basename($this->getLocalBranch() ?: '') != basename($this->getUpstreamBranch() ?: '')) {
         $this->statusCode .= 'B';
       }
       else {
@@ -222,7 +222,7 @@ class GitRepo {
    */
   public function getOriginUrl() {
     $remoteUrls = $this->getRemoteUrls();
-    return array_key_exists(dirname($this->getUpstreamBranch()), $remoteUrls) ? $remoteUrls['origin'] : NULL;
+    return array_key_exists(dirname($this->getUpstreamBranch() ?: ''), $remoteUrls) ? $remoteUrls['origin'] : NULL;
   }
 
   /**
@@ -489,7 +489,7 @@ class GitRepo {
       $cmd .= ' -b ' . escapeshellarg($branch);
     }
 
-    ProcessUtil::runOk($this->command($cmd));
+    ProcessUtil::runOk($this->command($cmd)->setWorkingDirectory(dirname($this->getPath())));
   }
 
   /**
