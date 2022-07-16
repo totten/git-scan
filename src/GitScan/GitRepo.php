@@ -489,7 +489,7 @@ class GitRepo {
       $cmd .= ' -b ' . escapeshellarg($branch);
     }
 
-    ProcessUtil::runOk($this->command($cmd));
+    ProcessUtil::runOk($this->command($cmd)->setWorkingDirectory(dirname($this->getPath())));
   }
 
   /**
