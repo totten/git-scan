@@ -98,4 +98,25 @@ class GitScanTestCase extends \PHPUnit\Framework\TestCase {
   public function assertIsCommit($commit) {
     $this->assertTrue(\GitScan\Util\Commit::isValid($commit));
   }
+
+  public static function assertRegExp(string $pattern, string $string, string $message = ''): void {
+    // Why would you want phpunit to be stable when it's clearly better for upstream to arbitrarily rename things? What could go wrong?
+    if (is_callable([static::CLASS, 'assertMatchesRegularExpression'])) {
+      static::assertMatchesRegularExpression($pattern, $string, $message);
+    }
+    else {
+      parent::assertRegExp($pattern, $string, $message);
+    }
+  }
+
+  public static function assertNotRegExp(string $pattern, string $string, string $message = ''): void {
+    // Why would you want phpunit to be stable when it's clearly better for upstream to arbitrarily rename things? What could go wrong?
+    if (is_callable([static::CLASS, 'assertDoesNotMatchRegularExpression'])) {
+      static::assertDoesNotMatchRegularExpression($pattern, $string, $message);
+    }
+    else {
+      parent::assertNotRegExp($pattern, $string, $message);
+    }
+  }
+
 }

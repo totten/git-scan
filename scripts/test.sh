@@ -12,7 +12,11 @@ SCRIPTDIR=$(absdirname "$0")
 PRJDIR=$(dirname "$SCRIPTDIR")
 set -ex
 
-PHPUNIT_VERSION=8.5.15
+if php -r 'exit(version_compare(PHP_VERSION, "8.1", ">=") ? 0 : 1);' ; then
+  PHPUNIT_VERSION=9.5.21
+else
+  PHPUNIT_VERSION=8.5.15
+fi
 PHPUNIT_URL="https://phar.phpunit.de/phpunit-{$PHPUNIT_VERSION}.phar"
 PHPUNIT_DIR="$PRJDIR/extern/phpunit-$PHPUNIT_VERSION"
 PHPUNIT_BIN="$PHPUNIT_DIR/phpunit"
