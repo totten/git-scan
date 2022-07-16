@@ -469,6 +469,30 @@ class GitRepo {
   }
 
   /**
+   * Initialize this repo by cloning another repo.
+   *
+   * @param string|GitRepo $upstream
+   *   Either the URL of the upstream repo, or a reference to a local GitRepo.
+   * @param string|null $branch
+   */
+  public function initClone($upstream, ?string $branch = NULL): void {
+    if ($this->fs->exists($this->getPath())) {
+      throw new \RuntimeException("Cannot clone repo. \"{$this->getPath()}\" already exists.");
+    }
+
+    if ($upstream instanceof GitRepo) {
+      $upstream = 'file://' . $upstream->getPath();
+    }
+
+    $cmd = sprintf("git clone %s %s", escapeshellarg($upstream), escapeshellarg($this->getPath()));
+    if ($branch !== NULL) {
+      $cmd .= ' -b ' . escapeshellarg($branch);
+    }
+
+    ProcessUtil::runOk($this->command($cmd));
+  }
+
+  /**
    * Prepare a command to run in the repo's directory
    *
    * @param $command
