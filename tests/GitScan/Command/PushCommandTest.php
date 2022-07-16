@@ -2,14 +2,9 @@
 namespace GitScan\Command;
 
 use GitScan\GitRepo;
-use GitScan\Util\Process;
 use GitScan\Util\Process as ProcessUtil;
 
 class PushCommandTest extends \GitScan\GitScanTestCase {
-  /**
-   * @var GitRepo
-   */
-  protected $repo1, $repo1b, $repo2;
 
   public function setUp(): void {
     parent::setUp();
@@ -54,11 +49,13 @@ class PushCommandTest extends \GitScan\GitScanTestCase {
   }
 
   /**
-   * @param string $checkout the treeish to checkout
-   * @return GitRepo the upstream repo has:
-   *  - a master branch
-   *  - a new (unmerged) feature branch (1.x-master)
-   *  - a tag of after the merge of 1.x-master-1 (0.2)
+   * @param string $checkout
+   *  the treeish to checkout
+   * @return \GitScan\GitRepo
+   *   A new upstream repo which includes these artifacts:
+   *   - a master branch
+   *   - a new (unmerged) feature branch (1.x-master)
+   *   - a tag of after the merge of 1.x-master-1 (0.2)
    */
   protected function createUpstreamRepo($checkout = 'master') {
     $gitRepo = new GitRepo($this->fixturePath . '/upstream');
