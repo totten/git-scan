@@ -82,8 +82,8 @@ class GitRepoTest extends GitScanTestCase {
   public function testClonedDefaultBranch_Fresh() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $downstream->initClone($upstream);
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
     $this->assertIsCommit($downstream->getCommit());
@@ -102,8 +102,8 @@ class GitRepoTest extends GitScanTestCase {
   public function testClonedMasterBranch_Fresh() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $downstream->initClone($upstream, 'master');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
     $this->assertIsCommit($downstream->getCommit());
@@ -122,8 +122,8 @@ class GitRepoTest extends GitScanTestCase {
   public function testClonedTag() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $downstream->initClone($upstream);
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
     ProcessUtil::runOk($downstream->command("git checkout 0.1"));
 
@@ -141,8 +141,8 @@ class GitRepoTest extends GitScanTestCase {
   public function testClonedMyFeatureBranch_Fresh() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b my-feature"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $downstream->initClone($upstream, 'my-feature');
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
 
     $this->assertIsCommit($downstream->getCommit());
@@ -160,8 +160,8 @@ class GitRepoTest extends GitScanTestCase {
   public function testCloned_CheckoutMyFeature_Fresh() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $downstream->initClone($upstream);
     ProcessUtil::runOk($downstream->command("git checkout my-feature"));
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
 
@@ -180,8 +180,8 @@ class GitRepoTest extends GitScanTestCase {
   public function testCloned_CheckoutMyFeature_Modified() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $downstream->initClone($upstream);
     ProcessUtil::runOk($downstream->command("git checkout my-feature"));
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
     $downstream->writeFile("example.txt", "ch-ch-changes");
@@ -201,8 +201,8 @@ class GitRepoTest extends GitScanTestCase {
   public function testCloned_CheckoutMyFeature_Newfile() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $downstream->initClone($upstream);
     ProcessUtil::runOk($downstream->command("git checkout my-feature"));
     $this->assertEquals("example text plus my feature", $downstream->readFile("example.txt"));
     $downstream->writeFile("example-2.txt", "second");
@@ -222,8 +222,8 @@ class GitRepoTest extends GitScanTestCase {
   public function testIsFastForwardable_upstreamChanged() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $downstream->initClone($upstream, 'master');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
     // note: messages may appear different before/after fetching
@@ -237,8 +237,8 @@ class GitRepoTest extends GitScanTestCase {
   public function testIsFastForwardable_downstreamChanged() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $downstream->initClone($upstream, 'master');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
     $downstream->commitFile('example-from-downstream.txt', 'downstream change example');
@@ -251,8 +251,8 @@ class GitRepoTest extends GitScanTestCase {
   public function testIsFastForwardable_bothChanged() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $downstream->initClone($upstream, 'master');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
     $upstream->commitFile('example-from-upstream.txt', 'upstream change example');
@@ -267,8 +267,8 @@ class GitRepoTest extends GitScanTestCase {
   public function testHasStash() {
     $upstream = $this->createUpstreamRepo();
 
-    ProcessUtil::runOk($this->command("", "git clone file://{$upstream->getPath()} downstream -b master"));
     $downstream = new GitRepo($this->fixturePath . '/downstream');
+    $downstream->initClone($upstream, 'master');
     $this->assertEquals("example text", $downstream->readFile("example.txt"));
 
     $this->assertEquals(FALSE, $downstream->hasStash());
