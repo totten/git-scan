@@ -117,7 +117,7 @@ If you have previously installed [phpunit](http://phpunit.de/), then you can run
 $ composer create-project totten/git-scan
 $ cd git-scan
 $ phpunit
-PHPUnit 3.7.10 by Sebastian Bergmann.
+PHPUnit 8.5.15 by Sebastian Bergmann.
 
 Configuration read from /home/me/src/git-scan/phpunit.xml.dist
 
