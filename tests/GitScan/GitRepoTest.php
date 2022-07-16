@@ -1,5 +1,6 @@
 <?php
 namespace GitScan;
+
 use GitScan\Util\Process as ProcessUtil;
 
 class GitRepoTest extends GitScanTestCase {
@@ -279,13 +280,14 @@ class GitRepoTest extends GitScanTestCase {
     $this->assertEquals(FALSE, $downstream->hasStash());
   }
 
-
   /**
-   * @param string $checkout the treeish to checkout
-   * @return GitRepo the upstream repo has:
-   *  - a master branch
-   *  - a new (unmerged) feature branch (my-feature)
-   *  - a tag of after the merge of my-feature-1 (0.2)
+   * @param string $checkout
+   *   the treeish to checkout
+   * @return GitRepo
+   *   A new upstream repo which includes these artifacts:
+   *   - a master branch
+   *   - a new (unmerged) feature branch (1.x-master)
+   *   - a tag of after the merge of 1.x-master-1 (0.2)
    */
   protected function createUpstreamRepo($checkout = 'master') {
     $gitRepo = new GitRepo($this->fixturePath . '/upstream');
@@ -311,4 +313,5 @@ class GitRepoTest extends GitScanTestCase {
     ProcessUtil::runOk($gitRepo->command("git checkout $checkout"));
     return $gitRepo;
   }
+
 }
