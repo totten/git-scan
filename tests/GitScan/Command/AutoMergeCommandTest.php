@@ -6,6 +6,7 @@ use GitScan\GitRepo;
 use GitScan\Util\Process as ProcessUtil;
 
 class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
+
   public function setUp(): void {
     parent::setUp();
   }
@@ -37,7 +38,8 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
       'command' => 'automerge',
       '--path' => $this->fixturePath,
       '--rebuild' => 1,
-      'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
+      // Find the dir based on upstream remote.
+      'url' => array(";/upstream;$patchFile"),
     ));
     $this->assertStringContainsString(
       'In "subdir/downstream/", rename "master" to "backup-master-',
@@ -77,7 +79,8 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
       'command' => 'automerge',
       '--path' => $this->fixturePath,
       '--keep' => 1,
-      'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
+      // Find the dir based on upstream remote.
+      'url' => array(";/upstream;$patchFile"),
     ));
     $this->assertStringContainsString(
       'In "subdir/downstream/", keep the current branch "master"',
@@ -86,7 +89,7 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
       'In "subdir/downstream/", apply',
       $commandTester->getDisplay(FALSE));
     $this->assertEquals(0, $commandTester->getStatusCode());
-    $this->assertEquals("master", $downstream->getLocalBranch()); // because --branch=current
+    $this->assertEquals("master", $downstream->getLocalBranch());
     $this->assertRegExp('/the future has been patched/', $downstream->readFile('changelog.txt'));
 
     // Preserved local changes.
@@ -121,10 +124,12 @@ class AutoMergeCommandTest extends \GitScan\GitScanTestCase {
         'command' => 'automerge',
         '--path' => $this->fixturePath,
         '--keep' => 1,
-        'url' => array(";/upstream;$patchFile"),  // Find the dir based on upstream remote.
+        // Find the dir based on upstream remote.
+        'url' => array(";/upstream;$patchFile"),
       ));
       $this->fail("Expected ProcessErrorException");
-    } catch (ProcessErrorException $e) {
+    }
+    catch (ProcessErrorException $e) {
       $this->assertTrue($e->getProcess()->getExitCode() > 0);
       $this->assertStringContainsString(
         'patch failed',

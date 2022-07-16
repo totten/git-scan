@@ -2,6 +2,7 @@
 namespace GitScan\Command;
 
 class ForeachCommandTest extends \GitScan\GitScanTestCase {
+
   public function setUp(): void {
     parent::setUp();
     $this->createExampleRepo($this->fixturePath . '/example-1/repo-1');
@@ -16,7 +17,7 @@ class ForeachCommandTest extends \GitScan\GitScanTestCase {
     $commandTester = $this->createCommandTester(array(
       'command' => 'foreach',
       'path' => array($this->fixturePath),
-      '--command' => 'touch foreach-output.txt'
+      '--command' => 'touch foreach-output.txt',
     ));
     $this->assertEquals('', trim($commandTester->getDisplay(TRUE)));
     $this->assertTrue(file_exists($this->fixturePath . '/example-1/repo-1/foreach-output.txt'));
@@ -32,7 +33,7 @@ class ForeachCommandTest extends \GitScan\GitScanTestCase {
     $commandTester = $this->createCommandTester(array(
       'command' => 'foreach',
       'path' => array($this->fixturePath),
-      '--command' => 'echo "found $toplevel: $path"'
+      '--command' => 'echo "found $toplevel: $path"',
     ));
 
     $expected = ""
@@ -49,7 +50,7 @@ class ForeachCommandTest extends \GitScan\GitScanTestCase {
     $commandTester = $this->createCommandTester(array(
       'command' => 'foreach',
       'path' => array($this->fixturePath),
-      '--command' => 'pwd'
+      '--command' => 'pwd',
     ));
 
     $expected = ""
@@ -67,7 +68,7 @@ class ForeachCommandTest extends \GitScan\GitScanTestCase {
     $commandTester = $this->createCommandTester(array(
       'command' => 'foreach',
       'path' => array($this->fixturePath),
-      '--command' => 'if [ "$path" = "example-1/repo-1/" ]; then echo "found $toplevel: $path" > /dev/stderr; exit 2; fi'
+      '--command' => 'if [ "$path" = "example-1/repo-1/" ]; then echo "found $toplevel: $path" > /dev/stderr; exit 2; fi',
     ));
 
     $expected = ""
@@ -83,4 +84,5 @@ class ForeachCommandTest extends \GitScan\GitScanTestCase {
     sort($expectedLines);
     $this->assertEquals($expectedLines, $actualLines);
   }
+
 }

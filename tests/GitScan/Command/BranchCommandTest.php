@@ -5,10 +5,21 @@ use GitScan\GitRepo;
 use GitScan\Util\Process;
 
 class BranchCommandTest extends \GitScan\GitScanTestCase {
+
   /**
-   * @var GitRepo
+   * @var \GitScan\GitRepo
    */
-  protected $repo1, $repo1b, $repo2;
+  protected $repo1;
+
+  /**
+   * @var \GitScan\GitRepo
+   */
+  protected $repo1b;
+
+  /**
+   * @var \GitScan\GitRepo
+   */
+  protected $repo2;
 
   public function setUp(): void {
     parent::setUp();

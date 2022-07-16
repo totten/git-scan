@@ -87,7 +87,8 @@ class CheckoutDocument {
 
   /**
    * @param string $path
-   * @return array|NULL with these keys:
+   * @return array|null
+   *   Array with these keys:
    *   - path: string, local path
    *   - remotes: array (string $name => string $fetchUrl)
    *   - commit: string, the name of the checked-out HEAD commit

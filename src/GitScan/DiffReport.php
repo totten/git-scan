@@ -19,7 +19,12 @@ class DiffReport {
   /**
    * @var CheckoutDocument
    */
-  protected $from, $to;
+  protected $from;
+
+  /**
+   * @var CheckoutDocument
+   */
+  protected $to;
 
   /**
    * @var GitFormatter\GitFormatterInterface

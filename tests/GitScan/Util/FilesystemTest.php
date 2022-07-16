@@ -2,6 +2,7 @@
 namespace GitScan\Util;
 
 class FilesystemTest extends \GitScan\GitScanTestCase {
+
   public function dataIsDescendent() {
     return array(
       array('/ex', '/ex', FALSE),
@@ -59,4 +60,5 @@ class FilesystemTest extends \GitScan\GitScanTestCase {
     $fs = new Filesystem();
     $this->assertEquals($expected, $fs->formatPrettyPath($path, $basePaths));
   }
+
 }

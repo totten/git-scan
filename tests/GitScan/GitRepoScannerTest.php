@@ -19,7 +19,7 @@ class GitRepoScannerTest extends GitScanTestCase {
     $this->assertRepos($gitRepos, array(
       $this->fixturePath,
       $this->fixturePath . '/sites/all/modules/real-1',
-      $this->fixturePath . '/sites/default/real-2'
+      $this->fixturePath . '/sites/default/real-2',
     ));
   }
 
@@ -39,7 +39,7 @@ class GitRepoScannerTest extends GitScanTestCase {
 
     $this->assertRepos($gitRepos, array(
       $this->fixturePath . '/sites/all/modules/real-1',
-      $this->fixturePath . '/sites/default/real-2'
+      $this->fixturePath . '/sites/default/real-2',
     ));
   }
 

@@ -2,6 +2,7 @@
 namespace GitScan\Command;
 
 class LsCommandTest extends \GitScan\GitScanTestCase {
+
   public function setUp(): void {
     parent::setUp();
   }

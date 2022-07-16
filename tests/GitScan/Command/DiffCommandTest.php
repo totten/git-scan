@@ -3,9 +3,9 @@ namespace GitScan\Command;
 
 use GitScan\GitRepo;
 use GitScan\Util\Process as ProcessUtil;
-use Symfony\Component\Filesystem\Filesystem;
 
 class DiffCommandTest extends \GitScan\GitScanTestCase {
+
   public function setUp(): void {
     parent::setUp();
   }
@@ -86,7 +86,7 @@ class DiffCommandTest extends \GitScan\GitScanTestCase {
         'changes' => '/^\(Removed repository\)$/',
       ),
     );
-    $this->assertEquals(count($actualDoc), count($expectRegexp), "Unexpected number of rows: ". print_r($actualDoc, TRUE));
+    $this->assertEquals(count($actualDoc), count($expectRegexp), "Unexpected number of rows: " . print_r($actualDoc, TRUE));
     foreach ($expectRegexp as $offset => $expectRow) {
       foreach ($expectRow as $key => $pattern) {
         $this->assertRegExp($pattern, $actualDoc[$offset][$key]);

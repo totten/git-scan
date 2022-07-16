@@ -2,7 +2,6 @@
 namespace GitScan;
 
 use GitScan\Util\Process as ProcessUtil;
-use GitScan\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -13,7 +12,7 @@ class GitScanTestCase extends \PHPUnit\Framework\TestCase {
   protected $fixturePath;
 
   /**
-   * @var Filesystem
+   * @var \Symfony\Component\Filesystem\Filesystem
    */
   protected $fs;
 

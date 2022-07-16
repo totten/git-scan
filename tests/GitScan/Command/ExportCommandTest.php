@@ -2,6 +2,7 @@
 namespace GitScan\Command;
 
 class ExportCommandTest extends \GitScan\GitScanTestCase {
+
   public function setUp(): void {
     parent::setUp();
   }
@@ -54,4 +55,5 @@ class ExportCommandTest extends \GitScan\GitScanTestCase {
     }
     $this->assertEquals(array(), $expectPaths);
   }
+
 }
