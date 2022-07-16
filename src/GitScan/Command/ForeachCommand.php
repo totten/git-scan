@@ -1,6 +1,7 @@
 <?php
 namespace GitScan\Command;
 
+use GitScan\Util\Env;
 use GitScan\Util\Filesystem;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -85,8 +86,8 @@ class ForeachCommand extends BaseCommand {
       $process = new \Symfony\Component\Process\Process($input->getOption('command'));
       $process->setWorkingDirectory($gitRepo->getPath());
       // $process->setEnv(...); sucks in Debian/Ubuntu
-      putenv("path=" . $this->fs->makePathRelative($gitRepo->getPath(), $topLevel));
-      putenv("toplevel=" . $topLevel);
+      Env::set('path', $this->fs->makePathRelative($gitRepo->getPath(), $topLevel));
+      Env::set('toplevel', $topLevel);
       $errorOutput = $output;
       if (is_callable($output, 'getErrorOutput') && $output->getErrorOutput()) {
         $errorOutput = $output->getErrorOutput();
@@ -110,8 +111,8 @@ class ForeachCommand extends BaseCommand {
         $statusCode = 2;
       }
     }
-    putenv("path");
-    putenv("toplevel");
+    Env::remove('path');
+    Env::remove('toplevel');
 
     return $statusCode;
   }
