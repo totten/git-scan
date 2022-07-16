@@ -10,10 +10,10 @@
     ],
     "require": {
         "php": ">=7.2",
-        "symfony/console": "^3.4",
-        "symfony/process": "^3.4",
-        "symfony/filesystem": "^3.4",
-        "symfony/finder": "^3.4"
+        "symfony/console": "^4.4",
+        "symfony/process": "^4.4",
+        "symfony/filesystem": "^4.4",
+        "symfony/finder": "^4.4"
     },
     "autoload": {
         "psr-0": {
