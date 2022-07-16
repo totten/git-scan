@@ -111,7 +111,7 @@ behavior. Supported options:
 Development: Unit-Tests
 =======================
 
-If you have previously installed [phpunit](http://phpunit.de/), then you can run the test suite. Something like:
+If you have [phpunit 8.x / 9.x](http://phpunit.de/), then you can run the test suite. For example:
 
 ```
 $ composer create-project totten/git-scan
@@ -128,14 +128,16 @@ Time: 2 seconds, Memory: 6.50Mb
 OK (49 tests, 121 assertions)
 ```
 
+The helper `./scripts/test.sh` is a small wrapper which will download and
+execute a suitable version of `phpunit`.
+
 Development: Build (PHAR)
 =========================
 
 If you are developing new changes to `git-scan` and want to create a new
-build of `git-scan.phar` from source, you must have
+build of `git-scan.phar` from source, you should have
 [`git`](https://git-scm.com), [`composer`](https://getcomposer.org/), and
-[`box`](http://box-project.github.io/box2/) installed.  Then run commands
-like:
+[`box`](http://box-project.github.io/box2/).
 
 ```
 $ git clone https://github.com/totten/git-scan
@@ -145,3 +147,6 @@ $ which box
 /usr/local/bin/box
 $ php -dphar.readonly=0 /usr/local/bin/box build
 ```
+
+The helper `./scripts/build.sh` is small wrapper which will download and
+execute a suitable version of `box`.
