@@ -11,13 +11,13 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [ ubuntu-18.04 ]
-        php: [ '7.2', '7.4', '8.0', '8.1' ]
+        operating-system: [ ubuntu-latest ]
+        php: [ '7.3', '7.4', '8.0', '8.1' ]
         include:
           - operating-system: windows-2019
-            php: '7.2'
+            php: '7.3'
         #operating-system: [ ubuntu-18.04, windows-2019 ]
-        #php: [ '7.2', '7.4', '8.0' ]
+        #php: [ '7.3', '7.4', '8.0' ]
     name: PHP ${{ matrix.php }}
     steps:
       - uses: actions/checkout@v3
