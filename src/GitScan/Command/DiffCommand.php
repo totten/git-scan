@@ -45,7 +45,7 @@ class DiffCommand extends BaseCommand {
     $this->fs->validateExists($input->getArgument('to'));
   }
 
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $fromDoc = $this->getCheckoutDocument($input->getArgument('from'));
     $toDoc = $this->getCheckoutDocument($input->getArgument('to'));
 
@@ -82,6 +82,7 @@ class DiffCommand extends BaseCommand {
         $output->writeln('<error>Unsupported output format</error>');
         return 1;
     }
+    return 0;
   }
 
   /**

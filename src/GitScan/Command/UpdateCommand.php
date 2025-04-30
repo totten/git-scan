@@ -35,7 +35,7 @@ class UpdateCommand extends BaseCommand {
     $this->fs->validateExists($input->getArgument('path'));
   }
 
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $statusCode = 0;
 
     $output->writeln("<comment>[[ Finding repositories ]]</comment>");

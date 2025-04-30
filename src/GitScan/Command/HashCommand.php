@@ -34,15 +34,16 @@ class HashCommand extends BaseCommand {
     $this->fs->validateExists($input->getArgument('path'));
   }
 
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $scanner = new \GitScan\GitRepoScanner();
     $paths = $input->getArgument('path');
     if (count($paths) != 1) {
       $output->writeln('<error>Expected only one root path</error>');
-      return;
+      return 1;
     }
 
     $output->writeln($scanner->hash($paths[0]));
+    return 0;
   }
 
 }

@@ -45,7 +45,7 @@ class StatusCommand extends BaseCommand {
     $this->fs->validateExists($input->getArgument('path'));
   }
 
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln("<comment>[[ Finding repositories ]]</comment>");
     $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getArgument('path'));
@@ -143,6 +143,7 @@ class StatusCommand extends BaseCommand {
           $output->writeln("NOTE: Omitted information about $hiddenCount repo(s). To display all, use --status=all.");
       }
     }
+    return 0;
   }
 
   public function getUniqueChars($items) {

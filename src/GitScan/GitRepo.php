@@ -499,7 +499,7 @@ class GitRepo {
    * @return \Symfony\Component\Process\Process
    */
   public function command($command) {
-    $process = new \Symfony\Component\Process\Process($command);
+    $process = \Symfony\Component\Process\Process::fromShellCommandline($command);
     $process->setWorkingDirectory($this->getPath());
     return $process;
   }

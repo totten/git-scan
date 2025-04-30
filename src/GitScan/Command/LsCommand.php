@@ -39,12 +39,12 @@ class LsCommand extends BaseCommand {
     $this->fs->validateExists($input->getArgument('path'));
   }
 
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $scanner = new \GitScan\GitRepoScanner();
     $paths = $input->getArgument('path');
     if (count($paths) != 1) {
       $output->writeln('<error>Expected only one root path</error>');
-      return;
+      return 1;
     }
 
     $gitRepos = $scanner->scan($paths);
@@ -56,6 +56,7 @@ class LsCommand extends BaseCommand {
       $path = rtrim($path, '/');
       $output->writeln($path);
     }
+    return 0;
   }
 
 }
