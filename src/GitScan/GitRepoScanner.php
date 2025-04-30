@@ -20,7 +20,7 @@ class GitRepoScanner {
    * @param FileSystem $fs
    * @param \GitScan\Config|NULL $config
    */
-  public function __construct($fs = NULL, \GitScan\Config $config = NULL) {
+  public function __construct($fs = NULL, ?\GitScan\Config $config = NULL) {
     $this->fs = $fs ?: new Filesystem();
     $this->config = $config ?: Config::load();
   }

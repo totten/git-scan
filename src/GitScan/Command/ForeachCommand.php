@@ -83,7 +83,7 @@ class ForeachCommand extends BaseCommand {
       if (OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity()) {
         $output->writeln("<comment>[[ <info>{$gitRepo->getPath()}</info> ]]</comment>");
       }
-      $process = new \Symfony\Component\Process\Process($input->getOption('command'));
+      $process = \Symfony\Component\Process\Process::fromShellCommandline($input->getOption('command'));
       $process->setWorkingDirectory($gitRepo->getPath());
       // $process->setEnv(...); sucks in Debian/Ubuntu
       Env::set('path', $this->fs->makePathRelative($gitRepo->getPath(), $topLevel));
