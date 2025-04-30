@@ -43,7 +43,7 @@ class TagCommand extends BaseCommand {
     $this->fs->validateExists($input->getOption('path'));
   }
 
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     if ($input->getOption('delete')) {
       return $this->executeDelete($input, $output);
     }
@@ -52,7 +52,7 @@ class TagCommand extends BaseCommand {
     }
   }
 
-  protected function executeCreate(InputInterface $input, OutputInterface $output) {
+  protected function executeCreate(InputInterface $input, OutputInterface $output): int {
     if (!$input->getArgument('head')) {
       throw new \RuntimeException("Missing argument \"head\". Please specify the name of original base branch.");
     }
@@ -96,9 +96,10 @@ class TagCommand extends BaseCommand {
       });
 
     $batch->runAllOk($output, $input->getOption('dry-run'));
+    return 0;
   }
 
-  protected function executeDelete(InputInterface $input, OutputInterface $output) {
+  protected function executeDelete(InputInterface $input, OutputInterface $output): int {
     $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getOption('path'));
     $batch = new ProcessBatch('Deleting branch(es)...');
@@ -128,6 +129,7 @@ class TagCommand extends BaseCommand {
     }
 
     $batch->runAllOk($output, $input->getOption('dry-run'));
+    return 0;
   }
 
 }

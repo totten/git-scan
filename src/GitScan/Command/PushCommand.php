@@ -40,7 +40,7 @@ class PushCommand extends BaseCommand {
     $this->fs->validateExists($input->getOption('path'));
   }
 
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $scanner = new \GitScan\GitRepoScanner();
     $gitRepos = $scanner->scan($input->getOption('path'));
     $remote = $input->getArgument('remote');
@@ -80,6 +80,7 @@ class PushCommand extends BaseCommand {
     }
 
     $batch->runAllOk($output, $input->getOption('dry-run'));
+    return 0;
   }
 
 }

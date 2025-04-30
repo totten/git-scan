@@ -58,7 +58,7 @@ class ForeachCommand extends BaseCommand {
     $this->fs->validateExists($input->getArgument('path'));
   }
 
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     if (!$input->getOption('command')) {
       $output->writeln("<error>Missing required option: --command</error>");
       return 1;

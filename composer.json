@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=7.3.0",
-        "symfony/console": "^4.4",
+        "symfony/console": "~5.4",
         "symfony/process": "^4.4",
         "symfony/filesystem": "^4.4",
         "symfony/finder": "^4.4",

@@ -70,7 +70,7 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
     $this->fs->validateExists($input->getOption('path'));
   }
 
-  protected function execute(InputInterface $input, OutputInterface $output) {
+  protected function execute(InputInterface $input, OutputInterface $output): int {
     $registeredSources = json_decode(file_get_contents(dirname(__DIR__) . '/AutoMergeRule.json'), 1);
     $rules = array();
     foreach ($this->getPatchExprs($input, $output) as $expr) {
@@ -122,6 +122,8 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
     if (!empty($rules)) {
       return 1;
     }
+
+    return 0;
   }
 
   /**
