@@ -11,22 +11,31 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [ ubuntu-18.04 ]
-        php: [ '7.2', '7.4', '8.0', '8.1' ]
         include:
-          - operating-system: windows-2019
-            php: '7.2'
-        #operating-system: [ ubuntu-18.04, windows-2019 ]
-        #php: [ '7.2', '7.4', '8.0' ]
+          - operating-system: ubuntu-latest
+            php: 7.3
+            phpunit: 8
+          - operating-system: ubuntu-latest
+            php: 7.4
+            phpunit: 8
+          - operating-system: ubuntu-latest
+            php: 8.1
+            phpunit: 9
+          - operating-system: ubuntu-latest
+            php: 8.3
+            phpunit: 9
+          ## We used to test here, but we were forced to switch to newer actions.
+          ## But these actions don't seem to run on Windows...
+          #- operating-system: windows-2019
+          #  php: '7.3'
+          #  phpunit: 8
     name: PHP ${{ matrix.php }}
     steps:
       - uses: actions/checkout@v3
-      - name: Setup PHP
-        uses: nanasess/setup-php@v3
+      - uses: php-actions/composer@v6
+      - name: PHPUnit Tests
+        uses: php-actions/phpunit@v3
         with:
-          php-version: ${{ matrix.php }}
-      - name: Validate composer.json and composer.lock
-        run: composer validate
-      - name: Set example Git user
-        run: git config --global user.email "testbot@example.com" && git config --global user.name "Test Bot"
-      - run: ./scripts/test.sh
+          configuration: phpunit.xml.dist
+          version: ${{ matrix.phpunit }}
+          php_version:  ${{ matrix.php }}
