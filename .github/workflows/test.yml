@@ -31,8 +31,6 @@ jobs:
           #  phpunit: 8
     name: PHP ${{ matrix.php }}
     steps:
-      - name: Set example Git user
-        run: git config --global user.email "testbot@example.com" && git config --global user.name "Test Bot"
       - uses: actions/checkout@v3
       - uses: php-actions/composer@v6
       - name: PHPUnit Tests
