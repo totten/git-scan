@@ -16,9 +16,6 @@ jobs:
             php: 7.3
             phpunit: 8
           - operating-system: ubuntu-latest
-            php: 7.4
-            phpunit: 8
-          - operating-system: ubuntu-latest
             php: 8.1
             phpunit: 9
           - operating-system: ubuntu-latest
