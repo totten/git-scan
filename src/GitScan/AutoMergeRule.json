@@ -7,6 +7,22 @@
     ],
     "patch_url": "https://github.com/!1/!2/pull/!3.patch"
   },
+  "test.civicrm.org/duderino": {
+    "match_pr": ";^https?://test.civicrm.org/duderino/file/github/([^/]+)/([^/]+)/([^/]+);",
+    "match_remote": [
+      ";https://github.com/!1/!2(|/|.git);",
+      ";git@github.com:!1/!2;"
+    ],
+    "patch_url": "https://test.civicrm.org/duderino/file/github/!1/!2/!3"
+  },
+  "duderino.local": {
+    "match_pr": ";^(https?://duderino\\..*)/file/github/([^/]+)/([^/]+)/([^/]+);",
+    "match_remote": [
+      ";https://github.com/!2/!3(|/|.git);",
+      ";git@github.com:!2/!3;"
+    ],
+    "patch_url": "!1/file/github/!2/!3/!4"
+  },
   "lab.civicrm.org": {
     "match_pr": ";^https?://lab.civicrm.org/([^/]+)/([^/]+)/merge_requests/([0-9]+)(|.diff|.patch);",
     "match_remote": [
