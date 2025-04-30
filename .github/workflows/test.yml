@@ -21,9 +21,11 @@ jobs:
           - operating-system: ubuntu-latest
             php: 8.1
             phpunit: 9
-          - operating-system: windows-2019
-            php: '7.3'
-            phpunit: 8
+          ## We used to test here, but we were forced to switch to newer actions.
+          ## But these actions don't seem to run on Windows...
+          #- operating-system: windows-2019
+          #  php: '7.3'
+          #  phpunit: 8
     name: PHP ${{ matrix.php }}
     steps:
       - name: Set example Git user
