@@ -12,6 +12,6 @@
     ],
     "git-version": "package_version",
     "main": "bin/git-scan",
-    "output": "bin/git-scan.phar",
+    "output": "dist/git-scan.phar",
     "stub": true
 }

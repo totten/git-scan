@@ -13,7 +13,8 @@
         "symfony/console": "^4.4",
         "symfony/process": "^4.4",
         "symfony/filesystem": "^4.4",
-        "symfony/finder": "^4.4"
+        "symfony/finder": "^4.4",
+        "civicrm/composer-downloads-plugin": "~3.0"
     },
     "autoload": {
         "psr-0": {
@@ -27,6 +28,18 @@
         "platform": {
             "php": "7.3.0"
         },
-        "bin-dir": "bin"
+        "bin-dir": "bin",
+        "allow-plugins": {
+            "civicrm/composer-downloads-plugin": true
+        }
+    },
+    "extra": {
+        "downloads": {
+            "box": {
+                "url": "https://github.com/humbug/box/releases/download/3.16.0/box.phar",
+                "path": "extern/box",
+                "type": "phar"
+            }
+        }
     }
 }

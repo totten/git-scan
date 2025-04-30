@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+## This script generates git-scan.phar.
+## NOTE: as written, it will *not* work within nix-shell, but it will work on non-nix environments.
+
 ## Determine the absolute path of the directory with the file
 ## usage: absdirname <file-path>
 function absdirname() {
@@ -8,17 +11,11 @@ function absdirname() {
   popd >> /dev/null
 }
 
-SCRIPTDIR=$(absdirname "$0")
-PRJDIR=$(dirname "$SCRIPTDIR")
+SCRDIR=$(absdirname "$0")
+PRJDIR=$(dirname "$SCRDIR")
+export PATH="$PRJDIR/extern:$PATH"
+
 set -ex
-
-BOX_VERSION=3.16.0
-BOX_URL="https://github.com/humbug/box/releases/download/${BOX_VERSION}/box.phar"
-BOX_DIR="$PRJDIR/extern/box-$BOX_VERSION"
-BOX_BIN="$BOX_DIR/box"
-[ ! -f "$BOX_BIN" ] && ( mkdir -p "$BOX_DIR" ; curl -L "$BOX_URL" -o "$BOX_BIN" )
-
-pushd "$PRJDIR" >> /dev/null
-  composer install --prefer-dist --no-progress --no-suggest --no-dev
-  php -d phar.read_only=0 "$BOX_BIN" build -v
-popd >> /dev/null
+composer install --prefer-dist --no-progress --no-suggest --no-dev
+which box
+php -d phar.read_only=0 `which box` build -v
