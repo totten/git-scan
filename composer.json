@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.3.0",
         "symfony/console": "^4.4",
         "symfony/process": "^4.4",
         "symfony/filesystem": "^4.4",
@@ -24,6 +24,9 @@
         "bin/git-scan"
     ],
     "config": {
+        "platform": {
+            "php": "7.3.0"
+        },
         "bin-dir": "bin"
     }
 }
