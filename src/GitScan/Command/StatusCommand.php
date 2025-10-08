@@ -35,6 +35,7 @@ class StatusCommand extends BaseCommand {
       ->setDescription('Show the status of any nested git repositories')
       ->setHelp("Show the status of any nested git repositories.\n\nNote: This will fetch upstream repositories to help determine the status (unless you specify --offline mode).")
       ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()))
+      ->addOption('max-depth', NULL, InputOption::VALUE_REQUIRED, 'Limit the depth of the search', -1)
       ->addOption('status', NULL, InputOption::VALUE_REQUIRED, 'Filter table output by repo statuses ("all","novel","boring","auto")', 'auto')
       ->addOption('fetch', NULL, InputOption::VALUE_NONE, 'Fetch latest data about remote repositories. (Slower but more accurate statuses.)');
     //->addOption('scan', 's', InputOption::VALUE_NONE, 'Force an immediate scan for new git repositories before doing anything')
@@ -48,7 +49,7 @@ class StatusCommand extends BaseCommand {
   protected function execute(InputInterface $input, OutputInterface $output): int {
     $output->writeln("<comment>[[ Finding repositories ]]</comment>");
     $scanner = new \GitScan\GitRepoScanner();
-    $gitRepos = $scanner->scan($input->getArgument('path'));
+    $gitRepos = $scanner->scan($input->getArgument('path'), $input->getOption('max-depth'));
 
     if ($input->getOption('status') == 'auto') {
       $input->setOption('status', count($gitRepos) > self::DISPLAY_ALL_THRESHOLD ? 'novel' : 'all');

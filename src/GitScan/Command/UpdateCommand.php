@@ -4,6 +4,7 @@ namespace GitScan\Command;
 use GitScan\Util\Filesystem;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateCommand extends BaseCommand {
@@ -27,6 +28,7 @@ class UpdateCommand extends BaseCommand {
       ->setAliases(array('up'))
       ->setDescription('Execute fast-forward merges on all nested repositories')
       ->setHelp('Execute fast-forward merges on all nested repositories (which are already amenable to fast-forwarding)')
+      ->addOption('max-depth', NULL, InputOption::VALUE_REQUIRED, 'Limit the depth of the search', -1)
       ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()));
   }
 
@@ -40,7 +42,7 @@ class UpdateCommand extends BaseCommand {
 
     $output->writeln("<comment>[[ Finding repositories ]]</comment>");
     $scanner = new \GitScan\GitRepoScanner();
-    $gitRepos = $scanner->scan($input->getArgument('path'));
+    $gitRepos = $scanner->scan($input->getArgument('path'), $input->getOption('max-depth'));
 
     $output->writeln("<comment>[[ Fast-forwarding ]]</comment>");
     foreach ($gitRepos as $gitRepo) {

@@ -4,6 +4,7 @@ namespace GitScan\Command;
 use GitScan\Util\Filesystem;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class HashCommand extends BaseCommand {
@@ -26,6 +27,7 @@ class HashCommand extends BaseCommand {
       ->setName('hash')
       ->setDescription('Generate a hash')
       ->setHelp("Generate a cumulative hash code for the current checkouts")
+      ->addOption('max-depth', NULL, InputOption::VALUE_REQUIRED, 'Limit the depth of the search', -1)
       ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()));
   }
 
@@ -42,7 +44,7 @@ class HashCommand extends BaseCommand {
       return 1;
     }
 
-    $output->writeln($scanner->hash($paths[0]));
+    $output->writeln($scanner->hash($paths[0], $input->getOption('max-depth')));
     return 0;
   }
 
