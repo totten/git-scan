@@ -30,11 +30,17 @@ class GitRepoScanner {
    * given base dir.
    *
    * @param string|array $basedir
+   * @param int $maxDepth
+   *    Maximum number of directory-levels to traverse.
+   *    Use -1 for unlimited.
    * @return array of GitRepo
    */
-  public function scan($basedir) {
+  public function scan($basedir, $maxDepth = -1) {
     $gitRepos = array();
     $finder = new Finder();
+    if ($maxDepth >= 0) {
+      $finder->depth('<= ' . $maxDepth);
+    }
     $finder->in($basedir)
       ->ignoreUnreadableDirs()
     // Specifically looking for .git files!
@@ -55,10 +61,11 @@ class GitRepoScanner {
    * within a given base dir.
    *
    * @param string $basedir
+   * @param int $maxDepth
    * @return string
    */
-  public function hash($basedir) {
-    $gitRepos = $this->scan($basedir);
+  public function hash($basedir, $maxDepth = -1) {
+    $gitRepos = $this->scan($basedir, $maxDepth);
     $buf = '';
     foreach ($gitRepos as $gitRepo) {
       $path = rtrim($this->fs->makePathRelative($gitRepo->getPath(), $basedir), '/');

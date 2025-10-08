@@ -4,6 +4,7 @@ namespace GitScan\Command;
 use GitScan\Util\Filesystem;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ExportCommand extends BaseCommand {
@@ -26,6 +27,7 @@ class ExportCommand extends BaseCommand {
       ->setName('export')
       ->setDescription('Show the status of any nested git repositories')
       ->setHelp("Export the current checkout information to JSON format")
+      ->addOption('max-depth', NULL, InputOption::VALUE_REQUIRED, 'Limit the depth of the search', -1)
       ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()));
   }
 
@@ -42,7 +44,7 @@ class ExportCommand extends BaseCommand {
       return 1;
     }
 
-    $gitRepos = $scanner->scan($paths);
+    $gitRepos = $scanner->scan($paths, $input->getOption('max-depth'));
     $output->writeln(
       \GitScan\CheckoutDocument::create($paths[0])
         ->importRepos($gitRepos)

@@ -58,6 +58,7 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
       ->addOption('keep', 'K', InputOption::VALUE_NONE, 'When applying patches, keep the current branch. Preserve local changes.')
       ->addOption('new', 'N', InputOption::VALUE_NONE, 'When applying patches, create a new merge branch.')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
+      ->addOption('max-depth', NULL, InputOption::VALUE_REQUIRED, 'Limit the depth of the search', -1)
       ->addOption('url-split', NULL, InputOption::VALUE_REQUIRED, 'If listing multiple URLs in one argument, use the given delimiter', '|')
       // The preflight check is optional because  'git apply --check' can be too picky sometimes (e.g. commit A adds a file; commit B renames the file)
       ->addOption('check', NULL, InputOption::VALUE_NONE, 'Before applying patches, do a preflight check.')
@@ -79,7 +80,7 @@ When applying patches to a repo, it will prompt for how to setup the branches, e
     }
 
     $scanner = new \GitScan\GitRepoScanner();
-    $gitRepos = $scanner->scan($input->getOption('path'));
+    $gitRepos = $scanner->scan($input->getOption('path'), $input->getOption('max-depth'));
 
     // array(string $absDir => TRUE)
     $checkouts = array();

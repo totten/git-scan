@@ -34,6 +34,7 @@ class DiffCommand extends BaseCommand {
       ->setHelp('Compare the commits/revisions in different source trees')
       ->addArgument('from', InputArgument::REQUIRED, 'Path to the project folder or JSON export')
       ->addArgument('to', InputArgument::REQUIRED, 'Path to the project folder or JSON export')
+      ->addOption('max-depth', NULL, InputOption::VALUE_REQUIRED, 'Limit the depth of the search', -1)
       ->addOption('format', NULL, InputOption::VALUE_REQUIRED, 'Output format (text|html|json)', 'text');
   }
 
@@ -46,8 +47,8 @@ class DiffCommand extends BaseCommand {
   }
 
   protected function execute(InputInterface $input, OutputInterface $output): int {
-    $fromDoc = $this->getCheckoutDocument($input->getArgument('from'));
-    $toDoc = $this->getCheckoutDocument($input->getArgument('to'));
+    $fromDoc = $this->getCheckoutDocument($input->getArgument('from'), $input->getOption('max-depth'));
+    $toDoc = $this->getCheckoutDocument($input->getArgument('to'), $input->getOption('max-depth'));
 
     $report = new DiffReport(
       $fromDoc,
@@ -87,12 +88,13 @@ class DiffCommand extends BaseCommand {
 
   /**
    * @param string $path path to a directory or JSON file
+   * @param int $maxDepth
    * @return \GitScan\CheckoutDocument
    */
-  protected function getCheckoutDocument($path) {
+  protected function getCheckoutDocument($path, $maxDepth = -1) {
     if (is_dir($path)) {
       $scanner = new \GitScan\GitRepoScanner();
-      $gitRepos = $scanner->scan($path);
+      $gitRepos = $scanner->scan($path, $maxDepth);
 
       return CheckoutDocument::create($path)
         ->importRepos($gitRepos);

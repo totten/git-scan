@@ -28,6 +28,7 @@ class PushCommand extends BaseCommand {
       ->setName('push')
       ->setDescription('Push tags or branches on all repos')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
+      ->addOption('max-depth', NULL, InputOption::VALUE_REQUIRED, 'Limit the depth of the search', -1)
       ->addOption('prefix', 'p', InputOption::VALUE_NONE, 'Autodetect prefixed variations')
       ->addOption('dry-run', 'T', InputOption::VALUE_NONE, 'Display what would be done')
       ->addOption('set-upstream', 'u', InputOption::VALUE_NONE, 'Set remote branch as upstream for local branch')
@@ -42,7 +43,7 @@ class PushCommand extends BaseCommand {
 
   protected function execute(InputInterface $input, OutputInterface $output): int {
     $scanner = new \GitScan\GitRepoScanner();
-    $gitRepos = $scanner->scan($input->getOption('path'));
+    $gitRepos = $scanner->scan($input->getOption('path'), $input->getOption('max-depth'));
     $remote = $input->getArgument('remote');
     $batch = new ProcessBatch('Pushing...');
 

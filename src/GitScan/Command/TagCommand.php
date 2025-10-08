@@ -31,6 +31,7 @@ class TagCommand extends BaseCommand {
       ->setName('tag')
       ->setDescription('Create tags across repos')
       ->addOption('path', NULL, InputOption::VALUE_REQUIRED, 'The local base path to search', getcwd())
+      ->addOption('max-depth', NULL, InputOption::VALUE_REQUIRED, 'Limit the depth of the search', -1)
       ->addOption('prefix', 'p', InputOption::VALUE_NONE, 'Autodetect prefixed variations')
       ->addOption('delete', 'd', InputOption::VALUE_NONE, 'Delete fully merged branches')
       ->addOption('dry-run', 'T', InputOption::VALUE_NONE, 'Display what would be done')
@@ -59,7 +60,7 @@ class TagCommand extends BaseCommand {
 
     $helper = $this->getHelper('question');
     $scanner = new \GitScan\GitRepoScanner();
-    $gitRepos = $scanner->scan($input->getOption('path'));
+    $gitRepos = $scanner->scan($input->getOption('path'), $input->getOption('max-depth'));
     $batch = new ProcessBatch('Creating tag(s)...');
     $self = $this;
 
@@ -101,7 +102,7 @@ class TagCommand extends BaseCommand {
 
   protected function executeDelete(InputInterface $input, OutputInterface $output): int {
     $scanner = new \GitScan\GitRepoScanner();
-    $gitRepos = $scanner->scan($input->getOption('path'));
+    $gitRepos = $scanner->scan($input->getOption('path'), $input->getOption('max-depth'));
     $batch = new ProcessBatch('Deleting branch(es)...');
 
     $tagName = $input->getArgument('tagName');

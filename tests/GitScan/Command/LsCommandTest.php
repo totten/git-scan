@@ -71,4 +71,64 @@ class LsCommandTest extends \GitScan\GitScanTestCase {
     $this->assertEquals($expectPaths, $actualPaths);
   }
 
+  public function testLsMaxDepth() {
+    $this->createExampleRepo($this->fixturePath . '/depth1');
+    $this->createExampleRepo($this->fixturePath . '/depth1/depth2');
+    $this->createExampleRepo($this->fixturePath . '/depth1/depth2/depth3');
+
+    // Test with max-depth=0
+    $commandTester = $this->createCommandTester(array(
+      'command' => 'ls',
+      '--max-depth' => 0,
+      'path' => array($this->fixturePath),
+    ));
+    $actualPaths = explode("\n", trim($commandTester->getDisplay(FALSE)));
+    $this->assertEquals(array(''), $actualPaths);
+
+    // Test with max-depth=1
+    $commandTester = $this->createCommandTester(array(
+      'command' => 'ls',
+      '--max-depth' => 1,
+      'path' => array($this->fixturePath),
+    ));
+    $actualPaths = explode("\n", trim($commandTester->getDisplay(FALSE)));
+    $expectPaths = array(
+      'depth1',
+    );
+    sort($actualPaths);
+    sort($expectPaths);
+    $this->assertEquals($expectPaths, $actualPaths);
+
+    // Test with max-depth=2
+    $commandTester = $this->createCommandTester(array(
+      'command' => 'ls',
+      '--max-depth' => 2,
+      'path' => array($this->fixturePath),
+    ));
+    $actualPaths = explode("\n", trim($commandTester->getDisplay(FALSE)));
+    $expectPaths = array(
+      'depth1',
+      'depth1/depth2',
+    );
+    sort($actualPaths);
+    sort($expectPaths);
+    $this->assertEquals($expectPaths, $actualPaths);
+
+    // Test with max-depth=3
+    $commandTester = $this->createCommandTester(array(
+      'command' => 'ls',
+      '--max-depth' => 3,
+      'path' => array($this->fixturePath),
+    ));
+    $actualPaths = explode("\n", trim($commandTester->getDisplay(FALSE)));
+    $expectPaths = array(
+      'depth1',
+      'depth1/depth2',
+      'depth1/depth2/depth3',
+    );
+    sort($actualPaths);
+    sort($expectPaths);
+    $this->assertEquals($expectPaths, $actualPaths);
+  }
+
 }

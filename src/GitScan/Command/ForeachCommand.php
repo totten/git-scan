@@ -42,6 +42,7 @@ class ForeachCommand extends BaseCommand {
         . "Important: The example uses single-quotes to escape the $'s\n"
       )
       ->addArgument('path', InputArgument::IS_ARRAY, 'The local base path to search', array(getcwd()))
+      ->addOption('max-depth', NULL, InputOption::VALUE_REQUIRED, 'Limit the depth of the search', -1)
       ->addOption('command', 'c', InputOption::VALUE_REQUIRED, 'The command to execute')
       ->addOption('status', NULL, InputOption::VALUE_REQUIRED, 'Filter table output by repo statuses ("all","novel","boring")', 'all');
   }
@@ -70,7 +71,7 @@ class ForeachCommand extends BaseCommand {
       $output->writeln("<comment>[[ Finding repositories ]]</comment>");
     }
     $scanner = new \GitScan\GitRepoScanner();
-    $gitRepos = $scanner->scan($input->getArgument('path'));
+    $gitRepos = $scanner->scan($input->getArgument('path'), $input->getOption('max-depth'));
 
     foreach ($gitRepos as $gitRepo) {
       /** @var \GitScan\GitRepo $gitRepo */
