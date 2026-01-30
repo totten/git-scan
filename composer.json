@@ -1,7 +1,7 @@
 {
     "name": "totten/git-scan",
     "description": "CLI tool for scanning/updating git repos",
-    "license": "AGPL-3.0",
+    "license": "AGPL-3.0-or-later",
     "authors": [
         {
             "name": "Tim Otten",
