@@ -15,8 +15,8 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          ## box.phar requires php72
-          php-version: '7.4'
+          ## box.phar requires php82
+          php-version: '8.2'
           tools: composer:v2
           extensions: pcntl
 
