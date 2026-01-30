@@ -36,7 +36,7 @@
     "extra": {
         "downloads": {
             "box": {
-                "url": "https://github.com/humbug/box/releases/download/3.16.0/box.phar",
+                "url": "https://github.com/box-project/box/releases/download/4.6.10/box.phar",
                 "path": "extern/box",
                 "type": "phar"
             }

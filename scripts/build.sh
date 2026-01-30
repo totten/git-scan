@@ -18,4 +18,4 @@ export PATH="$PRJDIR/extern:$PATH"
 set -ex
 composer install --prefer-dist --no-progress --no-suggest --no-dev
 which box
-php -d phar.read_only=0 `which box` build -v
+php -d phar.read_only=0 `which box` compile -v

@@ -19,7 +19,7 @@ if (!isset($loader)) {
 #### Extra - Register classes in "tests" directory
 $loader->add('GitScan', __DIR__);
 
-$userEmail = trim(shell_exec('git config --get user.email'));
+$userEmail = trim(shell_exec('git config --get user.email') ?? '');
 if (strpos($userEmail, '(none)') !== false || $userEmail === '') {
     shell_exec('git config --global user.email "testbot@example.com"');
     shell_exec('git config --global user.name "Test Bot"');

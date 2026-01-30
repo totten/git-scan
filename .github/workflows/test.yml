@@ -22,7 +22,7 @@ jobs:
             php: 8.3
             phpunit: 9
           - operating-system: ubuntu-latest
-            php: 8.4
+            php: 8.5
             phpunit: 9
           ## We used to test here, but we were forced to switch to newer actions.
           ## But these actions don't seem to run on Windows...
