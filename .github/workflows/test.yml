@@ -22,7 +22,8 @@ jobs:
             php: 8.3
             phpunit: 9
           - operating-system: ubuntu-latest
-            php: 8.5
+            php: 8.6
+            # php_extensions: dom filter json libxml mbstring tokenizer xmlwriter
             phpunit: 9
           ## We used to test here, but we were forced to switch to newer actions.
           ## But these actions don't seem to run on Windows...
@@ -33,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: php-actions/composer@v6
-      - uses: php-actions/phpunit@v3
+      - uses: php-actions/phpunit@v4
         with:
           configuration: phpunit.xml.dist
           version: ${{ matrix.phpunit }}
